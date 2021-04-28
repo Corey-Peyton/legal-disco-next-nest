@@ -59,12 +59,13 @@
       </collapse>
       <template v-for="data in objectProperties">
         <checkbox
+          :key="data.id"
           v-if="data.type === fieldType.Checkbox"
           v-model="data.value"
           :label="data.label"
           @change="objectPropertyChange(data)"
         ></checkbox>
-        <el-form v-else label-position="top">
+        <el-form v-else label-position="top" :key="data.id">
           <el-form-item :label="data.label">
             <el-input
               v-if="data.type === fieldType.Text"
@@ -122,7 +123,7 @@
     <div class="container eltable" slot="reference" v-popover:popover>
       <div ref="rootDiv">
         <!-- TODO: This should be based on this element reference. Not id. as there can be multiple ids when used this multiple time. -->
-        <drop class="canvas-div" v-for="item in canvasData" @drop="handleDrop">
+        <drop class="canvas-div" v-for="item in canvasData" @drop="handleDrop" :key="item.id">
           <canvas :id="item.id"></canvas>
         </drop>
       </div>

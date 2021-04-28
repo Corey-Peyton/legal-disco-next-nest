@@ -1,9 +1,9 @@
-import NuxtConfiguration from '@nuxt/config';
-import VuetifyLoaderPlugin from 'vuetify-loader/lib/plugin';
+import { NuxtConfig } from '@nuxt/types';
+//import VuetifyLoaderPlugin from 'vuetify-loader/lib/plugin';
 import nodeExternals from 'webpack-node-externals';
 const isDev = !(process.env.NODE_ENV === 'production');
 
-const config: NuxtConfiguration = {
+const config: NuxtConfig = {
   mode: 'universal',
 
   env: {
@@ -43,12 +43,25 @@ const config: NuxtConfiguration = {
   /*
    ** Global CSS
    */
-  css: ['element-ui/lib/theme-chalk/index.css', '~/assets/style/app.styl'],
+  css: ['element-ui/lib/theme-chalk/index.css'],
 
   /*
    ** Plugins to load before mounting the App
    */
-  plugins: ['@/plugins/element-ui', '@/plugins/vuetify', '@/plugins/axiosInstance.ts'],
+ // plugins: ['@/plugins/element-ui', '@/plugins/vuetify', '@/plugins/axiosInstance.ts'],
+  plugins: ['@/plugins/element-ui', '@/plugins/axiosInstance.ts'],
+
+  // Auto import components: https://go.nuxtjs.dev/config-components
+  components: true,
+
+  // Modules for dev and build (recommended): https://go.nuxtjs.dev/config-modules
+  buildModules: [
+    // https://go.nuxtjs.dev/typescript
+    '@nuxt/typescript-build',
+    // https://go.nuxtjs.dev/stylelint
+    '@nuxtjs/stylelint-module',
+    //'@nuxt/typescript'
+  ],
 
   /*
    ** Nuxt.js modules
@@ -71,13 +84,15 @@ const config: NuxtConfiguration = {
   build: {
     cache: true,
     babel: {
-      plugins: ['transform-decorators-legacy', 'transform-class-properties', '@babel/plugin-transform-modules-commonjs'],
+      plugins: [["@babel/plugin-proposal-decorators", { "legacy": true }], 
+      'transform-class-properties', '@babel/plugin-transform-modules-commonjs'],
     },
-    transpile: ['vuetify/lib', /^element-ui/],
-    plugins: [new VuetifyLoaderPlugin()],
+    //transpile: ['vuetify/lib', /^element-ui/],
+    transpile: [/^element-ui/],
+    //plugins: [new VuetifyLoaderPlugin()],
     loaders: {
       stylus: {
-        import: ['~assets/style/variables.styl'],
+        //import: ['~assets/style/variables.styl'],
       },
     },
     /*
@@ -87,7 +102,7 @@ const config: NuxtConfiguration = {
       if (process.server) {
         config.externals = [
           nodeExternals({
-            whitelist: [/^vuetify/],
+            //whitelist: [/^vuetify/],
           }),
         ];
       }

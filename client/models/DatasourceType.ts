@@ -1,4 +1,4 @@
-﻿import { Datasource } from './Datasource';
+﻿import { Datasource } from './datasource';
 
 export interface DatasourceType {
     datasource: Datasource[];

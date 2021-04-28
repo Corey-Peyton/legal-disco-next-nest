@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
+    "module": "esnext",
     "declaration": false,
     "removeComments": true,
     "noLib": false,
@@ -8,7 +8,7 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "allowJs": true,
-    "target": "es6",
+    "target": "esnext",
     "resolveJsonModule": true,
     "sourceMap": true,
     "outDir": "./dist",
@@ -22,6 +22,7 @@
       ],
     },
     "types": [
+      "node",
       "@types/node",
       "@nuxt/vue-app",
       "vuex-class-component/dist",

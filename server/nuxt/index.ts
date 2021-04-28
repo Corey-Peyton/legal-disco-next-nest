@@ -12,6 +12,8 @@ export default class NuxtServer {
 
     // Build only in dev mode
     if (config.dev && shouldBuild) {
+
+
       const builder = new Builder(nuxt, BundleBuilder);
       const res = await builder.build();
 
