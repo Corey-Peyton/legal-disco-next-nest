@@ -20,6 +20,7 @@
     "@nestjs/websockets": "^5.7.4",
     "@nuxtjs/axios": "^5.4.1",
     "cross-env": "^5.2.0",
+    "element-ui": "^2.15.1",
     "nuxt": "^2.4.5",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^2.6.3",

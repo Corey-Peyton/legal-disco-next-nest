@@ -43,12 +43,12 @@ const config: NuxtConfiguration = {
   /*
    ** Global CSS
    */
-  css: ['~/assets/style/app.styl'],
+  css: ['element-ui/lib/theme-chalk/index.css', '~/assets/style/app.styl'],
 
   /*
    ** Plugins to load before mounting the App
    */
-  plugins: ['@/plugins/vuetify', '@/plugins/axiosInstance.ts'],
+  plugins: ['@/plugins/element-ui', '@/plugins/vuetify', '@/plugins/axiosInstance.ts'],
 
   /*
    ** Nuxt.js modules
@@ -73,7 +73,7 @@ const config: NuxtConfiguration = {
     babel: {
       plugins: ['@babel/plugin-transform-modules-commonjs'],
     },
-    transpile: ['vuetify/lib'],
+    transpile: ['vuetify/lib', /^element-ui/],
     plugins: [new VuetifyLoaderPlugin()],
     loaders: {
       stylus: {
