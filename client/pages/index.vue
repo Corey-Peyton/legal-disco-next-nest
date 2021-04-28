@@ -5,8 +5,7 @@
   </vertical-container>
 </template>
 
-<script lang="ts" src="./app.ts">
-</script>
+<script lang="ts" src="./index.ts"/>
 
 <style lang="sass">
 $material-icons-font-path: '~material-icons/iconfont/'
