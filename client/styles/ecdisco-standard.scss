@@ -1,0 +1,107 @@
+$--font-size: 14px;
+
+#nav {
+  padding: 30px;
+  a {
+    font-weight: bold;
+    color: #2c3e50;
+    &.router-link-exact-active {
+      color: #42b983;
+    }
+  }
+}
+
+.fullHeight {
+  height: 100%;
+}
+
+.fullWidth {
+  width: 100%;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0%;
+}
+
+#nprogress .bar,
+#nprogress .spinner {
+  z-index: 999999; /*TODO: This is still not working. Took from their repo.*/
+}
+
+.flex-parent {
+  display: flex;
+  height: 100%;
+}
+
+.flex-column {
+  flex-flow: column;
+}
+
+.flex-remaining {
+  display: flex;
+  flex: 1 1 auto;
+}
+
+.full-height-el-dialog .el-dialog {
+  height: calc(100% - 20px); /*Top and bottom margin of 10pxs */
+  max-height: 100%;
+  max-width: 100%;
+  margin-top: 0;
+  margin-bottom: 0;
+  overflow: auto;
+}
+
+.full-height-el-dialog .el-dialog__body {
+  height: calc(100% - 114px); /* 114px = (54px dialog Header) + (60px dialog body padding)*/
+}
+
+.el-form-item {
+  margin-bottom: auto;
+}
+
+.splitpanes__pane {
+  overflow: auto;
+}
+
+html {
+  font-size: $--font-size !important;
+  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.vue-treeselect__control {
+  border-radius: 4px;
+}
+
+a {
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+// Select tree dropdown is not opening properly without below.
+.el-collapse-item__wrap,
+.el-table .cell,
+.el-table,
+.el-table__body-wrapper {
+  overflow: inherit;
+}
+
+.v-context {
+  border: 1px solid;
+  padding: 6px 0 !important;
+  line-height: initial;
+
+  & > li {
+    cursor: pointer;
+
+    & > a {
+      font-size: $--font-size !important;
+    }
+  }
+}

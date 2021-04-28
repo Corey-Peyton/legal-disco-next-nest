@@ -1,0 +1,77 @@
+// Note: Only theme color related styles should be here.
+
+$--background-color-base: #222933 !default;
+$--background-color-light: #2d3744 !default;
+$--background-color-dark: #121820 !default;
+$--background-color-hover: #313846 !default;
+
+$--button-color: #337ab7 !default;
+$--button-border-color: #2e6da4 !default;
+$--button-color-hover: #286090 !default;
+$--button-border-color-hover: #204d74 !default;
+
+$--text-color: #eee;
+
+.box,
+.vue-treeselect__control,
+.splitpanes__pane,
+.uploader-drop,
+.v-contextmenu,
+.uploader-file-progress,
+.vue-treeselect__menu {
+  background-color: $--background-color-base !important;
+}
+
+.toolbar,
+.uploader {
+  background-color: $--background-color-light;
+}
+
+.vue-treeselect__control,
+.v-contextmenu,
+.vue-treeselect__menu {
+  border-color: $--background-color-dark !important;
+}
+
+.vue-treeselect--open-below .vue-treeselect__menu {
+  border-top-color: $--background-color-dark;
+}
+
+.el-button--primary {
+  background-color: $--button-color;
+  border-color: $--button-border-color;
+}
+
+.el-button--primary:hover {
+  background-color: $--button-color-hover;
+  border-color: $--button-border-color-hover;
+}
+
+.vue-treeselect__single-value,
+.el-button--primary {
+  color: $--text-color !important;
+}
+
+.v-contextmenu--default .v-li--hover,
+.el-menu--horizontal > .el-menu-item:not(.is-disabled):hover,
+.el-menu--horizontal > .el-menu-item:not(.is-disabled):focus,
+.vue-treeselect__option--highlight {
+  background-color: $--background-color-hover !important;
+}
+
+.v-context {
+  background-color: $--background-color-base !important;
+  border-color: $--background-color-dark !important;
+
+  & > li {
+    cursor: pointer;
+
+    & > a {
+      color: $--text-color !important;
+      &:hover,
+      &:focus {
+        background-color: $--background-color-hover !important;
+      }
+    }
+  }
+}

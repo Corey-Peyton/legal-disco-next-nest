@@ -71,7 +71,7 @@ const config: NuxtConfiguration = {
   build: {
     cache: true,
     babel: {
-      plugins: ['@babel/plugin-transform-modules-commonjs'],
+      plugins: ['transform-decorators-legacy', 'transform-class-properties', '@babel/plugin-transform-modules-commonjs'],
     },
     transpile: ['vuetify/lib', /^element-ui/],
     plugins: [new VuetifyLoaderPlugin()],

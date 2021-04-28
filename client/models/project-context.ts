@@ -1,0 +1,41 @@
+import { Datasource } from './datasource';
+import { Document } from './document';
+import { DocumentAnnotation } from './document-annotation';
+import { DocumentAnnotationValue } from './document-annotation-value';
+import { DocumentAnnotationValueMultiPage } from './document-annotation-value-multi-page';
+import { DocumentFieldTextValue } from './document-dield-text-value';
+import { DocumentField } from './document-field';
+import { DocumentFieldBooleanValue } from './document-field-boolean-value';
+import { DocumentFieldDateValue } from './document-field-date-value';
+import { DocumentFieldNumberValue } from './document-field-number-value';
+import { DocumentFieldObjectReferenceValue } from './document-field-object-reference-value';
+import { DocumentMetadataValue } from './document-metadata-value';
+import { Production } from './production';
+import { ProductionAnnotationFilter } from './production-annotation-filter';
+import { Query } from './query';
+import { QueryGroup } from './query-group';
+import { QueryRule } from './query-rule';
+import { UserColumn } from './user-column';
+import { UserExpandedTreeNode } from './user-expanded-tree-node';
+
+export interface ProjectContext {
+    datasource: Datasource[];
+    document: Document[];
+    documentAnnotation: DocumentAnnotation[];
+    documentAnnotationValue: DocumentAnnotationValue[];
+    documentAnnotationValueMultiPage: DocumentAnnotationValueMultiPage[];
+    documentField: DocumentField[];
+    documentFieldBooleanValue: DocumentFieldBooleanValue[];
+    documentFieldDateValue: DocumentFieldDateValue[];
+    documentFieldNumberValue: DocumentFieldNumberValue[];
+    documentFieldObjectReferenceValue: DocumentFieldObjectReferenceValue[];
+    documentFieldTextValue: DocumentFieldTextValue[];
+    documentMetadataValue: DocumentMetadataValue[];
+    production: Production[];
+    productionAnnotationFilter: ProductionAnnotationFilter[];
+    query: Query[];
+    queryGroup: QueryGroup[];
+    queryRule: QueryRule[];
+    userColumns: UserColumn[];
+    userExpandedTreeNode: UserExpandedTreeNode[];
+}
