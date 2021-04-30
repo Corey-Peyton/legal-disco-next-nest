@@ -1,10 +1,9 @@
 import { NuxtConfig } from '@nuxt/types';
 //import VuetifyLoaderPlugin from 'vuetify-loader/lib/plugin';
-import nodeExternals from 'webpack-node-externals';
 const isDev = !(process.env.NODE_ENV === 'production');
 
 const config: NuxtConfig = {
-  mode: 'universal',
+  ssr: false, // Disable Server Side rendering
 
   env: {
     host: 'localhost',
@@ -13,11 +12,10 @@ const config: NuxtConfig = {
   },
 
   srcDir: './client/',
+
   dev: isDev,
 
-  /*
-   ** Headers of the page
-   */
+  // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
     title: 'title',
     meta: [
@@ -35,20 +33,10 @@ const config: NuxtConfig = {
     ],
   },
 
-  /*
-   ** Customize the progress-bar color
-   */
-  loading: { color: '#3B8070' },
-
-  /*
-   ** Global CSS
-   */
+  // Global CSS: https://go.nuxtjs.dev/config-css
   css: ['element-ui/lib/theme-chalk/index.css'],
 
-  /*
-   ** Plugins to load before mounting the App
-   */
- // plugins: ['@/plugins/element-ui', '@/plugins/vuetify', '@/plugins/axiosInstance.ts'],
+  // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: ['@/plugins/element-ui', '@/plugins/axiosInstance.ts'],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -60,53 +48,30 @@ const config: NuxtConfig = {
     '@nuxt/typescript-build',
     // https://go.nuxtjs.dev/stylelint
     '@nuxtjs/stylelint-module',
-    //'@nuxt/typescript'
   ],
 
-  /*
-   ** Nuxt.js modules
-   */
+  // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
-    // Doc: https://axios.nuxtjs.org/usage
+    // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
+    // https://go.nuxtjs.dev/pwa
+    '@nuxtjs/pwa',
+    // https://go.nuxtjs.dev/content
+    '@nuxt/content',
   ],
-  /*
-   ** Axios module configuration
-   */
+
+  // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
     // See https://github.com/nuxt-community/axios-module#options
     debug: isDev,
   },
 
-  /*
-   ** Build configuration
-   */
+  // Content module configuration: https://go.nuxtjs.dev/config-content
+  content: {},
+
+  // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
-    cache: true,
-    babel: {
-      plugins: [["@babel/plugin-proposal-decorators", { "legacy": true }], 
-      'transform-class-properties', '@babel/plugin-transform-modules-commonjs'],
-    },
-    //transpile: ['vuetify/lib', /^element-ui/],
     transpile: [/^element-ui/],
-    //plugins: [new VuetifyLoaderPlugin()],
-    loaders: {
-      stylus: {
-        //import: ['~assets/style/variables.styl'],
-      },
-    },
-    /*
-     ** You can extend webpack config here
-     */
-    extend(config, ctx) {
-      if (process.server) {
-        config.externals = [
-          nodeExternals({
-            //whitelist: [/^vuetify/],
-          }),
-        ];
-      }
-    },
   },
 };
 
