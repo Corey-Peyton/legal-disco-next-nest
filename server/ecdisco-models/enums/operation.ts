@@ -1,0 +1,17 @@
+﻿export enum Operation {
+  EqualTo = 1,
+  NotEqualTo = 2,
+  GreaterThan = 5,
+  GreaterThanEqualTo = 6,
+  LessThan = 3,
+  LessThanEqualTo = 4,
+  Between = 7,
+  includes = 8,
+  DoesNotContain = 9,
+  startsWith = 10,
+  EndsWith = 11,
+  In = 12,
+  NotIn = 13,
+  IsEmpty = 14,
+  IsNotEmpty = 15,
+}
