@@ -1,4 +1,5 @@
 ﻿import { getModelForClass, prop, Ref } from '@typegoose/typegoose';
+import { ObjectID } from 'bson';
 import { Condition } from '../enums/condition';
 import { FieldType } from '../enums/field-type';
 import { NodeType } from '../enums/node-type';
@@ -14,7 +15,7 @@ export class QueryRule extends ModelBase {
   @prop()
   queryId: number;
   @prop()
-  parentQueryRuleId: number;
+  parentQueryRuleId: ObjectID;
 }
 
 export class ChildRule extends ModelBase {

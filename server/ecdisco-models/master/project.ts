@@ -4,12 +4,13 @@ import { ProjectGroup } from './project-group';
 import { ProjectUser } from './project-user';
 import { prop, getModelForClass } from '@typegoose/typegoose';
 import { ModelBase } from '../general/model-base';
+import { ObjectID } from 'mongodb';
 
 export class Project extends ModelBase {
   @prop()
   databaseServer: DatabaseServer;
   @prop()
-  databaseServerId: number;
+  databaseServerId: ObjectID;
   @prop()
   datasource: Datasource[];
 

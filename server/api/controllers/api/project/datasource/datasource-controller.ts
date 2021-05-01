@@ -48,7 +48,7 @@ export class DatasourceController extends ProjectBaseController {
   }
 
   async getFiles(datasources: Datasource): Promise<string> {
-    if ((datasources.id as number) === 1) {
+    if ((datasources.id as unknown as number) === 1) {
       return this.getFTPFiles();
     }
 

@@ -67,7 +67,7 @@ export class ProjectController extends MasterController {
 
     return (
       await ProjectModel.findOneAndUpdate(
-        { id: projects.id },
+        { _id: projects.id },
         {
           $set: {
             name: projects.name,

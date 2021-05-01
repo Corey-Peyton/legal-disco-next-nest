@@ -25,7 +25,7 @@ export class DocumentAnnotationController extends ProjectBaseController {
     documentData: DocumentAnnotationValue
   ): Promise<KeyValue[]> {
     const documentId: number = documentData.documentId as number;
-    const annotationId: number = documentData.id as number;
+    const annotationId: number = documentData.id as unknown as number;
 
     if (documentId === -1) {
       return (

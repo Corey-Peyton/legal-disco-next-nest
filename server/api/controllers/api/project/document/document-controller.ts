@@ -1,5 +1,6 @@
 ﻿import { Client } from '@elastic/elasticsearch';
 import { Controller } from '@nestjs/common';
+import { ObjectID } from 'bson';
 import * as fs from 'fs';
 import * as path from 'path';
 import { FieldType } from '../../../../../ecdisco-models/enums/field-type';
@@ -135,7 +136,7 @@ export class DocumentController extends ProjectBaseController {
       }
 
       const childDocumentFieldData: KeyValue[] = this.GetDocumentFieldsData(
-        documentField.children,
+        documentField.children as DocumentField[],
         documentId
       );
       if (documentFieldData === null) {
@@ -243,9 +244,9 @@ export class DocumentController extends ProjectBaseController {
   }
 
   SaveFieldData(fieldData: any): void {
-    const documentId: number = fieldData.documentId as number;
+    const documentId: ObjectID = fieldData.documentId as ObjectID;
     const fieldType: FieldType = (fieldData.fieldType as number) as FieldType;
-    const fieldId: number = fieldData.fieldId as number;
+    const fieldId: ObjectID = fieldData.fieldId as ObjectID;
     const fieldValue: string = fieldData.fieldValue as string;
     switch (fieldType) {
       case FieldType.Checkbox:
@@ -283,14 +284,14 @@ export class DocumentController extends ProjectBaseController {
         if (fieldValue) {
           if (
             !DocumentFieldNumberValueModel(fieldId).findOne({
-              value: Number(fieldValue),
-              documentId,
-            } as DocumentFieldNumberValue)
+                value: Number(fieldValue),
+                documentId,
+              } as unknown as DocumentFieldNumberValue)
           ) {
             DocumentFieldNumberValueModel(fieldId).create({
-              value: Number(fieldValue),
-              documentId,
-            } as DocumentFieldNumberValue);
+                value: Number(fieldValue),
+                documentId,
+              } as unknown as DocumentFieldNumberValue);
           }
         } else {
           DocumentFieldNumberValueModel(fieldId).deleteOne({ DocumentId: documentId });
@@ -300,14 +301,14 @@ export class DocumentController extends ProjectBaseController {
         if (fieldValue) {
           if (
             !DocumentFieldTextValueModel(fieldId).findOne({
-              value: fieldValue,
-              documentId,
-            } as DocumentFieldTextValue)
+                value: fieldValue,
+                documentId,
+              } as unknown as DocumentFieldTextValue)
           ) {
             DocumentFieldTextValueModel(fieldId).create({
-              value: fieldValue,
-              documentId,
-            } as DocumentFieldTextValue);
+                value: fieldValue,
+                documentId,
+              } as unknown as DocumentFieldTextValue);
           }
 
           const client = new Client();
@@ -390,7 +391,7 @@ export class DocumentController extends ProjectBaseController {
     return paginatedData.map((r) => r[0]);
   }
 
-  private GetDocumentFields(parentIds: number[]): DocumentField[] {
+  private GetDocumentFields(parentIds: ObjectID[]): DocumentField[] {
     let documentFields: DocumentField[];
 
     (async () => {

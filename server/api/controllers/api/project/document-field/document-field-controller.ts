@@ -1,4 +1,7 @@
 ﻿import { Controller } from '@nestjs/common';
+import { Ref } from '@typegoose/typegoose';
+import { ObjectID } from 'bson';
+import { ObjectId } from 'mongodb';
 import { FieldType } from '../../../../../ecdisco-models/enums/field-type';
 import { KeyValue } from '../../../../../ecdisco-models/general/key-value';
 import {
@@ -42,7 +45,7 @@ export class DocumentFieldController extends ProjectBaseController {
     return documentFieldId;
   }
 
-  private GetDocumentFields(parentIds: number[]): DocumentField[] {
+  private GetDocumentFields(parentIds: ObjectID[]): DocumentField[] {
     let documentFields: DocumentField[];
 
     (async () => {
@@ -61,7 +64,7 @@ export class DocumentFieldController extends ProjectBaseController {
 
   private GetDocumentFieldsData(
     documentFields: DocumentField[],
-    documentId: number
+    documentId: ObjectID
   ): KeyValue[] {
     if (documentFields === null) {
       documentFields = this.GetDocumentFields([null]);
@@ -139,7 +142,7 @@ export class DocumentFieldController extends ProjectBaseController {
       }
 
       const childDocumentFieldData: KeyValue[] = this.GetDocumentFieldsData(
-        documentField.children,
+        documentField.children as DocumentField[],
         documentId
       );
       if (documentFieldData === null) {

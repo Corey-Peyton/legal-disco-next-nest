@@ -45,7 +45,7 @@ export class ProductionController extends ProjectBaseController {
 
   async RunProduction(production: Production): Promise<void> {
     // 1  Get Prduction id
-    const productionId: number = production.id as number;
+    const productionId = production.id;
 
     // 2 Get main query to filter main documents
     const queryId: number = (await ProductionModel.findById(productionId))

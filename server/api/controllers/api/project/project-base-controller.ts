@@ -6,7 +6,7 @@ export class ProjectBaseController extends MasterController {
   projectId: number;
 
   get projectContext(): Mongoose {
-    if (this.m_projectContext === null) {
+    if (!this.m_projectContext) {
       this.m_projectContext = new ProjectContext().context;
     }
 
