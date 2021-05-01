@@ -2,7 +2,7 @@ import NavBar from '@/components/nav-bar.vue';
 import VerticalContainer from '@/components/vertical-container.vue';
 import '@/styles/dark-theme.scss';
 import '@/styles/ecdisco-standard.scss';
-//import 'element-theme-dark';
+import 'element-theme-dark';
 import 'nprogress/nprogress.css';
 import 'splitpanes/dist/splitpanes.css';
 import { Component, Vue, Watch } from 'vue-property-decorator';

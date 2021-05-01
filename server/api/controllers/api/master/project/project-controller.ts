@@ -22,8 +22,8 @@ export class ProjectController extends MasterController {
     connection.connection.db.dropDatabase();
   }
 
-  @Post('GetProjects') 
-  async GetProjects(): Promise<Project[]> {
+  @Post('getProjects') 
+  async getProjects(): Promise<Project[]> {
     this.masterContext;
     const projects = (await ProjectModel.find({}));
     return projects.map((project) => {
@@ -39,7 +39,9 @@ export class ProjectController extends MasterController {
     });
   }
 
-  async SaveProject(projects: Project): Promise<number> {
+  @Post('saveProject')
+  async saveProject(projects: Project): Promise<number> {
+    this.masterContext;
     const project = new Project();
 
     project.name = projects.name;
