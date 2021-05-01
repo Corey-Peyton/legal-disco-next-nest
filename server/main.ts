@@ -11,7 +11,7 @@ async function bootstrap() {
   const { host, port } = config.env;
 
   const nuxt = await NuxtServer.getInstance().run(
-    config.dev ? !module.hot._main : true,
+    config.dev ? !(module.hot && module.hot._main) : true,
   );
   const server = await NestFactory.create(ApplicationModule);
 
