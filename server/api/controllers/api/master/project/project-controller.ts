@@ -1,9 +1,9 @@
-﻿import { Controller, Post } from '@nestjs/common';
+﻿import { Body, Controller, Post } from '@nestjs/common';
 import { DatabaseServerModel } from '../../../../../ecdisco-models/master/database-server';
 import { datasourceModel } from '../../../../../ecdisco-models/master/datasource';
 import {
-    Project,
-    ProjectModel
+  Project,
+  ProjectModel,
 } from '../../../../../ecdisco-models/master/project';
 import { GlobalConfiguration } from '../../../global-configuration';
 import { ProjectBaseController } from '../../project/project-base-controller';
@@ -22,10 +22,10 @@ export class ProjectController extends MasterController {
     connection.connection.db.dropDatabase();
   }
 
-  @Post('getProjects') 
+  @Post('getProjects')
   async getProjects(): Promise<Project[]> {
     this.masterContext;
-    const projects = (await ProjectModel.find({}));
+    const projects = await ProjectModel.find({});
     return projects.map((project) => {
       const projectBaseController = new ProjectBaseController();
       projectBaseController.projectId = project.id;
@@ -40,17 +40,29 @@ export class ProjectController extends MasterController {
   }
 
   @Post('saveProject')
-  async saveProject(projects: Project): Promise<number> {
+  async saveProject(@Body() projects: Project): Promise<number> {
     this.masterContext;
     const project = new Project();
 
     project.name = projects.name;
 
+    const avail = GlobalConfiguration.AvailableDatabaseServer;
+
+    await DatabaseServerModel.updateOne(
+      {
+        name: avail,
+      },
+      {
+        name: avail,
+      },
+      { upsert: true },
+    );
+
     // TODO: We will fetch this based on computed storage of cloud. For now it is fixed from Global Configuration.
     project.databaseServerId = (
-      await DatabaseServerModel
-        .findOne({ name: GlobalConfiguration.AvailableDatabaseServer })
-        .exec()
+      await DatabaseServerModel.findOne({
+        name: avail,
+      })
     ).id;
 
     return (
@@ -62,7 +74,7 @@ export class ProjectController extends MasterController {
             databaseServerId: project.databaseServerId,
           },
         },
-        { upsert: true }
+        { upsert: true },
       )
     ).id;
   }

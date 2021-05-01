@@ -12,7 +12,15 @@ import { QueryGroup, QueryRule } from '@/models/query-builder-query';
 import { ApiService } from '@/services/api-service';
 import Treeselect from '@riophae/vue-treeselect';
 import '@riophae/vue-treeselect/dist/vue-treeselect.css';
-import { Button, Input, Option, Select, Table, TableColumn, Tree } from 'element-ui';
+import {
+  Button,
+  Input,
+  Option,
+  Select,
+  Table,
+  TableColumn,
+  Tree,
+} from 'element-ui';
 import { TreeNode } from 'element-ui/types/tree';
 import { Pane, Splitpanes } from 'splitpanes';
 import VueContext from 'vue-context';
@@ -26,12 +34,22 @@ Vue.use(uploader);
 
 @Component({
   components: {
-    Tree, ElButton: Button, ElInput: Input, ElSelect: Select, ElTable: Table, TableColumn, ElOption: Option,
-    Pane, Splitpanes, VueContext, Treeselect, Auth2, QueryBuilder
-  }
+    Tree,
+    ElButton: Button,
+    ElInput: Input,
+    ElSelect: Select,
+    ElTable: Table,
+    TableColumn,
+    ElOption: Option,
+    Pane,
+    Splitpanes,
+    VueContext,
+    Treeselect,
+    Auth2,
+    QueryBuilder,
+  },
 })
 export default class In extends Vue {
-
   authDone = false;
 
   cloudDocuments = [];
@@ -41,29 +59,57 @@ export default class In extends Vue {
   datasourceTypes = [
     { label: 'HDD', id: DatasourceType.HDD },
     {
-      label: 'Cloud', id: DatasourceType.Cloud, children:
-        [
-          { label: 'One Drive', id: `${DatasourceType.Cloud}_${Datasources.OneDrive}` },
-          { label: 'Google Drive', id: `${DatasourceType.Cloud}_${Datasources.GoogleDrive}` },
-          { label: 'Box', id: `${DatasourceType.Cloud}_${Datasources.Box}` }
-        ]
+      label: 'Cloud',
+      id: DatasourceType.Cloud,
+      children: [
+        {
+          label: 'One Drive',
+          id: `${DatasourceType.Cloud}_${Datasources.OneDrive}`,
+        },
+        {
+          label: 'Google Drive',
+          id: `${DatasourceType.Cloud}_${Datasources.GoogleDrive}`,
+        },
+        { label: 'Box', id: `${DatasourceType.Cloud}_${Datasources.Box}` },
+      ],
     },
     {
-      label: 'Social Platform', id: DatasourceType.SocialPlatform, children: [
-        { label: 'Facebook', id: `${DatasourceType.SocialPlatform}_${Datasources.Facebook}` },
-        { label: 'Twitter', id: `${DatasourceType.SocialPlatform}_${Datasources.Twitter}` },
-        { label: 'Linkedin', id: `${DatasourceType.SocialPlatform}_${Datasources.Linkedin}` },
-        { label: 'Instagram', id: `${DatasourceType.SocialPlatform}_${Datasources.Instagram}` },
-        { label: 'Youtube', id: `${DatasourceType.SocialPlatform}_${Datasources.Youtube}` }
-      ]
+      label: 'Social Platform',
+      id: DatasourceType.SocialPlatform,
+      children: [
+        {
+          label: 'Facebook',
+          id: `${DatasourceType.SocialPlatform}_${Datasources.Facebook}`,
+        },
+        {
+          label: 'Twitter',
+          id: `${DatasourceType.SocialPlatform}_${Datasources.Twitter}`,
+        },
+        {
+          label: 'Linkedin',
+          id: `${DatasourceType.SocialPlatform}_${Datasources.Linkedin}`,
+        },
+        {
+          label: 'Instagram',
+          id: `${DatasourceType.SocialPlatform}_${Datasources.Instagram}`,
+        },
+        {
+          label: 'Youtube',
+          id: `${DatasourceType.SocialPlatform}_${Datasources.Youtube}`,
+        },
+      ],
     },
     {
-      label: 'Mail', id: DatasourceType.Mail, children:
-        [
-          { label: 'Gmail', id: `${DatasourceType.Mail}_${Datasources.Gmail}` },
-          { label: 'Yahoo', id: `${DatasourceType.Mail}_${Datasources.Yahoo}` },
-          { label: 'Outlook', id: `${DatasourceType.Mail}_${Datasources.Outlook}` }
-        ]
+      label: 'Mail',
+      id: DatasourceType.Mail,
+      children: [
+        { label: 'Gmail', id: `${DatasourceType.Mail}_${Datasources.Gmail}` },
+        { label: 'Yahoo', id: `${DatasourceType.Mail}_${Datasources.Yahoo}` },
+        {
+          label: 'Outlook',
+          id: `${DatasourceType.Mail}_${Datasources.Outlook}`,
+        },
+      ],
     },
     { label: 'FTP', id: DatasourceType.FTP },
   ];
@@ -71,13 +117,21 @@ export default class In extends Vue {
 
   documentFilters = [
     { id: 'audio', label: 'Audio' },
-    { id: 'createdDateTime', label: 'Created Date Time', fieldType: FieldType.DateTime },
+    {
+      id: 'createdDateTime',
+      label: 'Created Date Time',
+      fieldType: FieldType.DateTime,
+    },
     { id: 'deleted', label: 'Deleted' },
     { id: 'file', label: 'File' },
     { id: 'folder', label: 'Folder' },
     { id: 'image', label: 'Image' },
-    { id: 'lastModifiedDateTime', label: 'Last Modified Date Time', fieldType: FieldType.DateTime },
-    { id: 'video', label: 'Video' }
+    {
+      id: 'lastModifiedDateTime',
+      label: 'Last Modified Date Time',
+      fieldType: FieldType.DateTime,
+    },
+    { id: 'video', label: 'Video' },
   ];
 
   masterDatasourceId = 0;
@@ -119,81 +173,90 @@ export default class In extends Vue {
   }
 
   getFiles() {
+    const filter = encodeURIComponent(
+      (this.rule.rules as QueryRule[])
+        .map(
+          (k: QueryRule) =>
+            `${k.fieldId} ${OneDriveOperation[k.operation]} ${new Date(
+              k.value,
+            ).toISOString()}`,
+        )
+        .join(Condition[this.rule.condition].toLowerCase()),
+    );
 
-    const filter = encodeURIComponent((this.rule.rules as QueryRule[])
-      .map((k: QueryRule) => `${k.fieldId} ${OneDriveOperation[k.operation]} ${new Date(k.value).toISOString()}`)
-      .join(Condition[this.rule.condition].toLowerCase()));
-
-    return ApiService.post('Datasource/getFiles', { datasourceId: this.options.query.datasourceId, filter })
-      .then((fileData) => {
-        if (isNaN(fileData)) {
-          this.authDone = true;
-          this.cloudDocuments = fileData.value;
-        } else {
-          this.masterDatasourceId = fileData;
-          this.authDone = false;
-        }
-      });
-
+    return ApiService.post('Datasource/getFiles', {
+      datasourceId: this.options.query.datasourceId,
+      filter,
+    }).then((fileData) => {
+      if (isNaN(fileData)) {
+        this.authDone = true;
+        this.cloudDocuments = fileData.value;
+      } else {
+        this.masterDatasourceId = fileData;
+        this.authDone = false;
+      }
+    });
   }
 
   mounted() {
+    ApiService.post('Project/GetProjects').then((projects: Project[]) => {
+      this.project[0].children = projects.map((project: Project) => ({
+        id: project.id,
+        label: project.name,
+        isEdit: false,
+        children: [
+          {
+            id: 0,
+            label: 'Datasources',
+            nodeType: NodeType.Datasource,
+            children: project.datasource.map((datasource: Datasource) => ({
+              id: datasource.id,
+              label: datasource.name,
+              datasourceType: `${datasource.type}_${datasource.source}`,
+            })),
+          },
+        ],
+      }));
 
-    ApiService.post('Project/GetProjects')
-      .then((projects: Project[]) => {
-        this.project[0].children = projects.map(
-          (project: Project) =>
-            ({
-              id: project.id,
-              label: project.name,
-              isEdit: false,
-              children: [
-                {
-                  id: 0,
-                  label: 'Datasources',
-                  nodeType: NodeType.Datasource,
-                  children: project.datasource.map(
-                    (datasource: Datasource) =>
-                      ({
-                        id: datasource.id,
-                        label: datasource.name,
-                        datasourceType: `${datasource.type}_${datasource.source}`,
-                      }),
-                  ),
-                },
-              ],
-            }),
-        );
+      this.treeLoaded = true;
 
-        this.treeLoaded = true;
-
-        if (this.$route.params.datasourceId) {
+      if (this.$route.params.datasourceId) {
+        setTimeout(() => {
+          (this.$refs.projectTree as Tree).setCurrentKey(
+            this.$route.params.datasourceId,
+          );
 
           setTimeout(() => {
-            (this.$refs.projectTree as Tree).setCurrentKey(this.$route.params.datasourceId);
-
-            setTimeout(() => {
-
-              this.upload((this.$refs.projectTree as Tree).getNode(this.$route.params.datasourceId),
-                (this.$refs.projectTree as Tree).getCurrentNode()
-              );
-            });
-
+            this.upload(
+              (this.$refs.projectTree as Tree).getNode(
+                this.$route.params.datasourceId,
+              ),
+              (this.$refs.projectTree as Tree).getCurrentNode(),
+            );
           });
-        }
-
-      });
+        });
+      }
+    });
   }
 
   @Watch('$route', { immediate: true, deep: true })
   onUrlChange(newVal: Route) {
     if (newVal.params.datasourceId) {
-      this.defaultExpandedTreeNodes = [0, newVal.params.projectId, newVal.params.datasourceId];
+      this.defaultExpandedTreeNodes = [
+        0,
+        newVal.params.projectId,
+        newVal.params.datasourceId,
+      ];
     }
 
-    if (this.treeLoaded) { // I.e. node click.
-      this.upload((this.$refs.projectTree as Tree).getNode(this.$route.params.datasourceId),
-        (this.$refs.projectTree as Tree).getCurrentNode());
+    if (this.treeLoaded) {
+      // I.e. node click.
+      this.upload(
+        (this.$refs.projectTree as Tree).getNode(
+          this.$route.params.datasourceId,
+        ),
+        (this.$refs.projectTree as Tree).getCurrentNode(),
+      );
     }
 
     // TODO: Check this state with localstorage. if true then ok. else. need to delete cloud auth.
@@ -211,8 +274,7 @@ export default class In extends Vue {
     const index = children.indexOf(data.id);
     children.splice(index, 1);
 
-    ApiService.post('Project/deleteProject', { projectId: data.id })
-      .then();
+    ApiService.post('Project/deleteProject', { projectId: data.id }).then();
   }
 
   // TODO: Need to check parameters of TreeNode which is currently any.
@@ -238,7 +300,7 @@ export default class In extends Vue {
     data.isEdit = false;
 
     let query = '';
-    let variables: object = {};
+    let variables: any = {};
     switch (parentNode.data.nodeType) {
       case NodeType.Project:
         data.children = [
@@ -253,14 +315,17 @@ export default class In extends Vue {
         // TODO: in following, we also need to save userid. so that user project association can be there.
         query = 'project/saveProject';
         variables = {
-          id: data.id || 0,
           name: data.label,
         };
 
+        if (data.id) {
+          variables.id = data.id;
+        }
+
         break;
       case NodeType.Datasource:
-
-        const dataSourceType = (data as any).datasourceType.toString()
+        const dataSourceType = (data as any).datasourceType
+          .toString()
           .split('_');
 
         // TODO: In following we need to pass project id. so that datasource can be associated.
@@ -278,26 +343,27 @@ export default class In extends Vue {
     }
 
     // TODO: Define axios graphql base url.
-    ApiService.post(query, variables)
-      .then((responseData: any) => {
-        switch (parentNode.data.nodeType) {
-          case NodeType.Project:
-            data.id = responseData.project.id;
-            break;
-          case NodeType.Datasource:
-            data.id = responseData.datasource.id;
-        }
-      });
+    ApiService.post(query, variables).then((responseData: any) => {
+      switch (parentNode.data.nodeType) {
+        case NodeType.Project:
+          data.id = responseData.project.id;
+          break;
+        case NodeType.Datasource:
+          data.id = responseData.datasource.id;
+      }
+    });
   }
 
   upload(node: TreeNode<any, TreeData>, data: TreeData) {
-
     this.options.query.projectId = node.parent!.parent!.data.id;
     this.options.query.datasourceId = node.data.id;
 
-    if ([DatasourceType.Cloud.toString(), DatasourceType.Mail.toString()]
-      .includes((data as any).datasourceType.split('_')[0])) {
-
+    if (
+      [
+        DatasourceType.Cloud.toString(),
+        DatasourceType.Mail.toString(),
+      ].includes((data as any).datasourceType.split('_')[0])
+    ) {
       this.getFiles()
         .then(() => {
           this.selectedDatasourceType = (data as any).datasourceType;
@@ -305,10 +371,8 @@ export default class In extends Vue {
         .catch(() => {
           this.selectedDatasourceType = (data as any).datasourceType;
         });
-
     } else {
       this.selectedDatasourceType = (data as any).datasourceType;
     }
-
   }
 }
