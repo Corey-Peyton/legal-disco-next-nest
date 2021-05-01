@@ -3,7 +3,7 @@ import Axios from 'axios';
 
 export class ApiService {
 
-  static apiHost = 'http://localhost:3000/';
+  static apiHost = 'http://localhost:3100/';
 
   static post(url: string, data?: any) {
     return new Promise<any>((resolve, reject) => {

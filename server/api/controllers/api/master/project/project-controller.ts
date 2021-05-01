@@ -1,4 +1,4 @@
-﻿import { Controller } from '@nestjs/common';
+﻿import { Controller, Post } from '@nestjs/common';
 import { DatabaseServerModel } from '../../../../../ecdisco-models/master/database-server';
 import { datasourceModel } from '../../../../../ecdisco-models/master/datasource';
 import {
@@ -9,7 +9,7 @@ import { GlobalConfiguration } from '../../../global-configuration';
 import { ProjectBaseController } from '../../project/project-base-controller';
 import { MasterController } from '../master-controller';
 
-@Controller()
+@Controller('Project')
 export class ProjectController extends MasterController {
   DeleteProject(projectId: number): void {
     this.masterContext;
@@ -22,16 +22,16 @@ export class ProjectController extends MasterController {
     connection.connection.db.dropDatabase();
   }
 
+  @Post('GetProjects') 
   async GetProjects(): Promise<Project[]> {
-
+    this.masterContext;
     const projects = (await ProjectModel.find({}));
-
     return projects.map((project) => {
       const projectBaseController = new ProjectBaseController();
       projectBaseController.projectId = project.id;
 
       projectBaseController.projectContext;
-      (async function () {
+      (async () => {
         project.datasource = await datasourceModel.find();
       })();
 

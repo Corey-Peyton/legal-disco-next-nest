@@ -2,7 +2,9 @@ import { connect, Mongoose } from 'mongoose';
 
 export class MasterContext {
   get context(): Mongoose {
-    if (this.m_context === null) {
+    
+    if (!this.m_context) {
+
       (async () => {
 
           this.m_context = await connect(

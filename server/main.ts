@@ -15,8 +15,10 @@ async function bootstrap() {
   );
   const server = await NestFactory.create(ApplicationModule);
 
-  server.useGlobalFilters(new NuxtFilter(nuxt));
+  server.useGlobalFilters(new NuxtFilter(nuxt)); // On 404: This loads nuxt. Like other SPA do.
 
+  server.setGlobalPrefix('api');
+  
   await server.listen(port, host, () => {
     Consola.ready({
       message: `Server listening on http://${host}:${port}`,

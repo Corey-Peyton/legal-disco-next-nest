@@ -10,8 +10,7 @@ export class MasterController {
     response: express.Response
 
     get masterContext(): Mongoose {
-
-        if (this.m_masterContext === null) {
+        if (!this.m_masterContext) {
             this.m_masterContext = new MasterContext().context;
         }
 
