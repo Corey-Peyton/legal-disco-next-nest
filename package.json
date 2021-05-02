@@ -71,6 +71,7 @@
     "vuetify": "^2.4.11",
     "vuetify-loader": "^1.7.2",
     "vuex-class": "^0.3.2",
+    "webpack-node-externals": "^3.0.0",
     "winston": "^3.3.3"
   },
   "devDependencies": {

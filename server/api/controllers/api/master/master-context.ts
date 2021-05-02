@@ -11,7 +11,7 @@ export class MasterContext {
             'mongodb://localhost/ecdiscoMaster',
             { useNewUrlParser: true, useUnifiedTopology: true }
           );
-
+          
           this.m_context.pluralize(null); // By default mongoose is trying to be smart and makes things pluralize.
 
       })();

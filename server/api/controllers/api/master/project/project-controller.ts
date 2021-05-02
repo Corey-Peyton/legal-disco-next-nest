@@ -1,4 +1,5 @@
 ﻿import { Body, Controller, Post } from '@nestjs/common';
+import { ObjectID } from 'bson';
 import { DatabaseServerModel } from '../../../../../ecdisco-models/master/database-server';
 import { datasourceModel } from '../../../../../ecdisco-models/master/datasource';
 import {
@@ -40,11 +41,8 @@ export class ProjectController extends MasterController {
   }
 
   @Post('saveProject')
-  async saveProject(@Body() projects: Project): Promise<number> {
+  async saveProject(@Body() project: Project): Promise<ObjectID> {
     this.masterContext;
-    const project = new Project();
-
-    project.name = projects.name;
 
     const avail = GlobalConfiguration.AvailableDatabaseServer;
 
@@ -65,17 +63,33 @@ export class ProjectController extends MasterController {
       })
     ).id;
 
-    return (
-      await ProjectModel.findOneAndUpdate(
-        { _id: projects.id },
+    project = await ProjectModel.findOneAndUpdate(
+      { _id: project.id },
+      {
+        $set: {
+          name: project.name,
+          databaseServerId: project.databaseServerId,
+        },
+      },
+    );
+
+    if (project.id) {
+      project = await ProjectModel.findOneAndUpdate(
+        { _id: project.id },
         {
           $set: {
-            name: projects.name,
+            name: project.name,
             databaseServerId: project.databaseServerId,
           },
         },
-        { upsert: true },
-      )
-    ).id;
+      );
+    } else {
+      project = await ProjectModel.create({
+        name: project.name,
+        databaseServerId: project.databaseServerId,
+      });
+    }
+
+    return project.id;
   }
 }
