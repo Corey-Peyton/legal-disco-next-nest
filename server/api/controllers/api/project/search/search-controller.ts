@@ -1,4 +1,4 @@
-﻿import { Controller } from '@nestjs/common';
+﻿import { Body, Controller, Post } from '@nestjs/common';
 import {
   ChildRule,
   ChildRuleModel,
@@ -9,19 +9,23 @@ import { Query, QueryModel } from '../../../../../ecdisco-models/projects/query'
 import { ProjectBaseController } from '../project-base-controller';
 import { Search } from './search';
 
-@Controller()
+@Controller('Search')
 export class SearchController extends ProjectBaseController {
-  async GetSearches(): Promise<Query[]> {
+
+  @Post('getSearches')
+  async getSearches(): Promise<Query[]> {
     return await QueryModel.find({});
   }
 
-  Load(search: any): QueryRule {
+  @Post('load')
+  load(@Body() search: any): QueryRule {
     const queryId: number = search.queryId as number;
 
     return new Search().Load(queryId, true, this.projectContext);
   }
 
-  async Save(search: any) {
+  @Post('save')
+  async save(@Body() search: any) {
     const query: Query = search as Query;
     // TODO: recursively call for nested query. and also added modified need to handle.
     // EntityState entityState = query.id === 0 ? EntityState.Added : EntityState.Modified;

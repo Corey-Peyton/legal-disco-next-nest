@@ -18,21 +18,23 @@ import { DocumentType } from '@typegoose/typegoose/lib/types';
 import { DocumentModel } from '../../../../../ecdisco-models/projects/document';
 import { $lookup } from './lookup';
 import { DocumentFieldModel } from '../../../../../ecdisco-models/projects/document-field';
-import { Controller } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 
-@Controller()
+@Controller('DocumentSearch')
 export class DocumentSearchController extends ProjectBaseController {
   get tempDocumentSearchResult(): string {
     return `Temp_Session_${this.sessionId}_DocumentSearchResult`;
   }
 
-  GetSearchResultPagedData(filterData: any): GridData {
+  @Post('getSearchResultPagedData')
+  getSearchResultPagedData(@Body() filterData: any): GridData {
     const paginate: Paginate = filterData.paginate as Paginate;
 
     return this.GetPagedData(paginate);
   }
 
-  async Search(filterData: any): Promise<GridData> {
+  @Post('search')
+  async search(@Body() filterData: any): Promise<GridData> {
     const paginate: Paginate = filterData.paginate as Paginate;
 
     const whereQuery: any = {};
@@ -43,15 +45,15 @@ export class DocumentSearchController extends ProjectBaseController {
 
     const lookups: $lookup[] = [];
     const selectedColumn: { [key: string]: number } = {};
-    this.SelectColumns(lookups).forEach((sc) => {
+    this.selectColumns(lookups).forEach((sc) => {
       selectedColumn[sc] = 1;
     });
 
-    this.SearchQuery(
+    this.searchQuery(
       filterData.queryRule as QueryRule,
       lookups,
       whereQuery,
-      filterData.queryRule.Condition
+      filterData.queryRule.Condition,
     );
 
     const finalQuery = [whereQuery, ...lookups];
@@ -87,7 +89,8 @@ export class DocumentSearchController extends ProjectBaseController {
     };
   }
 
-  SelectColumns(joinQuery: $lookup[]): string[] {
+  @Post('selectColumns')
+  selectColumns(joinQuery: $lookup[]): string[] {
     let query: DocumentType<UserColumn>[];
 
     (async () => {
@@ -114,7 +117,9 @@ export class DocumentSearchController extends ProjectBaseController {
           let fieldType: FieldType;
 
           (async () => {
-            fieldType = await (await DocumentFieldModel.findById(selectedColumnId)).type;
+            fieldType = await (
+              await DocumentFieldModel.findById(selectedColumnId)
+            ).type;
           })();
 
           switch (fieldType) {
@@ -163,13 +168,12 @@ export class DocumentSearchController extends ProjectBaseController {
     return columns;
   }
 
-  public SearchQuery(
+  public searchQuery(
     queryRule: QueryRule,
     joinQuery: $lookup[],
     whereQuery: { [key: string]: any },
-    condition: Condition
+    condition: Condition,
   ): void {
-
     let i = 0;
 
     queryRule.rules.forEach((childRule: ChildRule) => {
@@ -192,15 +196,13 @@ export class DocumentSearchController extends ProjectBaseController {
         default:
       }
 
-      if ((childRule as unknown as QueryRule).condition) {
-
-        this.SearchQuery(
-          childRule as unknown as QueryRule,
+      if (((childRule as unknown) as QueryRule).condition) {
+        this.searchQuery(
+          (childRule as unknown) as QueryRule,
           joinQuery,
           whereQuery,
-          queryRule.condition
+          queryRule.condition,
         );
-
       } else {
         // When field will be null, it means filter is not selected. we'll ignore it.
         switch (childRule.operation as Operation) {
@@ -244,12 +246,11 @@ export class DocumentSearchController extends ProjectBaseController {
           childRule as ChildRule,
           joinQuery,
           whereQuery,
-          condition
+          condition,
         );
       }
       i++;
     });
-
   }
 
   // TODO: We don't need this function seperately. as it is calling from single place. so will merge later.
@@ -257,7 +258,7 @@ export class DocumentSearchController extends ProjectBaseController {
     childRule: ChildRule,
     joinQuery: $lookup[],
     whereQuery: { [key: string]: any },
-    condition: Condition
+    condition: Condition,
   ): Promise<void> {
     const documentFieldValue = `DocumentField_${childRule.fieldId}`;
     const documentField: { [key: string]: any } = {};

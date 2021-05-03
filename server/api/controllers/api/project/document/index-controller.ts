@@ -3,9 +3,9 @@ import path from 'path';
 import * as fs from 'fs';
 import { Controller } from '@nestjs/common';
 
-@Controller()
+@Controller('Index')
 export class IndexController {
-  async Index(textFileName: any): Promise<void> {
+  async index(textFileName: any): Promise<void> {
     const client = new Client();
 
     //https://www.elastic.co/blog/found-multi-tenancy

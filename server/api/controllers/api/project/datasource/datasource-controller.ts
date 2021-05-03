@@ -15,11 +15,13 @@ import {
   AuthTokenModel,
 } from '../../../../../ecdisco-models/master/auth-token';
 import { IAuthToken } from '../../../i-auth-token';
-import { Controller } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
+import { ObjectID } from 'bson';
 
-@Controller()
+@Controller('Datasource')
 export class DatasourceController extends ProjectBaseController {
-  getAuthObject(source: Datasources): IAuth {
+
+  private getAuthObject(source: Datasources): IAuth {
     switch (source) {
       case Datasources.OneDrive:
         return new MicrosoftAuth();
@@ -47,13 +49,14 @@ export class DatasourceController extends ProjectBaseController {
     }
   }
 
-  async getFiles(datasources: Datasource): Promise<string> {
-    if ((datasources.id as unknown as number) === 1) {
+  @Post('getFiles')
+  async getFiles(@Body() datasources: Datasource): Promise<string> {
+    if (((datasources.id as unknown) as number) === 1) {
       return this.getFTPFiles();
     }
 
     const datasource: Datasource = await DatasourceModel.findById(
-      datasources.id
+      datasources.id,
     )
       .select(['authTokenId', 'source'])
       .exec();
@@ -66,7 +69,7 @@ export class DatasourceController extends ProjectBaseController {
     }
 
     const tokenData: AuthToken = await AuthTokenModel.findById(
-      AuthTokenId
+      AuthTokenId,
     ).select(['accessToken', 'refreshToken', 'dateTime', 'expiresIn']);
 
     let accessToken: string = tokenData.accessToken;
@@ -75,7 +78,7 @@ export class DatasourceController extends ProjectBaseController {
 
     // Compare Expiry time.
     tokenData.dateTime.setSeconds(
-      tokenData.dateTime.getSeconds() + tokenData.expiresIn
+      tokenData.dateTime.getSeconds() + tokenData.expiresIn,
     );
 
     if (new Date().getTime() >= tokenData.dateTime.getTime()) {
@@ -198,8 +201,9 @@ export class DatasourceController extends ProjectBaseController {
   }
 
   // Static readonly HttpClient httpClient = new HttpClient();
-
-  async SaveDatasource(datasource: Datasource): Promise<number> {
+  @Post('saveDatasource')
+  async saveDatasource(@Body() datasource: Datasource): Promise<ObjectID> {
+    
     return (
       await DatasourceModel.findOneAndUpdate(
         { id: datasource.id },
@@ -210,7 +214,7 @@ export class DatasourceController extends ProjectBaseController {
             source: datasource.source,
           },
         },
-        { upsert: true }
+        { upsert: true },
       )
     ).id;
   }

@@ -1,5 +1,5 @@
 ﻿import { Client } from '@elastic/elasticsearch';
-import { Controller } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { ObjectID } from 'bson';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -26,13 +26,14 @@ import { ProjectBaseController } from '../project-base-controller';
 import { DocumentInfo } from './document-info';
 import { $lookup } from './lookup';
 
-@Controller()
+@Controller('Document')
 export class DocumentController extends ProjectBaseController {
   private get tempDocumentSearchResult(): string {
     return `Temp_Session_${this.sessionId}_DocumentSearchResult`;
   }
 
-  AddDocument(document: Document): number {
+  @Post('addDocument')
+  addDocument(@Body() document: Document): number {
     let documentId;
 
     (async () => {
@@ -49,7 +50,8 @@ export class DocumentController extends ProjectBaseController {
     return documentId;
   }
 
-  deleteSelectedColumnData(columnObject: any): void {
+  @Post('deleteSelectedColumnData')
+  deleteSelectedColumnData(@Body() columnObject: any): void {
     const fieldToRemove: any = {};
     fieldToRemove[columnObject.selectedColumn] = 1;
 
@@ -58,11 +60,13 @@ export class DocumentController extends ProjectBaseController {
       .updateMany({}, { $unset: fieldToRemove });
   }
 
-  FieldData(documentData: any): KeyValue[] {
-    return this.GetDocumentFieldsData(null, documentData.documentId as number);
+  @Post('fieldData')
+  fieldData(documentData: any): KeyValue[] {
+    return this.getDocumentFieldsData(null, documentData.documentId as number);
   }
 
-  GetDocumentFieldsData(
+  @Post('getDocumentFieldsData')
+  getDocumentFieldsData(
     documentFields: DocumentField[],
     documentId: number
   ): KeyValue[] {
@@ -135,7 +139,7 @@ export class DocumentController extends ProjectBaseController {
         default:
       }
 
-      const childDocumentFieldData: KeyValue[] = this.GetDocumentFieldsData(
+      const childDocumentFieldData: KeyValue[] = this.getDocumentFieldsData(
         documentField.children as DocumentField[],
         documentId
       );
@@ -155,7 +159,8 @@ export class DocumentController extends ProjectBaseController {
     return documentFieldsData;
   }
 
-  PNG(documentData: any): DocumentInfo {
+  @Post('PNG')
+  PNG(@Body() documentData: any): DocumentInfo {
     // TODO: Following path should be from database.
     const directoryPath: string = path.join(
       'C:\\ecdiscoProjects',
@@ -194,7 +199,8 @@ export class DocumentController extends ProjectBaseController {
     };
   }
 
-  SaveDocument(fieldData: any): void {
+  @Post('saveDocument')
+  saveDocument(@Body() fieldData: any): void {
     const metadatas: any = JSON.parse(fieldData.metadata.toString());
     // ConnectionPool masterContext = new ConnectionPool();
     const documentMetadataValue: { [key: string]: string[] } = {};
@@ -243,7 +249,8 @@ export class DocumentController extends ProjectBaseController {
     });
   }
 
-  SaveFieldData(fieldData: any): void {
+  @Post('saveFieldData')
+  saveFieldData(@Body() fieldData: any): void {
     const documentId: ObjectID = fieldData.documentId as ObjectID;
     const fieldType: FieldType = (fieldData.fieldType as number) as FieldType;
     const fieldId: ObjectID = fieldData.fieldId as ObjectID;
@@ -340,7 +347,8 @@ export class DocumentController extends ProjectBaseController {
     }
   }
 
-  setAndGetSelectedColumnData(paramsObject: any): any[] {
+  @Post('setAndGetSelectedColumnData')
+  setAndGetSelectedColumnData(@Body() paramsObject: any): any[] {
     const columnName: string = paramsObject.selectedColumn as string;
 
     const selectedColumn = columnName.split('_');

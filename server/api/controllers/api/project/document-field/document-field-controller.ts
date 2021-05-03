@@ -1,4 +1,4 @@
-﻿import { Controller } from '@nestjs/common';
+﻿import { Body, Controller, Post } from '@nestjs/common';
 import { Ref } from '@typegoose/typegoose';
 import { ObjectID } from 'bson';
 import { ObjectId } from 'mongodb';
@@ -22,9 +22,11 @@ import {
 } from '../../../../../ecdisco-models/projects/document-field-text-value';
 import { ProjectBaseController } from '../project-base-controller';
 
-@Controller()
+@Controller('DocumentField')
 export class DocumentFieldController extends ProjectBaseController {
-  async SaveDocumentField(documentFields: any): Promise<number> {
+
+  @Post('saveDocumentField')
+  async saveDocumentField(@Body() documentFields: any): Promise<number> {
     const documentField: DocumentField = documentFields.documentField as DocumentField;
     let documentFieldId;
 

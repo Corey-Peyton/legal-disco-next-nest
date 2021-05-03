@@ -5,17 +5,20 @@ import { MasterContext } from './master-context';
 
 @Controller()
 export class MasterController {
-    sessionId: number;
-    request: express.Request
-    response: express.Response
+  sessionId: number;
 
-    get masterContext(): Mongoose {
-        if (!this.m_masterContext) {
-            this.m_masterContext = new MasterContext().context;
-        }
-
-        return this.m_masterContext;
+  constructor(isProjectBase) {
+    if (!isProjectBase) {
+      this.masterContext;
     }
-    private m_masterContext: Mongoose;
+  }
 
+  get masterContext(): Mongoose {
+    if (!this.m_masterContext) {
+      this.m_masterContext = new MasterContext().context;
+    }
+
+    return this.m_masterContext;
+  }
+  private m_masterContext: Mongoose;
 }

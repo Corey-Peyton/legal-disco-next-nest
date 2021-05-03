@@ -1,4 +1,4 @@
-﻿import { Controller } from '@nestjs/common';
+﻿import { Body, Controller, Post } from '@nestjs/common';
 import AdmZip from 'adm-zip';
 import * as amqp from 'amqplib/callback_api';
 import * as fs from 'fs';
@@ -21,17 +21,21 @@ import { DocumentSearchController } from '../document/document-search-controller
 import { $lookup } from '../document/lookup';
 import { ProjectBaseController } from '../project-base-controller';
 
-@Controller()
+@Controller('Production')
 export class ProductionController extends ProjectBaseController {
-  async Production(production: Production): Promise<Production> {
+
+  @Post('production')
+  async production(@Body() production: Production): Promise<Production> {
     return await ProductionModel.findById(production.id);
   }
 
-  async Productions(): Promise<Production[]> {
+  @Post('productions')
+  async productions(): Promise<Production[]> {
     return await ProductionModel.find({});
   }
 
-  async SaveProduction(production: Production): Promise<number> {
+  @Post('saveProduction')
+  async saveProduction(@Body() production: Production): Promise<number> {
     return (
       await ProductionModel.create({
         includeImage: production.includeImage,
@@ -43,7 +47,8 @@ export class ProductionController extends ProjectBaseController {
     ).id;
   }
 
-  async RunProduction(production: Production): Promise<void> {
+  @Post('runProduction')
+  async runProduction(@Body() production: Production): Promise<void> {
     // 1  Get Prduction id
     const productionId = production.id;
 
@@ -51,7 +56,7 @@ export class ProductionController extends ProjectBaseController {
     const queryId: number = (await ProductionModel.findById(productionId))
       .queryId;
 
-    const productionDocuments = this.GetDocumentIdsByQueryId(queryId);
+    const productionDocuments = this.getDocumentIdsByQueryId(queryId);
 
     // Array<DocumentId, AnnotationId>
     const documentsAnnotations: { [key: number]: number[] } = [];
@@ -62,7 +67,7 @@ export class ProductionController extends ProjectBaseController {
     }).select(['queryId', 'annotationId']);
 
     annotationQueryData.forEach((annotationQueryRow) => {
-      const annotationDocuments = this.GetDocumentIdsByQueryId(
+      const annotationDocuments = this.getDocumentIdsByQueryId(
         annotationQueryRow.queryId as number
       );
 
@@ -165,7 +170,8 @@ export class ProductionController extends ProjectBaseController {
       }
     });
   }
-  GetDocumentIdsByQueryId(queryId: number): number[] {
+
+  private getDocumentIdsByQueryId(queryId: number): number[] {
     let queryRule: QueryRule;
 
     (async () => {
@@ -175,7 +181,7 @@ export class ProductionController extends ProjectBaseController {
     const lookups: $lookup[] = [];
     const whereQuery: any = {};
 
-    new DocumentSearchController().SearchQuery(
+    new DocumentSearchController().searchQuery(
       queryRule,
       lookups,
       whereQuery,
@@ -197,7 +203,8 @@ export class ProductionController extends ProjectBaseController {
     return DocumentIds;
   }
 
-  downloadProduction(production: any): FileResponse {
+  @Post('downloadProduction')
+  downloadProduction(@Body() production: any): FileResponse {
     // 1  Get Prduction id
     const productionId: number = production.productionId as number;
 

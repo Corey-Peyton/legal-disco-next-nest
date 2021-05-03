@@ -3,10 +3,10 @@ import * as fs from 'fs';
 import { FileResponse } from '../../ecdisco-models/general/file-response';
 import { Controller } from '@nestjs/common';
 
-@Controller()
+@Controller('WebView')
 export class WebViewController {
 
-  Index(file: string): FileResponse {
+  index(file: string): FileResponse {
     if (!path.extname(file)) {
       const doc = fs.readFileSync(
         'C:\\ecdiscoProjects\\Project_22\\Processed\\10\\1026_P1_png.html'

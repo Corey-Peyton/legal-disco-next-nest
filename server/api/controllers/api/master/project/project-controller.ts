@@ -12,8 +12,10 @@ import { MasterController } from '../master-controller';
 
 @Controller('Project')
 export class ProjectController extends MasterController {
-  DeleteProject(projectId: number): void {
-    this.masterContext;
+
+  @Post('deleteProject')
+  deleteProject(projectId: number): void {
+
     ProjectModel.findByIdAndDelete(projectId);
 
     // TODO: Need to make some common methods for following types of db operations.
@@ -25,7 +27,7 @@ export class ProjectController extends MasterController {
 
   @Post('getProjects')
   async getProjects(): Promise<Project[]> {
-    this.masterContext;
+    
     const projects = await ProjectModel.find({});
     return projects.map((project) => {
       const projectBaseController = new ProjectBaseController();
@@ -42,7 +44,6 @@ export class ProjectController extends MasterController {
 
   @Post('saveProject')
   async saveProject(@Body() project: Project): Promise<ObjectID> {
-    this.masterContext;
 
     const avail = GlobalConfiguration.AvailableDatabaseServer;
 

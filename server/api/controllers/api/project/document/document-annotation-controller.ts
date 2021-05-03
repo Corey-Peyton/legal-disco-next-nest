@@ -1,4 +1,4 @@
-﻿import { Controller } from '@nestjs/common';
+﻿import { Body, Controller, Post } from '@nestjs/common';
 import { DocumentType } from '@typegoose/typegoose/lib/types';
 import { KeyValue } from '../../../../../ecdisco-models/general/key-value';
 import {
@@ -12,7 +12,7 @@ import {
 import { DocumentAnnotationValueMultiPageModel } from '../../../../../ecdisco-models/projects/document-annotation-value-multi-page';
 import { ProjectBaseController } from '../project-base-controller';
 
-@Controller()
+@Controller('DocumentAnnotation')
 export class DocumentAnnotationController extends ProjectBaseController {
   Annotations(): DocumentAnnotation[][] {
     return [
@@ -21,11 +21,12 @@ export class DocumentAnnotationController extends ProjectBaseController {
     ];
   }
 
-  async DocumentAnnotationData(
-    documentData: DocumentAnnotationValue
+  @Post('documentAnnotationData')
+  async documentAnnotationData(
+    @Body() documentData: DocumentAnnotationValue,
   ): Promise<KeyValue[]> {
     const documentId: number = documentData.documentId as number;
-    const annotationId: number = documentData.id as unknown as number;
+    const annotationId: number = (documentData.id as unknown) as number;
 
     if (documentId === -1) {
       return (
@@ -46,7 +47,8 @@ export class DocumentAnnotationController extends ProjectBaseController {
     ).map((c) => ({ key: c.pageId, value: c.value }));
   }
 
-  async MultiPageAnnotationData(annotationId: number): Promise<string> {
+  @Post('multiPageAnnotationData')
+  async multiPageAnnotationData(@Body() annotationId: number): Promise<string> {
     return (
       await DocumentAnnotationValueMultiPageModel.findOne({
         documentAnnotationId: annotationId,
@@ -56,7 +58,8 @@ export class DocumentAnnotationController extends ProjectBaseController {
     ).value;
   }
 
-  Save(annotationData: DocumentAnnotationValue): void {
+  @Post('save')
+  save(@Body() annotationData: DocumentAnnotationValue): void {
     const documentId: number = annotationData.documentId;
     const pageId: number = annotationData.pageId;
     const annotationId: number = annotationData.documentAnnotationId;
@@ -78,7 +81,7 @@ export class DocumentAnnotationController extends ProjectBaseController {
               value: value,
             },
           },
-          { upsert: true }
+          { upsert: true },
         ).exec();
       } else {
         // TODO: WithID
@@ -101,7 +104,7 @@ export class DocumentAnnotationController extends ProjectBaseController {
               value: value,
             },
           },
-          { upsert: true }
+          { upsert: true },
         ).exec();
       } else {
         DocumentAnnotationValueMultiPageModel.deleteMany({
@@ -111,17 +114,18 @@ export class DocumentAnnotationController extends ProjectBaseController {
     }
   }
 
-  SaveAnnotation(annotation: DocumentAnnotation): number {
+  @Post('saveAnnotation')
+  saveAnnotation(@Body() annotation: DocumentAnnotation): number {
     return this.SaveAnnotation2(
       annotation.parentId,
       annotation.name,
-      annotation.isMultiPage
+      annotation.isMultiPage,
     );
   }
 
   private GetDocumentAnnotation(
     parentIds: number[],
-    isMultiPage: boolean
+    isMultiPage: boolean,
   ): DocumentType<DocumentAnnotation>[] {
     let documentAnnotations: DocumentType<DocumentAnnotation>[];
 
@@ -152,7 +156,7 @@ export class DocumentAnnotationController extends ProjectBaseController {
   private SaveAnnotation2(
     parentId: number,
     name: string,
-    isMultiPage: boolean
+    isMultiPage: boolean,
   ): number {
     let id = null;
 

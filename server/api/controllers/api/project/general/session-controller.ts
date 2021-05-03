@@ -1,9 +1,11 @@
-﻿import { Controller } from '@nestjs/common';
+﻿import { Controller, Post } from '@nestjs/common';
 import { ProjectBaseController } from '../project-base-controller';
 
-@Controller()
+@Controller('Session')
 export class SessionController extends ProjectBaseController {
-  Clear(): void {
+
+  @Post('clear')
+  clear(): void {
     const dbContext =
       this.projectId === 0 ? this.masterContext : this.projectContext;
 

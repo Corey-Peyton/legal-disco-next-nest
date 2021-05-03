@@ -8,9 +8,9 @@ import { FileResult } from './file-result';
 import mime from 'mime-types';
 import { Controller } from '@nestjs/common';
 
-@Controller()
+@Controller('Upload')
 export class UploadController {
-  async Index(
+  async index(
     file: any,
     chunkNumber: number,
     chunkSize: number,

@@ -42,6 +42,7 @@ const config: NuxtConfig = {
     '@/styles/dark-theme.scss',
     'element-theme-dark',
     '@/styles/ecdisco-standard.scss',
+    '@/styles/ecdisco-standard-nuxt-specific.scss',
   ],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins

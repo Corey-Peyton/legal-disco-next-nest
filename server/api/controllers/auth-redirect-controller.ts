@@ -8,12 +8,13 @@ import { ProjectContext } from './api/master/project-context';
 import { Datasources } from './datasources';
 import { IAuth } from './i-auth-request';
 import { IAuthToken } from './i-auth-token';
-import { Controller } from '@nestjs/common';
+import { Controller, Req, Res } from '@nestjs/common';
+import { Request, Response } from 'express';
 
-@Controller()
+@Controller('AuthRedirect')
 export class AuthRedirectController extends MasterController {
-  async Index(): Promise<void> {
-    const state: string[] = this.request.query.state.toString().split('_');
+  async index(@Req() req: Request, @Res() res: Response): Promise<void> {
+    const state: string[] = req.query.state.toString().split('_');
     const projectId = Number(state[0]);
     const datasourceId: string = state[1];
 
@@ -63,7 +64,7 @@ export class AuthRedirectController extends MasterController {
       client_id: auth.client_id,
       redirect_uri: auth.redirect_uri,
       client_secret: auth.client_secret,
-      code: this.request.query.code,
+      code: req.query.code,
       grant_type: 'authorization_code',
     };
 
@@ -97,14 +98,14 @@ export class AuthRedirectController extends MasterController {
       $set: { authTokenId: tokenId },
     });
 
-    return this.response.redirect(
+    return res.redirect(
       `https://localhost:44375/in/project/${projectId.toString()}/datasource/${
         state[1]
       }?state=${state[2]}`
     );
   }
 
-  RefreshToken() {
+  refreshToken() {
     //            POST https://login.microsoftonline.com/common/oauth2/v2.0/token
     // Content - Type: application / x - www - form - urlencoded
     // Client_id ={ client_id}
