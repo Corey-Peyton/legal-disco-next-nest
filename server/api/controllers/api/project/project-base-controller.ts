@@ -1,4 +1,5 @@
 ﻿import { Mongoose } from 'mongoose';
+import { MasterBaseController } from '../master/master-base-controller';
 import { MasterController } from '../master/master-controller';
 import { ProjectContext } from '../master/project-context';
 
@@ -6,8 +7,12 @@ export class ProjectBaseController extends MasterController {
   projectId: number;
 
   constructor() {
-    super(true);
+    super();
     this.projectContext;
+  }
+
+  get masterContext(): Mongoose {
+    return new MasterBaseController().masterContext;
   }
 
   get projectContext(): Mongoose {

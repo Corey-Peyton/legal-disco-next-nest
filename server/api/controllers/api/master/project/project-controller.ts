@@ -8,10 +8,10 @@ import {
 } from '../../../../../ecdisco-models/master/project';
 import { GlobalConfiguration } from '../../../global-configuration';
 import { ProjectBaseController } from '../../project/project-base-controller';
-import { MasterController } from '../master-controller';
+import { MasterBaseController } from '../master-base-controller';
 
 @Controller('Project')
-export class ProjectController extends MasterController {
+export class ProjectController extends MasterBaseController {
 
   @Post('deleteProject')
   deleteProject(projectId: number): void {

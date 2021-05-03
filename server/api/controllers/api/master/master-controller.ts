@@ -6,19 +6,4 @@ import { MasterContext } from './master-context';
 @Controller()
 export class MasterController {
   sessionId: number;
-
-  constructor(isProjectBase) {
-    if (!isProjectBase) {
-      this.masterContext;
-    }
-  }
-
-  get masterContext(): Mongoose {
-    if (!this.m_masterContext) {
-      this.m_masterContext = new MasterContext().context;
-    }
-
-    return this.m_masterContext;
-  }
-  private m_masterContext: Mongoose;
 }

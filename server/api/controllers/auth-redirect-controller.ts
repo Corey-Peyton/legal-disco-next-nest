@@ -3,7 +3,7 @@ import { DatasourceModel } from '../../ecdisco-models/projects/datasource';
 import { AuthTokenModel } from '../../ecdisco-models/master/auth-token';
 import { GoogleAuth } from '../google-auth';
 import { MicrosoftAuth } from '../microsoft-auth';
-import { MasterController } from './api/master/master-controller';
+import { MasterBaseController } from './api/master/master-base-controller';
 import { ProjectContext } from './api/master/project-context';
 import { Datasources } from './datasources';
 import { IAuth } from './i-auth-request';
@@ -12,8 +12,10 @@ import { Controller, Req, Res } from '@nestjs/common';
 import { Request, Response } from 'express';
 
 @Controller('AuthRedirect')
-export class AuthRedirectController extends MasterController {
-  async index(@Req() req: Request, @Res() res: Response): Promise<void> {
+export class AuthRedirectController extends MasterBaseController {
+
+  
+  async indexes(@Req() req: Request, @Res() res: Response): Promise<void> {
     const state: string[] = req.query.state.toString().split('_');
     const projectId = Number(state[0]);
     const datasourceId: string = state[1];
