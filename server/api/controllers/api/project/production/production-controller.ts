@@ -23,19 +23,27 @@ import { ProjectBaseController } from '../project-base-controller';
 
 @Controller('Production')
 export class ProductionController extends ProjectBaseController {
-
   @Post('production')
   async production(@Body() production: Production): Promise<Production> {
+    
+    this.projectContext;
+
     return await ProductionModel.findById(production.id);
   }
 
   @Post('productions')
   async productions(): Promise<Production[]> {
+
+    this.projectContext;
+
     return await ProductionModel.find({});
   }
 
   @Post('saveProduction')
   async saveProduction(@Body() production: Production): Promise<number> {
+
+    this.projectContext;
+
     return (
       await ProductionModel.create({
         includeImage: production.includeImage,
@@ -49,6 +57,9 @@ export class ProductionController extends ProjectBaseController {
 
   @Post('runProduction')
   async runProduction(@Body() production: Production): Promise<void> {
+
+    this.projectContext;
+
     // 1  Get Prduction id
     const productionId = production.id;
 
@@ -68,7 +79,7 @@ export class ProductionController extends ProjectBaseController {
 
     annotationQueryData.forEach((annotationQueryRow) => {
       const annotationDocuments = this.getDocumentIdsByQueryId(
-        annotationQueryRow.queryId as number
+        annotationQueryRow.queryId as number,
       );
 
       annotationDocuments.forEach((annotationDocumentId) => {
@@ -77,7 +88,7 @@ export class ProductionController extends ProjectBaseController {
         }
 
         documentsAnnotations[annotationDocumentId].push(
-          annotationQueryRow.annotationId
+          annotationQueryRow.annotationId,
         );
       });
     });
@@ -94,13 +105,13 @@ export class ProductionController extends ProjectBaseController {
         documentAnnotations.forEach(async (annotationId: number) => {
           const isMultiPageAnnotation = (
             await DocumentAnnotationModel.findById(annotationId).select(
-              'isMultiPage'
+              'isMultiPage',
             )
           ).isMultiPage;
 
           if (isMultiPageAnnotation) {
             const multiPageAnnotationValue = await DocumentAnnotationValueMultiPageModel.findOne(
-              { DocumentAnnotationId: annotationId }
+              { DocumentAnnotationId: annotationId },
             ).select('value');
 
             annotationsArray.push(multiPageAnnotationValue);
@@ -120,7 +131,7 @@ export class ProductionController extends ProjectBaseController {
         const reg = new RegExp(`^${productionDocumentId}_P`);
 
         const dirCont = fs.readdirSync(
-          `C:\\ecdiscoProjects\\Project_${this.projectId}\\Processed`
+          `C:\\ecdiscoProjects\\Project_${this.projectId}\\Processed`,
         );
 
         const files: string[] = dirCont
@@ -129,7 +140,7 @@ export class ProductionController extends ProjectBaseController {
 
         const productionPath = path.join(
           `C:\\ecdiscoProjects\\Project_${this.projectId}\\Production`,
-          productionId.toString()
+          productionId.toString(),
         );
 
         if (!fs.existsSync(productionPath)) {
@@ -139,7 +150,7 @@ export class ProductionController extends ProjectBaseController {
         files.forEach((file: string) => {
           const productionFile: string = path.join(
             productionPath,
-            path.parse(file).base
+            path.parse(file).base,
           );
           fs.copyFile(file, productionFile, null);
         });
@@ -162,8 +173,8 @@ export class ProductionController extends ProjectBaseController {
                   projectId: this.projectId,
                   documentId: productionDocumentId,
                   annotations: annotationsArray,
-                })
-              )
+                }),
+              ),
             );
           });
         });
@@ -185,7 +196,7 @@ export class ProductionController extends ProjectBaseController {
       queryRule,
       lookups,
       whereQuery,
-      queryRule.condition
+      queryRule.condition,
     );
 
     // Let tempRunProductionTable: string = 'TempRunProduction_' + productionId;
@@ -196,7 +207,7 @@ export class ProductionController extends ProjectBaseController {
 
     async () => {
       DocumentIds = (await DocumentModel.aggregate(finalQuery)).map(
-        (document) => document.id
+        (document) => document.id,
       );
     };
 
@@ -205,6 +216,9 @@ export class ProductionController extends ProjectBaseController {
 
   @Post('downloadProduction')
   downloadProduction(@Body() production: any): FileResponse {
+
+    this.projectContext;
+
     // 1  Get Prduction id
     const productionId: number = production.productionId as number;
 
@@ -216,7 +230,7 @@ export class ProductionController extends ProjectBaseController {
         files.forEach((file) => {
           zip.addLocalFile(file);
         });
-      }
+      },
     );
 
     return {

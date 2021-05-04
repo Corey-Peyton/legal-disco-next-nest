@@ -12,9 +12,11 @@ import { MasterBaseController } from '../master-base-controller';
 
 @Controller('Project')
 export class ProjectController extends MasterBaseController {
-
+  
   @Post('deleteProject')
   deleteProject(projectId: number): void {
+
+    this.masterContext;
 
     ProjectModel.findByIdAndDelete(projectId);
 
@@ -27,7 +29,9 @@ export class ProjectController extends MasterBaseController {
 
   @Post('getProjects')
   async getProjects(): Promise<Project[]> {
-    
+
+    this.masterContext;
+
     const projects = await ProjectModel.find({});
     return projects.map((project) => {
       const projectBaseController = new ProjectBaseController();
@@ -44,6 +48,8 @@ export class ProjectController extends MasterBaseController {
 
   @Post('saveProject')
   async saveProject(@Body() project: Project): Promise<ObjectID> {
+
+    this.masterContext;
 
     const avail = GlobalConfiguration.AvailableDatabaseServer;
 

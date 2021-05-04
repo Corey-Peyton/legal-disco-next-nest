@@ -27,6 +27,9 @@ export class DocumentFieldController extends ProjectBaseController {
 
   @Post('saveDocumentField')
   async saveDocumentField(@Body() documentFields: any): Promise<number> {
+
+    this.projectContext;
+
     const documentField: DocumentField = documentFields.documentField as DocumentField;
     let documentFieldId;
 
@@ -48,6 +51,9 @@ export class DocumentFieldController extends ProjectBaseController {
   }
 
   private GetDocumentFields(parentIds: ObjectID[]): DocumentField[] {
+
+    this.projectContext;
+
     let documentFields: DocumentField[];
 
     (async () => {
@@ -68,6 +74,9 @@ export class DocumentFieldController extends ProjectBaseController {
     documentFields: DocumentField[],
     documentId: ObjectID
   ): KeyValue[] {
+
+    this.projectContext;
+
     if (documentFields === null) {
       documentFields = this.GetDocumentFields([null]);
     }

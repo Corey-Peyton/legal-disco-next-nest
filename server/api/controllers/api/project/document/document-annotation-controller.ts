@@ -14,7 +14,12 @@ import { ProjectBaseController } from '../project-base-controller';
 
 @Controller('DocumentAnnotation')
 export class DocumentAnnotationController extends ProjectBaseController {
+  
+  @Post('annotations')
   Annotations(): DocumentAnnotation[][] {
+
+    this.projectContext;
+
     return [
       this.GetDocumentAnnotation([null], false),
       this.GetDocumentAnnotation([null], true),
@@ -25,6 +30,9 @@ export class DocumentAnnotationController extends ProjectBaseController {
   async documentAnnotationData(
     @Body() documentData: DocumentAnnotationValue,
   ): Promise<KeyValue[]> {
+
+    this.projectContext;
+
     const documentId: number = documentData.documentId as number;
     const annotationId: number = (documentData.id as unknown) as number;
 
@@ -49,6 +57,9 @@ export class DocumentAnnotationController extends ProjectBaseController {
 
   @Post('multiPageAnnotationData')
   async multiPageAnnotationData(@Body() annotationId: number): Promise<string> {
+
+    this.projectContext;
+
     return (
       await DocumentAnnotationValueMultiPageModel.findOne({
         documentAnnotationId: annotationId,
@@ -60,6 +71,9 @@ export class DocumentAnnotationController extends ProjectBaseController {
 
   @Post('save')
   save(@Body() annotationData: DocumentAnnotationValue): void {
+
+    this.projectContext;
+
     const documentId: number = annotationData.documentId;
     const pageId: number = annotationData.pageId;
     const annotationId: number = annotationData.documentAnnotationId;
@@ -116,6 +130,9 @@ export class DocumentAnnotationController extends ProjectBaseController {
 
   @Post('saveAnnotation')
   saveAnnotation(@Body() annotation: DocumentAnnotation): number {
+
+    this.projectContext;
+
     return this.SaveAnnotation2(
       annotation.parentId,
       annotation.name,

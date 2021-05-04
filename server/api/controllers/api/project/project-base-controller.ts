@@ -6,11 +6,6 @@ import { ProjectContext } from '../master/project-context';
 export class ProjectBaseController extends MasterController {
   projectId: number;
 
-  constructor() {
-    super();
-    this.projectContext;
-  }
-
   get masterContext(): Mongoose {
     return new MasterBaseController().masterContext;
   }

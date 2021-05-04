@@ -28,6 +28,9 @@ export class DocumentSearchController extends ProjectBaseController {
 
   @Post('getSearchResultPagedData')
   getSearchResultPagedData(@Body() filterData: any): GridData {
+
+    this.projectContext;
+
     const paginate: Paginate = filterData.paginate as Paginate;
 
     return this.GetPagedData(paginate);
@@ -35,6 +38,9 @@ export class DocumentSearchController extends ProjectBaseController {
 
   @Post('search')
   async search(@Body() filterData: any): Promise<GridData> {
+
+    this.projectContext;
+
     const paginate: Paginate = filterData.paginate as Paginate;
 
     const whereQuery: any = {};
@@ -72,6 +78,9 @@ export class DocumentSearchController extends ProjectBaseController {
   }
 
   private GetPagedData(paginate: Paginate): GridData {
+
+    this.projectContext;
+
     let paginatedData;
 
     (async () => {
@@ -91,6 +100,9 @@ export class DocumentSearchController extends ProjectBaseController {
 
   @Post('selectColumns')
   selectColumns(joinQuery: $lookup[]): string[] {
+
+    this.projectContext;
+
     let query: DocumentType<UserColumn>[];
 
     (async () => {

@@ -34,6 +34,9 @@ export class DocumentController extends ProjectBaseController {
 
   @Post('addDocument')
   addDocument(@Body() document: Document): number {
+
+    this.projectContext;
+
     let documentId;
 
     (async () => {
@@ -52,6 +55,9 @@ export class DocumentController extends ProjectBaseController {
 
   @Post('deleteSelectedColumnData')
   deleteSelectedColumnData(@Body() columnObject: any): void {
+
+    this.projectContext;
+
     const fieldToRemove: any = {};
     fieldToRemove[columnObject.selectedColumn] = 1;
 
@@ -62,6 +68,9 @@ export class DocumentController extends ProjectBaseController {
 
   @Post('fieldData')
   fieldData(documentData: any): KeyValue[] {
+
+    this.projectContext;
+
     return this.getDocumentFieldsData(null, documentData.documentId as number);
   }
 
@@ -70,6 +79,9 @@ export class DocumentController extends ProjectBaseController {
     documentFields: DocumentField[],
     documentId: number
   ): KeyValue[] {
+
+    this.projectContext;
+
     if (documentFields === null) {
       documentFields = this.GetDocumentFields([null]);
     }
@@ -161,6 +173,9 @@ export class DocumentController extends ProjectBaseController {
 
   @Post('PNG')
   PNG(@Body() documentData: any): DocumentInfo {
+
+    this.projectContext;
+
     // TODO: Following path should be from database.
     const directoryPath: string = path.join(
       'C:\\ecdiscoProjects',
@@ -201,6 +216,9 @@ export class DocumentController extends ProjectBaseController {
 
   @Post('saveDocument')
   saveDocument(@Body() fieldData: any): void {
+
+    this.projectContext;
+
     const metadatas: any = JSON.parse(fieldData.metadata.toString());
     // ConnectionPool masterContext = new ConnectionPool();
     const documentMetadataValue: { [key: string]: string[] } = {};
@@ -251,6 +269,9 @@ export class DocumentController extends ProjectBaseController {
 
   @Post('saveFieldData')
   saveFieldData(@Body() fieldData: any): void {
+
+    this.projectContext;
+
     const documentId: ObjectID = fieldData.documentId as ObjectID;
     const fieldType: FieldType = (fieldData.fieldType as number) as FieldType;
     const fieldId: ObjectID = fieldData.fieldId as ObjectID;
@@ -349,6 +370,9 @@ export class DocumentController extends ProjectBaseController {
 
   @Post('setAndGetSelectedColumnData')
   setAndGetSelectedColumnData(@Body() paramsObject: any): any[] {
+
+    this.projectContext;
+
     const columnName: string = paramsObject.selectedColumn as string;
 
     const selectedColumn = columnName.split('_');

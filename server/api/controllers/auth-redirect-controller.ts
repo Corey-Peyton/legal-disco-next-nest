@@ -16,6 +16,9 @@ export class AuthRedirectController extends MasterBaseController {
 
   
   async indexes(@Req() req: Request, @Res() res: Response): Promise<void> {
+
+    this.masterContext;
+
     const state: string[] = req.query.state.toString().split('_');
     const projectId = Number(state[0]);
     const datasourceId: string = state[1];

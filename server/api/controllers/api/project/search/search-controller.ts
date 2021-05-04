@@ -14,11 +14,17 @@ export class SearchController extends ProjectBaseController {
 
   @Post('getSearches')
   async getSearches(): Promise<Query[]> {
+
+    this.projectContext;
+
     return await QueryModel.find({});
   }
 
   @Post('load')
   load(@Body() search: any): QueryRule {
+
+    this.projectContext;
+
     const queryId: number = search.queryId as number;
 
     return new Search().Load(queryId, true, this.projectContext);
@@ -26,6 +32,9 @@ export class SearchController extends ProjectBaseController {
 
   @Post('save')
   async save(@Body() search: any) {
+
+    this.projectContext;
+
     const query: Query = search as Query;
     // TODO: recursively call for nested query. and also added modified need to handle.
     // EntityState entityState = query.id === 0 ? EntityState.Added : EntityState.Modified;

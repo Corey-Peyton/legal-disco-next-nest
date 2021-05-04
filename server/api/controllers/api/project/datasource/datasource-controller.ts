@@ -20,7 +20,6 @@ import { ObjectID } from 'bson';
 
 @Controller('Datasource')
 export class DatasourceController extends ProjectBaseController {
-
   private getAuthObject(source: Datasources): IAuth {
     switch (source) {
       case Datasources.OneDrive:
@@ -51,6 +50,9 @@ export class DatasourceController extends ProjectBaseController {
 
   @Post('getFiles')
   async getFiles(@Body() datasources: Datasource): Promise<string> {
+
+    this.projectContext;
+
     if (((datasources.id as unknown) as number) === 1) {
       return this.getFTPFiles();
     }
@@ -203,7 +205,9 @@ export class DatasourceController extends ProjectBaseController {
   // Static readonly HttpClient httpClient = new HttpClient();
   @Post('saveDatasource')
   async saveDatasource(@Body() datasource: Datasource): Promise<ObjectID> {
-    
+
+    this.projectContext;
+
     return (
       await DatasourceModel.findOneAndUpdate(
         { id: datasource.id },

@@ -8,11 +8,6 @@ import { MasterController } from './master-controller';
 export class MasterBaseController extends MasterController {
   sessionId: number;
 
-  constructor() {
-    super();
-    this.masterContext;
-  }
-
   get masterContext(): Mongoose {
     if (!this.m_masterContext) {
       this.m_masterContext = new MasterContext().context;
