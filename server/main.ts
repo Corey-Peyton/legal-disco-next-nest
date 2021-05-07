@@ -1,9 +1,10 @@
 import { NestFactory } from '@nestjs/core';
-import { ApplicationModule } from './application.module';
-import { NuxtFilter } from './nuxt/nuxt.filter';
-import NuxtServer from './nuxt/';
-import config from '../nuxt.config';
+import { AuthGuard } from '@nestjs/passport';
 import Consola from 'consola';
+import config from '../nuxt.config';
+import { ApplicationModule } from './application.module';
+import NuxtServer from './nuxt/';
+import { NuxtFilter } from './nuxt/nuxt.filter';
 
 declare const module: any;
 
@@ -18,6 +19,7 @@ async function bootstrap() {
   server.useGlobalFilters(new NuxtFilter(nuxt)); // On 404: This loads nuxt. Like other SPA do.
 
   server.setGlobalPrefix('api');
+  server.useGlobalGuards(new (AuthGuard('jwt')));
   
   await server.listen(port, host, () => {
     Consola.ready({

@@ -20,10 +20,12 @@ export class NuxtFilter implements ExceptionFilter {
     const req = ctx.getRequest();
     const status = exception.getStatus();
 
-    if (status === 404) {
+    if (status === 404) { // Means you load client app.
       if (!res.headersSent) {
         await this.nuxt.render(req, res);
       }
+    } else if (status === 401) { // Not authorized...
+      // Redirect to localhost: 5000 login page
     } else {
       res.status(status).json({
         statusCode: status,
