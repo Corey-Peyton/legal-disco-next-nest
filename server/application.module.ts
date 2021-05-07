@@ -21,15 +21,12 @@ import { ConfigModule, ConfigType } from '@nestjs/config';
 import jwtConfig from './config/jwt.config';
 import { JwtStrategy } from './auth/jwt/jwt';
 import { UserService } from './user/user.service';
+import { AuthModule } from './auth/session/auth-module';
 
 
 @Module({
   imports: [
-    ConfigModule.forFeature(jwtConfig),
-    PassportModule.register({ session: true }),
-    JwtModule.register({
-      secret: "jwtConfig.secretKey",
-    }),
+    AuthModule
   ],
   controllers: [
     AppController,
@@ -48,6 +45,6 @@ import { UserService } from './user/user.service';
     ProductionController,
     SearchController,
   ],
-  providers: [JwtStrategy, UserService],
+  providers: [UserService],
 })
 export class ApplicationModule {}

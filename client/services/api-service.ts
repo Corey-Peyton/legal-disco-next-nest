@@ -1,8 +1,8 @@
 import { AppStore } from '@/app-store';
 import Axios from 'axios';
+import { auth2, AuthConfig } from '@/config/auth-config';
 
 export class ApiService {
-
   static apiHost = 'http://localhost:3100/';
 
   static post(url: string, data?: any) {
@@ -13,9 +13,22 @@ export class ApiService {
             (data && data.projectId) || AppStore.projectId || window.projectId,
           sessionId: AppStore.sessionId,
         },
-      }).then((response) => {
-        resolve(response.data);
-      });
+      })
+        .then((response) => {
+          resolve(response.data);
+        })
+        .catch((response) => {
+
+
+          //ApiService.post('Datasource/GetNewState')
+          //.then((state) => {
+
+          const url = this.buildAuthorizationUrl('state', new AuthConfig().IdentityServerOAuth2Config);
+          // tslint:disable-next-line: max-line-length
+          window.location.href = url;
+
+          //});
+        });
     });
   }
 
@@ -33,4 +46,24 @@ export class ApiService {
       });
     });
   }
+
+  static buildAuthorizationUrl(randomState: string | number | boolean, config: auth2) {
+
+    let authUrl = `${config.authorizationUri}?${new URLSearchParams({
+      'response_type': 'code',
+      'redirect_uri': config.redirect_uri,
+      'client_id': encodeURIComponent(config.client_id),
+      'ClientId': encodeURIComponent(config.ClientId),
+      'state': encodeURIComponent(randomState)
+    })}`;
+
+    authUrl += '&scope=' + encodeURIComponent(config.scope);
+
+    if (config.queryParams) {
+      authUrl += `&${new URLSearchParams(config.queryParams).toString()}`;
+    }
+
+    return authUrl;
+  }
+
 }

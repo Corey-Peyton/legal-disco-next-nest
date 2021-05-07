@@ -3,6 +3,8 @@ import {
   HttpException,
   ArgumentsHost,
   Catch,
+  UnauthorizedException,
+  ForbiddenException,
 } from '@nestjs/common';
 import { Nuxt } from 'nuxt';
 
@@ -20,13 +22,19 @@ export class NuxtFilter implements ExceptionFilter {
     const req = ctx.getRequest();
     const status = exception.getStatus();
 
-    if (status === 404) { // Means you load client app.
+    if (status === 404) {
+      // Means you load client app.
       if (!res.headersSent) {
         await this.nuxt.render(req, res);
       }
-    } else if (status === 401) { // Not authorized...
-      // Redirect to localhost: 5000 login page
-    } else {
+    }
+    //  else if (
+    //   exception instanceof UnauthorizedException ||
+    //   exception instanceof ForbiddenException
+    // ) {
+    //   res.redirect('http://localhost:5000');
+    // }
+     else {
       res.status(status).json({
         statusCode: status,
         timestamp: new Date().toISOString(),

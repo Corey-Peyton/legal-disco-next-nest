@@ -3,6 +3,7 @@ import { AuthGuard } from '@nestjs/passport';
 import Consola from 'consola';
 import config from '../nuxt.config';
 import { ApplicationModule } from './application.module';
+import { AuthenticatedGuard } from './auth/session/session-guard';
 import NuxtServer from './nuxt/';
 import { NuxtFilter } from './nuxt/nuxt.filter';
 
@@ -19,7 +20,7 @@ async function bootstrap() {
   server.useGlobalFilters(new NuxtFilter(nuxt)); // On 404: This loads nuxt. Like other SPA do.
 
   server.setGlobalPrefix('api');
-  server.useGlobalGuards(new (AuthGuard('jwt')));
+  server.useGlobalGuards(new AuthenticatedGuard());
   
   await server.listen(port, host, () => {
     Consola.ready({
