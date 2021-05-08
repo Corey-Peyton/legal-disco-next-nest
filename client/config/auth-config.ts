@@ -10,7 +10,6 @@ export interface auth2 {
 }
 
 export class AuthConfig {
-  
   IdentityServerOAuth2Config: auth2;
   MicrosoftOAuth2Config: auth2;
   GoogleOAuth2Config: auth2;
@@ -19,10 +18,10 @@ export class AuthConfig {
 
   constructor() {
     this.IdentityServerOAuth2Config = {
-      ClientId: 'hybrid',
-      authorizationUri: 'http://localhost:5000/',
+      authorizationUri: 'https://localhost:5001/Account/Login',
+      client_id: 'js',
       redirect_uri: `${ApiService.apiHost}/authredirect`,
-      scope: 'Files.ReadWrite.All offline_access',
+      scope: 'openid profile api1',
     };
 
     this.MicrosoftOAuth2Config = {

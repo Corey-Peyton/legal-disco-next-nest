@@ -8,13 +8,13 @@ import { ProjectContext } from './api/master/project-context';
 import { Datasources } from './datasources';
 import { IAuth } from './i-auth-request';
 import { IAuthToken } from './i-auth-token';
-import { Controller, Req, Res } from '@nestjs/common';
+import { Controller, Get, Req, Res } from '@nestjs/common';
 import { Request, Response } from 'express';
 
 @Controller('AuthRedirect')
 export class AuthRedirectController extends MasterBaseController {
 
-  
+  @Get()
   async indexes(@Req() req: Request, @Res() res: Response): Promise<void> {
 
     this.masterContext;
