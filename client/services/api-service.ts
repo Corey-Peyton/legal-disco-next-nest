@@ -1,9 +1,10 @@
 import { AppStore } from '@/app-store';
 import Axios from 'axios';
+import Oidc from 'oidc-client';
 import { auth2, AuthConfig } from '@/config/auth-config';
 
 export class ApiService {
-  static apiHost = 'http://localhost:3100/';
+  static apiHost = 'https://localhost:3100/';
 
   static post(url: string, data?: any) {
     return new Promise<any>((resolve, reject) => {
@@ -19,13 +20,16 @@ export class ApiService {
         })
         .catch((response) => {
 
+          var mgr = new Oidc.UserManager(new AuthConfig().IdentityServerOAuth2Config);
+
+          mgr.signinRedirect();
 
           //ApiService.post('Datasource/GetNewState')
           //.then((state) => {
 
-          const url = this.buildAuthorizationUrl('state', new AuthConfig().IdentityServerOAuth2Config);
-          // tslint:disable-next-line: max-line-length
-          window.location.href = url;
+          // const url = this.buildAuthorizationUrl('state', new AuthConfig().IdentityServerOAuth2Config);
+          // // tslint:disable-next-line: max-line-length
+          // window.location.href = url;
 
           //});
         });

@@ -3,7 +3,8 @@ import { ApiService } from '@/services/api-service';
 export interface auth2 {
   client_id?: string;
   ClientId?: string;
-  authorizationUri: string;
+  authorizationUri?: string;
+  authority?: string;
   redirect_uri: string;
   scope: string;
   queryParams?: any;
@@ -18,9 +19,11 @@ export class AuthConfig {
 
   constructor() {
     this.IdentityServerOAuth2Config = {
+      authority: 'https://localhost:5001',
       authorizationUri: 'https://localhost:5001/Account/Login',
       client_id: 'js',
       redirect_uri: `${ApiService.apiHost}/authredirect`,
+      // redirect_uri: `https://localhost:5003/callback.html`,
       scope: 'openid profile api1',
     };
 

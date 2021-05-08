@@ -8,6 +8,7 @@ import NuxtServer from './nuxt/';
 import { NuxtFilter } from './nuxt/nuxt.filter';
 import fs from 'fs';
 import path from 'path';
+import cors from 'cors';
 
 declare const module: any;
 
@@ -19,6 +20,7 @@ async function bootstrap() {
     key: fs.readFileSync(path.resolve(__dirname, 'ssl/key.pem'), 'utf8'),
     cert: fs.readFileSync(path.resolve(__dirname, 'ssl/server.crt'), 'utf8'),
   };
+
 
   const nuxt = await NuxtServer.getInstance().run(
     config.dev ? !(module.hot && module.hot._main) : true,
@@ -34,7 +36,7 @@ async function bootstrap() {
 
   await server.listen(port, host, () => {
     Consola.ready({
-      message: `Server listening on http://${host}:${port}`,
+      message: `Server listening on https://${host}:${port}`,
       badge: true,
     });
   });
