@@ -21,8 +21,8 @@ import { ConfigModule, ConfigType } from '@nestjs/config';
 import jwtConfig from './config/jwt.config';
 import { JwtStrategy } from './auth/jwt/jwt';
 import { UserService } from './user/user.service';
-import { AuthModule } from './auth/session/auth-module';
-
+//import { AuthModule } from './auth/session/auth-module';
+import { AuthModule } from './auth/oidc/auth.module';
 
 @Module({
   imports: [

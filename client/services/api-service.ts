@@ -6,23 +6,32 @@ import { auth2, AuthConfig } from '@/config/auth-config';
 export class ApiService {
   static apiHost = 'https://localhost:3100/';
 
-  static post(url: string, data?: any) {
+  static mgr = new Oidc.UserManager(
+    new AuthConfig().IdentityServerOAuth2Config,
+  );
+
+  static async post(url: string, data?: any) {
+    let user = await ApiService.mgr.getUser();
+
+    let headers: any = {
+      projectId:
+        (data && data.projectId) || AppStore.projectId || window.projectId,
+      sessionId: AppStore.sessionId,
+    };
+
+    if (user) {
+      headers.Authorization = `Bearer ${user.access_token}`;
+    }
+
     return new Promise<any>((resolve, reject) => {
       Axios.post(`${ApiService.apiHost}api/${url}`, data, {
-        headers: {
-          projectId:
-            (data && data.projectId) || AppStore.projectId || window.projectId,
-          sessionId: AppStore.sessionId,
-        },
+        headers,
       })
         .then((response) => {
           resolve(response.data);
         })
         .catch((response) => {
-
-          var mgr = new Oidc.UserManager(new AuthConfig().IdentityServerOAuth2Config);
-
-          mgr.signinRedirect();
+          ApiService.mgr.signinRedirect();
 
           //ApiService.post('Datasource/GetNewState')
           //.then((state) => {
@@ -51,14 +60,16 @@ export class ApiService {
     });
   }
 
-  static buildAuthorizationUrl(randomState: string | number | boolean, config: auth2) {
-
+  static buildAuthorizationUrl(
+    randomState: string | number | boolean,
+    config: auth2,
+  ) {
     let authUrl = `${config.authorizationUri}?${new URLSearchParams({
-      'response_type': 'code',
-      'redirect_uri': config.redirect_uri,
-      'client_id': encodeURIComponent(config.client_id),
-      'ClientId': encodeURIComponent(config.ClientId),
-      'state': encodeURIComponent(randomState)
+      response_type: 'code',
+      redirect_uri: config.redirect_uri,
+      client_id: encodeURIComponent(config.client_id),
+      ClientId: encodeURIComponent(config.ClientId),
+      state: encodeURIComponent(randomState),
     })}`;
 
     authUrl += '&scope=' + encodeURIComponent(config.scope);
@@ -69,5 +80,4 @@ export class ApiService {
 
     return authUrl;
   }
-
 }

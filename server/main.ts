@@ -8,7 +8,10 @@ import NuxtServer from './nuxt/';
 import { NuxtFilter } from './nuxt/nuxt.filter';
 import fs from 'fs';
 import path from 'path';
+import session from 'express-session';
 import cors from 'cors';
+import connectMongo from 'connect-mongo';
+import passport from 'passport';
 
 declare const module: any;
 
@@ -21,6 +24,9 @@ async function bootstrap() {
     cert: fs.readFileSync(path.resolve(__dirname, 'ssl/server.crt'), 'utf8'),
   };
 
+  //https://github.com/panva/node-openid-client/issues/157
+  //https://stackoverflow.com/a/21961005
+  (process.env["NODE_TLS_REJECT_UNAUTHORIZED"] as any) = 0;
 
   const nuxt = await NuxtServer.getInstance().run(
     config.dev ? !(module.hot && module.hot._main) : true,
@@ -32,7 +38,25 @@ async function bootstrap() {
   server.useGlobalFilters(new NuxtFilter(nuxt)); // On 404: This loads nuxt. Like other SPA do.
 
   server.setGlobalPrefix('api');
-  server.useGlobalGuards(new AuthenticatedGuard());
+  //server.useGlobalGuards(new AuthenticatedGuard());
+
+  // Authentication & Session
+  server.use(session({
+  //    store: connectMongo.create({
+  //      mongoUrl: 'mongodb://localhost:27017/?readPreference=primary&appname=MongoDB%20Compass&ssl=false'
+  //  }), // where session will be stored
+    secret: 'processenvSESSION_SECRET', // to sign session id
+    resave: false, // will default to false in near future: https://github.com/expressjs/session#resave
+    saveUninitialized: false, // will default to false in near future: https://github.com/expressjs/session#saveuninitialized
+    rolling: true, // keep session alive
+    cookie: {
+      maxAge: 30 * 60 * 1000, // session expires in 1hr, refreshed by `rolling: true` option.
+      httpOnly: true, // so that cookie can't be accessed via client-side script
+    }
+  }));
+
+  server.use(passport.initialize());
+  server.use(passport.session());
 
   await server.listen(port, host, () => {
     Consola.ready({

@@ -1,5 +1,6 @@
-﻿import { Body, Controller, Post } from '@nestjs/common';
+﻿import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ObjectID } from 'bson';
+import { AuthenticatedGuard } from 'server/auth/session/session-guard';
 import { DatabaseServerModel } from '../../../../../ecdisco-models/master/database-server';
 import { datasourceModel } from '../../../../../ecdisco-models/master/datasource';
 import {
@@ -10,6 +11,7 @@ import { GlobalConfiguration } from '../../../global-configuration';
 import { ProjectBaseController } from '../../project/project-base-controller';
 import { MasterBaseController } from '../master-base-controller';
 
+@UseGuards(AuthenticatedGuard)
 @Controller('Project')
 export class ProjectController extends MasterBaseController {
   

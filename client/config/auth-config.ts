@@ -24,7 +24,7 @@ export class AuthConfig {
       authorizationUri: 'https://localhost:5001/Account/Login',
       client_id: 'js',
       response_type: 'code',
-      redirect_uri: `${ApiService.apiHost}authredirect`,
+      redirect_uri: `${ApiService.apiHost}api/callback`,
       scope: 'openid profile api1',
     };
 

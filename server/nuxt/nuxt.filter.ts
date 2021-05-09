@@ -20,7 +20,7 @@ export class NuxtFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const res = ctx.getResponse();
     const req = ctx.getRequest();
-    const status = exception.getStatus();
+    const status = exception.getStatus && exception.getStatus();
 
     if (status === 404) {
       // Means you load client app.
@@ -34,7 +34,9 @@ export class NuxtFilter implements ExceptionFilter {
     // ) {
     //   res.redirect('http://localhost:5000');
     // }
-     else {
+    else {
+      console.log(exception);
+
       res.status(status).json({
         statusCode: status,
         timestamp: new Date().toISOString(),
