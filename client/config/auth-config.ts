@@ -6,6 +6,7 @@ export interface auth2 {
   authorizationUri?: string;
   authority?: string;
   redirect_uri: string;
+  response_type?: string,
   scope: string;
   queryParams?: any;
 }
@@ -22,8 +23,8 @@ export class AuthConfig {
       authority: 'https://localhost:5001',
       authorizationUri: 'https://localhost:5001/Account/Login',
       client_id: 'js',
-      redirect_uri: `${ApiService.apiHost}/authredirect`,
-      // redirect_uri: `https://localhost:5003/callback.html`,
+      response_type: 'code',
+      redirect_uri: `${ApiService.apiHost}authredirect`,
       scope: 'openid profile api1',
     };
 
