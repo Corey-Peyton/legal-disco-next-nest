@@ -5,10 +5,14 @@ import { Strategy, Client, UserinfoResponse, TokenSet, Issuer } from 'openid-cli
 import { AuthService } from './auth.service';
 
 export const buildOpenIdClient = async () => {
-  const TrustIssuer = await Issuer.discover(`https://localhost:5001/.well-known/openid-configuration`);
+  const TrustIssuer = await Issuer.discover(`http://localhost:5001/.well-known/openid-configuration`);
   const client = new TrustIssuer.Client({
-    client_id: 'js',
-    client_secret: 'K7gNU3sdo+OL0wNhqoVWhr3g6s1xYv72ol/pe/Unols=',
+    client_id: 'mvc',
+    //client_secret: 'K7gNU3sdo+OL0wNhqoVWhr3g6s1xYv72ol/pe/Unols=',
+    client_secret: 'secret',
+    redirect_uris: ['http://localhost:3100/api/callback'],
+    post_logout_redirect_uris: ['http://localhost:3100/signout-callback-oidc'],
+    token_endpoint_auth_method: 'client_secret_post',
   });
   return client;
 };
@@ -20,10 +24,10 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
     super({
       client: client,
       params: {
-        redirect_uri: 'https://localhost:3100/callback',
+        redirect_uri: 'http://localhost:3100/api/callback',
         scope: 'openid profile api1',
       },
-      passReqToCallback: false,
+      passReqToCallback: true,
       usePKCE: false,
     });
 

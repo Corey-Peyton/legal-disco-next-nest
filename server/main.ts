@@ -19,21 +19,21 @@ async function bootstrap() {
   const { host, port } = config.env;
 
   //https://stackoverflow.com/questions/22584268/node-js-https-pem-error-routinespem-read-biono-start-line
-  const httpsOptions = {
-    key: fs.readFileSync(path.resolve(__dirname, 'ssl/key.pem'), 'utf8'),
-    cert: fs.readFileSync(path.resolve(__dirname, 'ssl/server.crt'), 'utf8'),
-  };
+  // TODO: Remove this later for https
+  // const httpsOptions = { 
+  //   key: fs.readFileSync(path.resolve(__dirname, 'ssl/key.pem'), 'utf8'),
+  //   cert: fs.readFileSync(path.resolve(__dirname, 'ssl/server.crt'), 'utf8'),
+  // };
 
   //https://github.com/panva/node-openid-client/issues/157
   //https://stackoverflow.com/a/21961005
-  (process.env["NODE_TLS_REJECT_UNAUTHORIZED"] as any) = 0;
+  // TODO: Remove this later for https
+  //(process.env["NODE_TLS_REJECT_UNAUTHORIZED"] as any) = 0;
 
   const nuxt = await NuxtServer.getInstance().run(
     config.dev ? !(module.hot && module.hot._main) : true,
   );
-  const server = await NestFactory.create(ApplicationModule, {
-    httpsOptions,
-  });
+  const server = await NestFactory.create(ApplicationModule);
 
   server.useGlobalFilters(new NuxtFilter(nuxt)); // On 404: This loads nuxt. Like other SPA do.
 
