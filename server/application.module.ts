@@ -17,9 +17,9 @@ import { AppController } from './application.controller';
 import { AuthModule } from './auth/oidc/auth.module';
 
 @Module({
-  imports: [
-    AuthModule
-  ],
+  // imports: [
+  //   AuthModule // TODO: Temporary. disabled auth to depoly to docker.
+  // ],
   controllers: [
     AppController,
     AuthRedirectController,
