@@ -1,17 +1,11 @@
 import { NestFactory } from '@nestjs/core';
-import { AuthGuard } from '@nestjs/passport';
 import Consola from 'consola';
+import session from 'express-session';
+import passport from 'passport';
 import config from '../nuxt.config';
 import { ApplicationModule } from './application.module';
-import { AuthenticatedGuard } from './auth/session/session-guard';
 import NuxtServer from './nuxt/';
 import { NuxtFilter } from './nuxt/nuxt.filter';
-import fs from 'fs';
-import path from 'path';
-import session from 'express-session';
-import cors from 'cors';
-import connectMongo from 'connect-mongo';
-import passport from 'passport';
 
 declare const module: any;
 

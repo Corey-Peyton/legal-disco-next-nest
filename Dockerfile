@@ -7,7 +7,7 @@ RUN apk add --no-cache --virtual .gyp \
     && npm install \
     && apk del .gyp
 
-WORKDIR /app
+WORKDIR /
 
 COPY package.json package-lock.json ./
 
@@ -17,4 +17,4 @@ COPY . .
 
 EXPOSE 3100
 
-CMD node main.js
+CMD node dist/server/main.js

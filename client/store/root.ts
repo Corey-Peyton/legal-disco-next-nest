@@ -5,7 +5,7 @@ import {
   getter,
   Module,
 } from 'vuex-class-component';
-import { axios } from '~/plugins/axiosInstance';
+import { axios } from '@/plugins/axiosInstance';
 
 @Module({ namespacedPath: 'root/' })
 export class rootStore extends VuexModule {
