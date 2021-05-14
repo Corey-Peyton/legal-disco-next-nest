@@ -1,6 +1,6 @@
 ﻿import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ObjectID } from 'bson';
-import { AuthenticatedGuard } from '~/auth/oidc/session-guard';
+import { AuthenticatedGuard } from '../../../../../auth/oidc/session-guard';
 import { DatabaseServerModel } from '../../../../../ecdisco-models/master/database-server';
 import { datasourceModel } from '../../../../../ecdisco-models/master/datasource';
 import {

@@ -1,7 +1,4 @@
 import { Module } from '@nestjs/common';
-import { JwtModule, JwtModuleOptions } from '@nestjs/jwt';
-import { PassportModule } from '@nestjs/passport';
-import { Strategy } from 'passport-jwt';
 import { ProjectController } from './api/controllers/api/master/project/project-controller';
 import { DatasourceController } from './api/controllers/api/project/datasource/datasource-controller';
 import { DocumentFieldController } from './api/controllers/api/project/document-field/document-field-controller';
@@ -17,11 +14,6 @@ import { HomeController } from './api/controllers/home-controller';
 import { UploadController } from './api/controllers/upload-controller';
 import { WebViewController } from './api/controllers/web-view-controller';
 import { AppController } from './application.controller';
-import { ConfigModule, ConfigType } from '@nestjs/config';
-import jwtConfig from './config/jwt.config';
-import { JwtStrategy } from './auth/jwt/jwt';
-import { UserService } from './user/user.service';
-//import { AuthModule } from './auth/session/auth-module';
 import { AuthModule } from './auth/oidc/auth.module';
 
 @Module({
@@ -45,6 +37,5 @@ import { AuthModule } from './auth/oidc/auth.module';
     ProductionController,
     SearchController,
   ],
-  providers: [UserService],
 })
 export class ApplicationModule {}
