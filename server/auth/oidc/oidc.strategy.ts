@@ -1,13 +1,15 @@
 // src/auth/oidc.strategy.ts
 import { UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
+import { IncomingMessage } from 'node:http';
 import { Strategy, Client, UserinfoResponse, TokenSet, Issuer } from 'openid-client';
 import { AuthService } from './auth.service';
 
 export const buildOpenIdClient = async () => {
-  const TrustIssuer = await Issuer.discover(`http://0.0.0.0:5001/.well-known/openid-configuration`);
+  const TrustIssuer = await Issuer.discover(`http://localhost:5001/.well-known/openid-configuration`);
   const client = new TrustIssuer.Client({
     client_id: 'mvc',
+    ClientId: 'mvc',
     //client_secret: 'K7gNU3sdo+OL0wNhqoVWhr3g6s1xYv72ol/pe/Unols=',
     client_secret: 'secret',
     redirect_uris: ['http://0.0.0.0:3100/api/callback'],
@@ -34,7 +36,7 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
     this.client = client;
   }
 
-  async validate(tokenset: TokenSet): Promise<any> {
+  async validate(incomingMessage: IncomingMessage, tokenset: TokenSet): Promise<any> {
     const userinfo: UserinfoResponse = await this.client.userinfo(tokenset);
 
     try {

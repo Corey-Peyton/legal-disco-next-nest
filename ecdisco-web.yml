@@ -1,0 +1,16 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: ecdisco-web
+spec:
+  template:
+    metadata:
+      name: ecdisco-web-pod
+    spec:
+      containers:
+      - name: ecdisco-web
+        image: ecdisco-web
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 3100
+      restartPolicy: Never

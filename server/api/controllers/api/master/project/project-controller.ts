@@ -11,8 +11,7 @@ import { GlobalConfiguration } from '../../../global-configuration';
 import { ProjectBaseController } from '../../project/project-base-controller';
 import { MasterBaseController } from '../master-base-controller';
 
-// TODO: Temporary disabled auth to depoly to docker.
-// @UseGuards(AuthenticatedGuard)
+ @UseGuards(AuthenticatedGuard)
 @Controller('Project')
 export class ProjectController extends MasterBaseController {
   
