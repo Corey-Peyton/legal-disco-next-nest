@@ -4,7 +4,7 @@ import Oidc from 'oidc-client';
 import { auth2, AuthConfig } from '@/config/auth-config';
 
 export class ApiService {
-  static apiHost = 'http://0.0.0.0:3100/';
+  static apiHost = 'http://localhost:3100/';
 
   static mgr = new Oidc.UserManager(
     new AuthConfig().IdentityServerOAuth2Config,
@@ -31,7 +31,7 @@ export class ApiService {
           resolve(response.data);
         })
         .catch((response) => {
-
+          debugger;
           window.location.replace('/api/login');
 
           //ApiService.mgr.signinRedirect();

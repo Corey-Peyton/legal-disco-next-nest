@@ -12,8 +12,8 @@ export const buildOpenIdClient = async () => {
     ClientId: 'mvc',
     //client_secret: 'K7gNU3sdo+OL0wNhqoVWhr3g6s1xYv72ol/pe/Unols=',
     client_secret: 'secret',
-    redirect_uris: ['http://0.0.0.0:3100/api/callback'],
-    post_logout_redirect_uris: ['http://0.0.0.0:3100/signout-callback-oidc'],
+    redirect_uris: ['http://localhost:3100/api/callback'],
+    post_logout_redirect_uris: ['http://localhost:3100/signout-callback-oidc'],
     token_endpoint_auth_method: 'client_secret_post',
   });
   return client;

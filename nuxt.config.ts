@@ -6,9 +6,9 @@ const config: NuxtConfig = {
   ssr: false, // Disable Server Side rendering
 
   env: {
-    host: '0.0.0.0',
+    host: 'localhost',
     port: '3100',
-    baseUrl: process.env.BASE_URL || 'http://0.0.0.0:3100',
+    baseUrl: process.env.BASE_URL || 'http://localhost:3100',
   },
 
   telemetry: false, // True asks every time whether we want to participate for anonymous usage data.
