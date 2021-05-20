@@ -8,7 +8,7 @@ const config: NuxtConfig = {
   env: {
     host: 'localhost',
     port: '3100',
-    baseUrl: process.env.BASE_URL || 'http://localhost:3100',
+    baseUrl: process.env.BASE_URL || 'https://localhost:3100',
   },
 
   telemetry: false, // True asks every time whether we want to participate for anonymous usage data.

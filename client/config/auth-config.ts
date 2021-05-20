@@ -20,8 +20,8 @@ export class AuthConfig {
 
   constructor() {
     this.IdentityServerOAuth2Config = {
-      authority: 'http://localhost:5001',
-      authorizationUri: 'http://localhost:5001/Account/Login',
+      authority: 'https://localhost:5001',
+      authorizationUri: 'https://localhost:5001/Account/Login',
       client_id: 'mvc',
       response_type: 'code',
       redirect_uri: `${ApiService.apiHost}api/callback`,
