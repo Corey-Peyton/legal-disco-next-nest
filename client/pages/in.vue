@@ -78,7 +78,7 @@
                     :to="{ name: 'work', params: { projectId: data.id }}"
                   >{{ node.label }}</router-link>
                 </template>
-                <template v-if="node.parent.data.nodeType === NodeType.Datasource">
+                <template v-else-if="node.parent.data.nodeType === NodeType.Datasource">
                   <router-link
                     :to="{ path: '/in/project/' + node.parent.parent.data.id + '/datasource/' + node.data.id }"
                   >{{ node.label }}</router-link>

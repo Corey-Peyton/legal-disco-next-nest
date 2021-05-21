@@ -72,16 +72,6 @@ export class ProjectController extends MasterBaseController {
       })
     ).id;
 
-    project = await ProjectModel.findOneAndUpdate(
-      { _id: project.id },
-      {
-        $set: {
-          name: project.name,
-          databaseServerId: project.databaseServerId,
-        },
-      },
-    );
-
     if (project.id) {
       project = await ProjectModel.findOneAndUpdate(
         { _id: project.id },
