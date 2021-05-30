@@ -10,6 +10,7 @@ import { IAuth } from './i-auth-request';
 import { IAuthToken } from './i-auth-token';
 import { Controller, Get, Req, Res } from '@nestjs/common';
 import { Request, Response } from 'express';
+import { ObjectID } from 'bson';
 
 @Controller('AuthRedirect')
 export class AuthRedirectController extends MasterBaseController {
@@ -20,13 +21,12 @@ export class AuthRedirectController extends MasterBaseController {
     this.masterContext;
 
     const state: string[] = req.query.state.toString().split('_');
-    const projectId = Number(state[0]);
+    const projectId = new ObjectID(state[0]);
     const datasourceId: string = state[1];
 
     // Store above token values in db and redirect to In Page
 
-    const projectConnection = new ProjectContext();
-    projectConnection.projectId = projectId;
+    const projectConnection = new ProjectContext(projectId);
 
     const projectContext = projectConnection.context;
 

@@ -16,7 +16,7 @@ import { MasterBaseController } from '../master-base-controller';
 export class ProjectController extends MasterBaseController {
   
   @Post('deleteProject')
-  deleteProject(projectId: number): void {
+  deleteProject(projectId: ObjectID): void {
 
     this.masterContext;
 
