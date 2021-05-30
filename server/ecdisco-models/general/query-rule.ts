@@ -4,7 +4,7 @@ import { Condition } from '../enums/condition';
 import { FieldType } from '../enums/field-type';
 import { NodeType } from '../enums/node-type';
 import { Operation } from '../enums/operation';
-import { ModelBase } from './model-base';
+import { DefaultTransform, ModelBase } from './model-base';
 
 export class QueryRule extends ModelBase {
 
@@ -33,6 +33,6 @@ export class ChildRule extends ModelBase {
   parentQueryRuleId: number;
 }
 
-const QueryRuleModel = getModelForClass(QueryRule);
-const ChildRuleModel = getModelForClass(ChildRule);
+const QueryRuleModel = getModelForClass(QueryRule, DefaultTransform);
+const ChildRuleModel = getModelForClass(ChildRule, DefaultTransform);
 export { QueryRuleModel, ChildRuleModel };

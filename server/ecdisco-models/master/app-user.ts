@@ -1,5 +1,5 @@
 import { getModelForClass, prop } from '@typegoose/typegoose';
-import { ModelBase } from '../general/model-base';
+import { DefaultTransform, ModelBase } from '../general/model-base';
 import { GroupUser } from './group-user';
 import { IdentityProvider } from './identity-provider';
 import { ProjectUser } from './project-user';
@@ -40,5 +40,5 @@ export class AppUser extends ModelBase {
   }
 }
 
-const AppUserModel = getModelForClass(AppUser);
+const AppUserModel = getModelForClass(AppUser, DefaultTransform);
 export { AppUserModel };

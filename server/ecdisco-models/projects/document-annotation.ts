@@ -1,5 +1,5 @@
 import { getModelForClass, prop, Ref } from '@typegoose/typegoose';
-import { ModelBase } from '../general/model-base';
+import { DefaultTransform, ModelBase } from '../general/model-base';
 import { DocumentAnnotationValue } from './document-annotation-value';
 import { DocumentAnnotationValueMultiPage } from './document-annotation-value-multi-page';
 import { ProductionAnnotationFilter } from './production-annotation-filter';
@@ -31,5 +31,5 @@ export class DocumentAnnotation extends ModelBase {
   }
 }
 
-const DocumentAnnotationModel = getModelForClass(DocumentAnnotation);
+const DocumentAnnotationModel = getModelForClass(DocumentAnnotation, DefaultTransform);
 export { DocumentAnnotationModel };

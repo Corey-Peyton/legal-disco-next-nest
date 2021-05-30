@@ -1,5 +1,5 @@
 import { getModelForClass, prop } from '@typegoose/typegoose';
-import { ModelBase } from '../general/model-base';
+import { DefaultTransform, ModelBase } from '../general/model-base';
 
 export class DocumentMetadatum extends ModelBase {
 
@@ -7,5 +7,5 @@ export class DocumentMetadatum extends ModelBase {
   name: string;
 }
 
-const DocumentMetadatumModel = getModelForClass(DocumentMetadatum);
+const DocumentMetadatumModel = getModelForClass(DocumentMetadatum, DefaultTransform);
 export { DocumentMetadatumModel };

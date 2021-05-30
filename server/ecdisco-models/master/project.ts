@@ -3,7 +3,7 @@ import { Datasource } from './datasource';
 import { ProjectGroup } from './project-group';
 import { ProjectUser } from './project-user';
 import { prop, getModelForClass } from '@typegoose/typegoose';
-import { ModelBase } from '../general/model-base';
+import { DefaultTransform, ModelBase } from '../general/model-base';
 import { ObjectID } from 'mongodb';
 
 export class Project extends ModelBase {
@@ -27,5 +27,5 @@ export class Project extends ModelBase {
   }
 }
 
-const ProjectModel = getModelForClass(Project);
+const ProjectModel = getModelForClass(Project, DefaultTransform);
 export { ProjectModel };

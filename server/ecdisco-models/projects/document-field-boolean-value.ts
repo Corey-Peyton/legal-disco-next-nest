@@ -2,11 +2,10 @@ import { getModelForClass, prop, ReturnModelType } from '@typegoose/typegoose';
 import { BeAnObject } from '@typegoose/typegoose/lib/types';
 import { ObjectID } from 'bson';
 import { Document } from '../../api/document';
-import { ModelBase } from '../general/model-base';
+import { DefaultTransform, ModelBase } from '../general/model-base';
 import { documentFieldTableNamePrefix } from './document-field';
 
 export class DocumentFieldBooleanValue extends ModelBase {
-
   @prop()
   documentId: ObjectID;
   @prop()
@@ -15,10 +14,15 @@ export class DocumentFieldBooleanValue extends ModelBase {
 
 // TODO: ONly Pass id and build collection name.
 const DocumentFieldBooleanValueModel = (
-  fieldId: ObjectID
+  fieldId: ObjectID,
 ): ReturnModelType<typeof DocumentFieldBooleanValue, BeAnObject> => {
   return getModelForClass(DocumentFieldBooleanValue, {
-    schemaOptions: { collection: `${documentFieldTableNamePrefix}${fieldId}` },
+    ...DefaultTransform,
+    ...{
+      schemaOptions: {
+        collection: `${documentFieldTableNamePrefix}${fieldId}`,
+      },
+    },
   });
 };
 

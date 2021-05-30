@@ -1,5 +1,5 @@
 import { getModelForClass, prop } from '@typegoose/typegoose';
-import { ModelBase } from '../general/model-base';
+import { DefaultTransform, ModelBase } from '../general/model-base';
 import { DocumentMetadatumValue } from './document-metadatum-value';
 
 export class DocumentMetadatumValueLink extends ModelBase {
@@ -22,6 +22,6 @@ export class DocumentMetadatumValueLink extends ModelBase {
 }
 
 const DocumentMetadatumValueLinkModel = getModelForClass(
-  DocumentMetadatumValueLink
+  DocumentMetadatumValueLink, DefaultTransform
 );
 export { DocumentMetadatumValueLinkModel };

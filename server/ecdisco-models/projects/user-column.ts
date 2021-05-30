@@ -1,5 +1,5 @@
 import { getModelForClass, prop } from '@typegoose/typegoose';
-import { ModelBase } from '../general/model-base';
+import { DefaultTransform, ModelBase } from '../general/model-base';
 
 export class UserColumn extends ModelBase {
   @prop()
@@ -10,5 +10,5 @@ export class UserColumn extends ModelBase {
   columnId: number;
 }
 
-const UserColumnModel = getModelForClass(UserColumn);
+const UserColumnModel = getModelForClass(UserColumn, DefaultTransform);
 export { UserColumnModel };

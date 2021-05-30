@@ -1,5 +1,5 @@
 import { getModelForClass, prop, Ref } from '@typegoose/typegoose';
-import { ModelBase } from '../general/model-base';
+import { DefaultTransform, ModelBase } from '../general/model-base';
 import { Datasource } from '../master/datasource';
 import { DocumentAnnotationValue } from './document-annotation-value';
 import { DocumentFieldBooleanValue } from './document-field-boolean-value';
@@ -49,5 +49,5 @@ export class Document extends ModelBase {
   }
 }
 
-const DocumentModel = getModelForClass(Document);
+const DocumentModel = getModelForClass(Document, DefaultTransform);
 export { DocumentModel };
