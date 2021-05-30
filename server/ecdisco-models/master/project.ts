@@ -8,18 +8,18 @@ import { ObjectID } from 'mongodb';
 
 export class Project extends ModelBase {
   @prop()
-  databaseServer: DatabaseServer;
+  databaseServer?: DatabaseServer;
   @prop()
-  databaseServerId: ObjectID;
+  databaseServerId?: ObjectID;
   @prop()
-  datasource: Datasource[];
+  datasource?: Datasource[];
 
   @prop()
-  name: string;
+  name?: string;
   @prop()
-  projectGroups: ProjectGroup[];
+  projectGroups?: ProjectGroup[];
   @prop()
-  projectUsers: ProjectUser[];
+  projectUsers?: ProjectUser[];
   constructor() {
     super();
     this.projectGroups = [];

@@ -6,20 +6,24 @@ import { Project } from '../master/project';
 
 export class Datasource extends ModelBase {
   @prop()
-  authTokenId: number;
+  authTokenId?: number;
+
   @prop()
-  documents: Document[];
+  documents?: Document[];
 
   @prop()
   name: string;
-  @prop()
-  project: Project;
-  @prop()
-  source: number;
-  @prop()
-  type: DatasourceType;
 
-  filter: string;
+  @prop()
+  project?: Project;
+
+  @prop()
+  source?: number;
+
+  @prop()
+  type?: DatasourceType;
+
+  filter?: string;
 
   constructor() {
     super();

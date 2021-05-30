@@ -206,6 +206,7 @@ export class DatasourceController extends ProjectBaseController {
   @Post('saveDatasource')
   async saveDatasource(@Body() datasource: Datasource): Promise<ObjectID> {
 
+    this.projectId = datasource.project.id;
     this.projectContext;
 
     return (

@@ -4,10 +4,10 @@ import { Condition } from '@/enums/condition';
 import { FieldType } from '@/enums/field-type';
 import { OneDriveOperation } from '@/enums/operation';
 import { TreeData } from '@/extended-types/tree-data';
-import { Datasource } from '@/models/datasource';
+import { Datasource } from '~/ecdisco-models/projects/datasource';
 import { Datasources, DatasourceType } from '@/models/datasource-type';
 import { NodeType } from '@/models/node-type';
-import { Project } from '@/models/project';
+import { Project } from '~/ecdisco-models/master/project';
 import { QueryGroup, QueryRule } from '@/models/query-builder-query';
 import { ApiService } from '@/services/api-service';
 import Treeselect from '@riophae/vue-treeselect';
@@ -330,13 +330,16 @@ export default class In extends Vue {
 
         // TODO: In following we need to pass project id. so that datasource can be associated.
         query = 'datasource/saveDatasource';
+
         variables = {
-          id: 0,
+          id: null,
           name: data.label,
-          type: Number(dataSourceType[0]),
+          type: <DatasourceType>Number(dataSourceType[0]),
           source: Number(dataSourceType[1]),
-          projectId: parentNode.parent!.data.id,
-        };
+          project: {
+            id: parentNode.parent!.data.id,
+          },
+        } as Datasource;
 
         break;
       default:
