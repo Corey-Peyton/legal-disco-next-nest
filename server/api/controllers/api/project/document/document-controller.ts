@@ -7,20 +7,38 @@ import { FieldType } from '../../../../../ecdisco-models/enums/field-type';
 import { NodeType } from '../../../../../ecdisco-models/enums/node-type';
 import { KeyValue } from '../../../../../ecdisco-models/general/key-value';
 import { Paginate } from '../../../../../ecdisco-models/general/paginate';
-import { DocumentMetadatum, DocumentMetadatumModel } from '../../../../../ecdisco-models/master/document-metadatum';
+import {
+  DocumentMetadatum,
+  DocumentMetadatumModel,
+} from '../../../../../ecdisco-models/master/document-metadatum';
 import {
   Document,
-  DocumentModel
+  DocumentModel,
 } from '../../../../../ecdisco-models/projects/document';
 import {
   DocumentField,
-  DocumentFieldModel
+  DocumentFieldModel,
 } from '../../../../../ecdisco-models/projects/document-field';
-import { DocumentFieldBooleanValue, DocumentFieldBooleanValueModel } from '../../../../../ecdisco-models/projects/document-field-boolean-value';
-import { DocumentFieldDateValue, DocumentFieldDateValueModel } from '../../../../../ecdisco-models/projects/document-field-date-value';
-import { DocumentFieldNumberValue, DocumentFieldNumberValueModel } from '../../../../../ecdisco-models/projects/document-field-number-value';
-import { DocumentFieldTextValue, DocumentFieldTextValueModel } from '../../../../../ecdisco-models/projects/document-field-text-value';
-import { DocumentMetadatumValueLink, DocumentMetadatumValueLinkModel } from '../../../../../ecdisco-models/projects/document-metadatum-value-link';
+import {
+  DocumentFieldBooleanValue,
+  DocumentFieldBooleanValueModel,
+} from '../../../../../ecdisco-models/projects/document-field-boolean-value';
+import {
+  DocumentFieldDateValue,
+  DocumentFieldDateValueModel,
+} from '../../../../../ecdisco-models/projects/document-field-date-value';
+import {
+  DocumentFieldNumberValue,
+  DocumentFieldNumberValueModel,
+} from '../../../../../ecdisco-models/projects/document-field-number-value';
+import {
+  DocumentFieldTextValue,
+  DocumentFieldTextValueModel,
+} from '../../../../../ecdisco-models/projects/document-field-text-value';
+import {
+  DocumentMetadatumValueLink,
+  DocumentMetadatumValueLinkModel,
+} from '../../../../../ecdisco-models/projects/document-metadatum-value-link';
 import { DocumentFields } from '../document-field/document-fields';
 import { ProjectBaseController } from '../project-base-controller';
 import { DocumentInfo } from './document-info';
@@ -34,7 +52,6 @@ export class DocumentController extends ProjectBaseController {
 
   @Post('addDocument')
   addDocument(@Body() document: Document): number {
-
     this.projectContext;
 
     let documentId;
@@ -54,21 +71,19 @@ export class DocumentController extends ProjectBaseController {
   }
 
   @Post('deleteSelectedColumnData')
-  deleteSelectedColumnData(@Body() columnObject: any): void {
-
+  async deleteSelectedColumnData(@Body() columnObject: any): Promise<void> {
     this.projectContext;
 
     const fieldToRemove: any = {};
     fieldToRemove[columnObject.selectedColumn] = 1;
 
-    this.projectContext.connection.db
+    (await this.projectContext).db
       .collection(this.tempDocumentSearchResult)
       .updateMany({}, { $unset: fieldToRemove });
   }
 
   @Post('fieldData')
   fieldData(documentData: any): KeyValue[] {
-
     this.projectContext;
 
     return this.getDocumentFieldsData(null, documentData.documentId as number);
@@ -77,9 +92,8 @@ export class DocumentController extends ProjectBaseController {
   @Post('getDocumentFieldsData')
   getDocumentFieldsData(
     documentFields: DocumentField[],
-    documentId: number
+    documentId: number,
   ): KeyValue[] {
-
     this.projectContext;
 
     if (documentFields === null) {
@@ -93,9 +107,10 @@ export class DocumentController extends ProjectBaseController {
       switch (documentField.type as FieldType) {
         case FieldType.Checkbox:
           documentFieldData = (
-            await DocumentFieldBooleanValueModel(documentField.id).find({
-              DocumentId: documentId,
-            })
+            await DocumentFieldBooleanValueModel(documentField.id)
+              .find({
+                DocumentId: documentId,
+              })
               .select(['id'])
               .exec()
           ).map((documentFieldDateValue) => {
@@ -109,7 +124,8 @@ export class DocumentController extends ProjectBaseController {
           // TODO: Except boolean following all query are same except for type. Can be common.
           // TODO: 2 Here actual table is dynamic as `DocumentField_${documentField.id}`. Fix for all switch case. not writing comment for all.
           documentFieldData = (
-            await DocumentFieldDateValueModel(documentField.id).find({ DocumentId: documentId })
+            await DocumentFieldDateValueModel(documentField.id)
+              .find({ DocumentId: documentId })
               .select(['id', 'value'])
               .exec()
           ).map((documentFieldDateValue) => {
@@ -123,7 +139,8 @@ export class DocumentController extends ProjectBaseController {
           break;
         case FieldType.Number:
           documentFieldData = (
-            await DocumentFieldNumberValueModel(documentField.id).find({ DocumentId: documentId })
+            await DocumentFieldNumberValueModel(documentField.id)
+              .find({ DocumentId: documentId })
               .select(['id', 'value'])
               .exec()
           ).map((documentFieldDateValue) => {
@@ -139,7 +156,8 @@ export class DocumentController extends ProjectBaseController {
           break;
         case FieldType.Text:
           documentFieldData = (
-            await DocumentFieldTextValueModel(documentField.id).find({ DocumentId: documentId })
+            await DocumentFieldTextValueModel(documentField.id)
+              .find({ DocumentId: documentId })
               .select(['id', 'value'])
               .exec()
           ).map((documentFieldDateValue) => {
@@ -153,7 +171,7 @@ export class DocumentController extends ProjectBaseController {
 
       const childDocumentFieldData: KeyValue[] = this.getDocumentFieldsData(
         documentField.children as DocumentField[],
-        documentId
+        documentId,
       );
       if (documentFieldData === null) {
         documentFieldData = childDocumentFieldData;
@@ -173,14 +191,13 @@ export class DocumentController extends ProjectBaseController {
 
   @Post('PNG')
   PNG(@Body() documentData: any): DocumentInfo {
-
     this.projectContext;
 
     // TODO: Following path should be from database.
     const directoryPath: string = path.join(
       'C:\\ecdiscoProjects',
       `Project_${this.projectId}`,
-      'Processed'
+      'Processed',
     );
 
     const strDocumentId: string = documentData.documentId.toString();
@@ -198,12 +215,12 @@ export class DocumentController extends ProjectBaseController {
 
     const fileDirectoryPath: string = path.join(
       directoryPath,
-      ['\\', splitFileName].join()
+      ['\\', splitFileName].join(),
     );
 
     const dirCont = fs.readdirSync(fileDirectoryPath);
     const files = dirCont.filter((elm) =>
-      elm.match(new RegExp(`${strDocumentId}_P*_png*.png`, 'ig'))
+      elm.match(new RegExp(`${strDocumentId}_P*_png*.png`, 'ig')),
     );
 
     // TODO: Currently it returns only first page. Multi page need to handle
@@ -216,7 +233,6 @@ export class DocumentController extends ProjectBaseController {
 
   @Post('saveDocument')
   saveDocument(@Body() fieldData: any): void {
-
     this.projectContext;
 
     const metadatas: any = JSON.parse(fieldData.metadata.toString());
@@ -227,12 +243,16 @@ export class DocumentController extends ProjectBaseController {
       documentMetadataValue[key] = metadatas[key];
 
       // TODO: We need to manage if already exists then get value of it.
-      let documentMetadata = await DocumentMetadatumModel.findOne({ name: key } as DocumentMetadatum)
+      let documentMetadata = await DocumentMetadatumModel.findOne({
+        name: key,
+      } as DocumentMetadatum)
         .select('name')
         .exec();
 
       if (!documentMetadata) {
-        documentMetadata = await DocumentMetadatumModel.create({ name: key } as DocumentMetadatum);
+        documentMetadata = await DocumentMetadatumModel.create({
+          name: key,
+        } as DocumentMetadatum);
       }
 
       const documentMetadataTable = `DocumentMetadatum_${documentMetadata.id}`;
@@ -245,7 +265,7 @@ export class DocumentController extends ProjectBaseController {
               {
                 metadataId: documentMetadata.id,
                 documentMetadataValue: metadataValue,
-              } as DocumentMetadatumValueLink
+              } as DocumentMetadatumValueLink,
             ).select('id');
 
             if (!existingMetadataValueRecord) {
@@ -253,15 +273,15 @@ export class DocumentController extends ProjectBaseController {
                 {
                   documentMetadataValueId: documentMetadata.id,
                   documentMetadataValue: metadataValue,
-                } as DocumentMetadatumValueLink
+                } as DocumentMetadatumValueLink,
               );
             }
 
             DocumentMetadatumValueLinkModel.create({
               documentMetadataValueId: existingMetadataValueRecord.id,
-              documentId: fieldData.documentId
+              documentId: fieldData.documentId,
             } as DocumentMetadatumValueLink);
-          }
+          },
         );
       });
     });
@@ -269,7 +289,6 @@ export class DocumentController extends ProjectBaseController {
 
   @Post('saveFieldData')
   saveFieldData(@Body() fieldData: any): void {
-
     this.projectContext;
 
     const documentId: ObjectID = fieldData.documentId as ObjectID;
@@ -283,12 +302,18 @@ export class DocumentController extends ProjectBaseController {
         // TODO: 2 Need to use for all switch cases. use dynamic table name.
         if (fieldValue) {
           if (
-            !DocumentFieldBooleanValueModel(fieldId).findOne({ documentId: documentId } as DocumentFieldBooleanValue)
+            !DocumentFieldBooleanValueModel(fieldId).findOne({
+              documentId: documentId,
+            } as DocumentFieldBooleanValue)
           ) {
-            DocumentFieldBooleanValueModel(fieldId).create({ documentId: documentId } as DocumentFieldBooleanValue);
+            DocumentFieldBooleanValueModel(fieldId).create({
+              documentId: documentId,
+            } as DocumentFieldBooleanValue);
           }
         } else {
-          DocumentFieldBooleanValueModel(fieldId).deleteOne({ documentId: documentId } as DocumentFieldBooleanValue);
+          DocumentFieldBooleanValueModel(fieldId).deleteOne({
+            documentId: documentId,
+          } as DocumentFieldBooleanValue);
         }
         break;
       case FieldType.DateTime:
@@ -305,38 +330,42 @@ export class DocumentController extends ProjectBaseController {
             } as DocumentFieldDateValue);
           }
         } else {
-          DocumentFieldDateValueModel(fieldId).deleteOne({ DocumentId: documentId });
+          DocumentFieldDateValueModel(fieldId).deleteOne({
+            DocumentId: documentId,
+          });
         }
         break;
       case FieldType.Number:
         if (fieldValue) {
           if (
-            !DocumentFieldNumberValueModel(fieldId).findOne({
-                value: Number(fieldValue),
-                documentId,
-              } as unknown as DocumentFieldNumberValue)
+            !DocumentFieldNumberValueModel(fieldId).findOne(({
+              value: Number(fieldValue),
+              documentId,
+            } as unknown) as DocumentFieldNumberValue)
           ) {
-            DocumentFieldNumberValueModel(fieldId).create({
-                value: Number(fieldValue),
-                documentId,
-              } as unknown as DocumentFieldNumberValue);
+            DocumentFieldNumberValueModel(fieldId).create(({
+              value: Number(fieldValue),
+              documentId,
+            } as unknown) as DocumentFieldNumberValue);
           }
         } else {
-          DocumentFieldNumberValueModel(fieldId).deleteOne({ DocumentId: documentId });
+          DocumentFieldNumberValueModel(fieldId).deleteOne({
+            DocumentId: documentId,
+          });
         }
         break;
       case FieldType.Text:
         if (fieldValue) {
           if (
-            !DocumentFieldTextValueModel(fieldId).findOne({
-                value: fieldValue,
-                documentId,
-              } as unknown as DocumentFieldTextValue)
+            !DocumentFieldTextValueModel(fieldId).findOne(({
+              value: fieldValue,
+              documentId,
+            } as unknown) as DocumentFieldTextValue)
           ) {
-            DocumentFieldTextValueModel(fieldId).create({
-                value: fieldValue,
-                documentId,
-              } as unknown as DocumentFieldTextValue);
+            DocumentFieldTextValueModel(fieldId).create(({
+              value: fieldValue,
+              documentId,
+            } as unknown) as DocumentFieldTextValue);
           }
 
           const client = new Client();
@@ -352,7 +381,9 @@ export class DocumentController extends ProjectBaseController {
             routing: this.projectId.toString(),
           });
         } else {
-          DocumentFieldTextValueModel(fieldId).deleteOne({ DocumentId: documentId });
+          DocumentFieldTextValueModel(fieldId).deleteOne({
+            DocumentId: documentId,
+          });
 
           const client = new Client();
 
@@ -369,8 +400,7 @@ export class DocumentController extends ProjectBaseController {
   }
 
   @Post('setAndGetSelectedColumnData')
-  setAndGetSelectedColumnData(@Body() paramsObject: any): any[] {
-
+  async setAndGetSelectedColumnData(@Body() paramsObject: any): Promise<any[]> {
     this.projectContext;
 
     const columnName: string = paramsObject.selectedColumn as string;
@@ -382,10 +412,10 @@ export class DocumentController extends ProjectBaseController {
     } = new DocumentFields().GetColumnNameAndJoin(
       Number(selectedColumn[0]) as NodeType,
       Number(selectedColumn[1]),
-      this.projectContext
+      await this.projectContext,
     );
 
-    this.projectContext.connection.db
+    (await this.projectContext).db
       .collection(this.tempDocumentSearchResult)
       .find()
       .forEach((tempTableRow) => {
@@ -409,18 +439,16 @@ export class DocumentController extends ProjectBaseController {
 
     // Return Paginated Data from temp table.
     const paginate: Paginate = paramsObject.paginate;
-    let paginatedData: any[];
+    let paginatedData: Promise<any[]>;
 
-    (async () => {
-      paginatedData = await this.projectContext.connection.db
-        .collection(this.tempDocumentSearchResult)
-        .find({ id: { $g: paginate.lastRowValue } })
-        .limit(paginate.pageSize)
-        .sort(paginate.sorting)
-        .toArray();
-    })();
+    paginatedData = (await this.projectContext).db
+      .collection(this.tempDocumentSearchResult)
+      .find({ id: { $g: paginate.lastRowValue } })
+      .limit(paginate.pageSize)
+      .sort(paginate.sorting)
+      .toArray();
 
-    return paginatedData.map((r) => r[0]);
+    return (await paginatedData).map((r) => r[0]);
   }
 
   private GetDocumentFields(parentIds: ObjectID[]): DocumentField[] {

@@ -31,19 +31,7 @@ export class ApiService {
           resolve(response.data);
         })
         .catch((response) => {
-          debugger;
           window.location.replace('/api/login');
-
-          //ApiService.mgr.signinRedirect();
-
-          //ApiService.post('Datasource/GetNewState')
-          //.then((state) => {
-
-          // const url = this.buildAuthorizationUrl('state', new AuthConfig().IdentityServerOAuth2Config);
-          // // tslint:disable-next-line: max-line-length
-          // window.location.href = url;
-
-          //});
         });
     });
   }

@@ -16,32 +16,28 @@ import { MasterBaseController } from '../master-base-controller';
 export class ProjectController extends MasterBaseController {
   
   @Post('deleteProject')
-  deleteProject(projectId: ObjectID): void {
+  async deleteProject(projectId: ObjectID): Promise<void> {
 
-    this.masterContext;
-
-    ProjectModel.findByIdAndDelete(projectId);
+    ProjectModel(await this.masterContext).findByIdAndDelete(projectId);
 
     // TODO: Need to make some common methods for following types of db operations.
     const projectController = new ProjectBaseController();
     projectController.projectId = projectId;
-    const connection = projectController.projectContext;
-    connection.connection.db.dropDatabase();
+    const connection = await projectController.projectContext;
+    connection.db.dropDatabase();
   }
 
   @Post('getProjects')
   async getProjects(): Promise<Project[]> {
-
-    this.masterContext;
-
-    const projects = await ProjectModel.find({});
+    const projects = await ProjectModel(await this.masterContext).find({})
+    
     return projects.map((project) => {
       const projectBaseController = new ProjectBaseController();
       projectBaseController.projectId = project.id;
 
       projectBaseController.projectContext;
       (async () => {
-        project.datasource = await datasourceModel.find();
+        project.datasource = await datasourceModel(await projectBaseController.projectContext).find({}); // datasource gets stored in project db.
       })();
 
       return project;
@@ -50,8 +46,6 @@ export class ProjectController extends MasterBaseController {
 
   @Post('saveProject')
   async saveProject(@Body() project: Project): Promise<ObjectID> {
-
-    this.masterContext;
 
     const avail = GlobalConfiguration.AvailableDatabaseServer;
 
@@ -73,7 +67,7 @@ export class ProjectController extends MasterBaseController {
     ).id;
 
     if (project.id) {
-      project = await ProjectModel.findOneAndUpdate(
+      project = await ProjectModel(await this.masterContext).findOneAndUpdate(
         { _id: project.id },
         {
           $set: {
@@ -83,7 +77,7 @@ export class ProjectController extends MasterBaseController {
         },
       );
     } else {
-      project = await ProjectModel.create({
+      project = await ProjectModel(await this.masterContext).create({
         name: project.name,
         databaseServerId: project.databaseServerId,
       });

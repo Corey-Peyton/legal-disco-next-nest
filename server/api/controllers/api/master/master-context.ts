@@ -1,24 +1,26 @@
-import { connect, Mongoose } from 'mongoose';
+import {
+  connect,
+  Connection,
+  createConnection,
+  mongo,
+  Mongoose,
+} from 'mongoose';
 
 export class MasterContext {
-  get context(): Mongoose {
+  get context(): Promise<Connection> {
     
     if (!this.m_context) {
-
-      (async () => {
-
-          this.m_context = await connect(
-            'mongodb://localhost/ecdiscoMaster',
-            { useNewUrlParser: true, useUnifiedTopology: true }
-          );
-          
-          this.m_context.pluralize(null); // By default mongoose is trying to be smart and makes things pluralize.
-
-      })();
+      this.m_context = createConnection('mongodb://localhost/ecdiscoMaster', {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+        socketTimeoutMS: 60000,
+        poolSize: 300,
+        bufferCommands: false,
+        bufferMaxEntries: 0,
+      });
     }
 
     return this.m_context;
   }
-  private m_context: Mongoose;
-
+  private m_context: Promise<Connection>;
 }

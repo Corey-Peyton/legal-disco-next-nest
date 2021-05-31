@@ -1,6 +1,6 @@
 ﻿import { Controller } from '@nestjs/common';
 import express from 'express';
-import { Mongoose } from 'mongoose';
+import { Connection, Mongoose } from 'mongoose';
 import { MasterContext } from './master-context';
 import { MasterController } from './master-controller';
 
@@ -8,12 +8,19 @@ import { MasterController } from './master-controller';
 export class MasterBaseController extends MasterController {
   sessionId: number;
 
-  get masterContext(): Mongoose {
-    if (!this.m_masterContext) {
-      this.m_masterContext = new MasterContext().context;
-    }
+  get masterContext(): Promise<Connection> {
+    
+      if (!this.m_masterContext) {
+          this.m_masterContext =  new MasterContext().context;
 
-    return this.m_masterContext;
+          return this.m_masterContext;
+      } else {
+        return this.m_masterContext;
+  
+      }
+    
+    
+
   }
-  private m_masterContext: Mongoose;
+  private m_masterContext: Promise<Connection>;
 }

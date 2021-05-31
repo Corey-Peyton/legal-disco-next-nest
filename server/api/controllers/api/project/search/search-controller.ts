@@ -21,13 +21,13 @@ export class SearchController extends ProjectBaseController {
   }
 
   @Post('load')
-  load(@Body() search: any): QueryRule {
+  async load(@Body() search: any): Promise<QueryRule> {
 
     this.projectContext;
 
     const queryId: number = search.queryId as number;
 
-    return new Search().Load(queryId, true, this.projectContext);
+    return new Search().Load(queryId, true, await this.projectContext);
   }
 
   @Post('save')

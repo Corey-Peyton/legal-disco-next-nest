@@ -45,8 +45,7 @@ export class DocumentSearchController extends ProjectBaseController {
 
     const whereQuery: any = {};
 
-    this.projectContext.connection
-      .collection(this.tempDocumentSearchResult)
+    (await this.projectContext).collection(this.tempDocumentSearchResult)
       .drop();
 
     const lookups: $lookup[] = [];
@@ -64,12 +63,10 @@ export class DocumentSearchController extends ProjectBaseController {
 
     const finalQuery = [whereQuery, ...lookups];
 
-    await this.projectContext.connection
-      .collection(this.tempDocumentSearchResult)
+    (await this.projectContext).collection(this.tempDocumentSearchResult)
       .insertMany(await DocumentModel.aggregate(finalQuery));
 
-    const gridData = this.projectContext.connection
-      .collection(this.tempDocumentSearchResult)
+    const gridData = (await this.projectContext).collection(this.tempDocumentSearchResult)
       .find({}, selectedColumn);
 
     paginate.total = await gridData.count();
@@ -84,7 +81,7 @@ export class DocumentSearchController extends ProjectBaseController {
     let paginatedData;
 
     (async () => {
-      paginatedData = await this.projectContext.connection.db
+      paginatedData = (await this.projectContext).db
         .collection(this.tempDocumentSearchResult)
         .find({ id: { $g: paginate.lastRowValue } })
         .limit(paginate.pageSize)
@@ -352,7 +349,7 @@ export class DocumentSearchController extends ProjectBaseController {
 
         const tempTableName = '#MatchedTextDocuments';
 
-        this.projectContext.connection.db
+        (await this.projectContext).db
           .collection(tempTableName)
           .insertMany(fieldTextValueDocumentIds);
 

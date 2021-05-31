@@ -2,9 +2,11 @@ import { DatabaseServer } from './database-server';
 import { Datasource } from './datasource';
 import { ProjectGroup } from './project-group';
 import { ProjectUser } from './project-user';
-import { prop, getModelForClass } from '@typegoose/typegoose';
+import { prop, getModelForClass, ReturnModelType } from '@typegoose/typegoose';
 import { DefaultTransform, ModelBase } from '../general/model-base';
 import { ObjectID } from 'mongodb';
+import { Connection } from 'mongoose';
+import { BeAnObject } from '@typegoose/typegoose/lib/types';
 
 export class Project extends ModelBase {
   @prop()
@@ -27,5 +29,14 @@ export class Project extends ModelBase {
   }
 }
 
-const ProjectModel = getModelForClass(Project, DefaultTransform);
+const ProjectModel = (
+  connection: Connection,
+): ReturnModelType<typeof Project, BeAnObject> => {
+  return getModelForClass(Project, {
+    ...DefaultTransform,
+    ...{
+      existingConnection: connection,
+    },
+  });
+};
 export { ProjectModel };

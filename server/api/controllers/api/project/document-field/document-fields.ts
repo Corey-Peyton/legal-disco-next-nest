@@ -1,4 +1,4 @@
-﻿import { Mongoose } from 'mongoose';
+﻿import { Connection, Mongoose } from 'mongoose';
 import { FieldType } from '../../../../../ecdisco-models/enums/field-type';
 import { NodeType } from '../../../../../ecdisco-models/enums/node-type';
 import { DocumentFieldModel } from '../../../../../ecdisco-models/projects/document-field';
@@ -8,7 +8,7 @@ export class DocumentFields {
   GetColumnNameAndJoin(
     columnType: NodeType,
     columnId: number,
-    projectContext: Mongoose
+    projectContext: Connection
   ): { [key: string]: $lookup } {
     let columnName = '';
     let joinQuery: $lookup;

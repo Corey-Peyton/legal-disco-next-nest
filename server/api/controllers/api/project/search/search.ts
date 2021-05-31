@@ -1,4 +1,4 @@
-﻿import { Mongoose } from 'mongoose';
+﻿import { Connection, Mongoose } from 'mongoose';
 import {
   QueryRule,
   QueryRuleModel,
@@ -11,7 +11,7 @@ export class Search {
   Load(
     queryId: number,
     insertIfNull: boolean,
-    projectContext: Mongoose
+    projectContext: Connection
   ): QueryRule {
     let QueryRule: QueryRule;
 

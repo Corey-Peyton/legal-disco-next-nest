@@ -1,5 +1,5 @@
 ﻿import { ObjectID } from 'bson';
-import { Mongoose } from 'mongoose';
+import { Connection } from 'mongoose';
 import { MasterBaseController } from '../master/master-base-controller';
 import { MasterController } from '../master/master-controller';
 import { ProjectContext } from '../master/project-context';
@@ -7,11 +7,11 @@ import { ProjectContext } from '../master/project-context';
 export class ProjectBaseController extends MasterController {
   projectId: ObjectID;
 
-  get masterContext(): Mongoose {
+  get masterContext(): Promise<Connection> {
     return new MasterBaseController().masterContext;
   }
 
-  get projectContext(): Mongoose {
+  get projectContext(): Promise<Connection> {
     if (!this.m_projectContext) {
       this.m_projectContext = new ProjectContext(this.projectId).context;
     }
@@ -19,5 +19,5 @@ export class ProjectBaseController extends MasterController {
     return this.m_projectContext;
   }
 
-  private m_projectContext: Mongoose;
+  private m_projectContext: Promise<Connection>;
 }

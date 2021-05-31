@@ -1,5 +1,5 @@
 import { ObjectID } from 'bson';
-import { connect, Mongoose } from 'mongoose';
+import { connect, Connection, createConnection, Mongoose } from 'mongoose';
 
 export class ProjectContext {
   projectId: ObjectID;
@@ -8,19 +8,18 @@ export class ProjectContext {
     this.projectId = projectId;
   }
 
-  get context(): Mongoose {
+  get context(): Promise<Connection> {
     if (!this.m_context) {
-      (async () => {
-        this.m_context = await connect(
-          `mongodb://localhost/ecdiscoProject_${this.projectId}`,
-          { useNewUrlParser: true, useUnifiedTopology: true },
+
+        this.m_context = createConnection(
+          `mongodb://localhost/ecdiscoProject_${this.projectId}`, // This will be used for some other db queries. depending on tenant.
+          { useNewUrlParser: true, useUnifiedTopology: true, socketTimeoutMS: 60000, poolSize: 300 },
         );
+        
+      }
 
-        this.m_context.pluralize(null); // By default mongoose is trying to be smart and makes things pluralize.
-      })();
-    }
+      return this.m_context;
 
-    return this.m_context;
   }
-  private m_context: Mongoose;
+  private m_context: Promise<Connection>;
 }
