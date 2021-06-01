@@ -10,16 +10,13 @@ export class ProjectContext {
 
   get context(): Promise<Connection> {
     if (!this.m_context) {
+      this.m_context = createConnection(
+        `mongodb://localhost/ecdiscoProject_${this.projectId}`, // This will be used for some other db queries. depending on tenant.
+        { useNewUrlParser: true, useUnifiedTopology: true },
+      );
+    }
 
-        this.m_context = createConnection(
-          `mongodb://localhost/ecdiscoProject_${this.projectId}`, // This will be used for some other db queries. depending on tenant.
-          { useNewUrlParser: true, useUnifiedTopology: true, socketTimeoutMS: 60000, poolSize: 300 },
-        );
-        
-      }
-
-      return this.m_context;
-
+    return this.m_context;
   }
   private m_context: Promise<Connection>;
 }
