@@ -1,8 +1,9 @@
-import { getModelForClass, prop } from '@typegoose/typegoose';
+import { getModelForClass, modelOptions, prop } from '@typegoose/typegoose';
 import { Document } from '../../api/document';
 import { DatasourceType } from '../enums/datasource-type';
-import { DefaultTransform, ModelBase } from '../general/model-base';
+import { defaultTransform, ModelBase } from '../general/model-base';
 import { Project } from '../master/project';
+
 
 export class Datasource extends ModelBase {
   @prop()
@@ -32,5 +33,5 @@ export class Datasource extends ModelBase {
   }
 }
 
-const DatasourceModel = getModelForClass(Datasource, DefaultTransform);
+const DatasourceModel = getModelForClass(Datasource, defaultTransform);
 export { DatasourceModel };

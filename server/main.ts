@@ -9,6 +9,9 @@ import { NuxtFilter } from './nuxt/nuxt.filter';
 import fs from 'fs';
 import path from 'path';
 import connectMongo from 'connect-mongo';
+import { setGlobalOptions, Severity } from "@typegoose/typegoose";
+
+setGlobalOptions({ options: { allowMixed: Severity.ALLOW } });
 
 declare const module: any;
 

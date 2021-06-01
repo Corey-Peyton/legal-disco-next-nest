@@ -9,18 +9,10 @@ export class MasterBaseController extends MasterController {
   sessionId: number;
 
   get masterContext(): Promise<Connection> {
-    
-      if (!this.m_masterContext) {
-          this.m_masterContext =  new MasterContext().context;
-
-          return this.m_masterContext;
-      } else {
-        return this.m_masterContext;
-  
-      }
-    
-    
-
+    if (!this.m_masterContext) {
+      this.m_masterContext = new MasterContext().context;
+    }
+    return this.m_masterContext;
   }
   private m_masterContext: Promise<Connection>;
 }

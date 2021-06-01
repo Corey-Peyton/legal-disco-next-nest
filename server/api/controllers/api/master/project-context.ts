@@ -11,7 +11,7 @@ export class ProjectContext {
   get context(): Promise<Connection> {
     if (!this.m_context) {
       this.m_context = createConnection(
-        `mongodb://localhost/ecdiscoProject_${this.projectId}`, // This will be used for some other db queries. depending on tenant.
+        `mongodb://localhost/ecdiscoProject_${this.projectId}`,
         { useNewUrlParser: true, useUnifiedTopology: true },
       );
     }

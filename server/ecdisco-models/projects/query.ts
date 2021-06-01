@@ -1,8 +1,9 @@
-import { getModelForClass, prop, Ref } from '@typegoose/typegoose';
-import { DefaultTransform, ModelBase } from '../general/model-base';
+import { getModelForClass, modelOptions, prop, Ref } from '@typegoose/typegoose';
+import { defaultTransform, ModelBase } from '../general/model-base';
 import { QueryRule } from '../general/query-rule';
 import { Production } from './production';
 import { ProductionAnnotationFilter } from './production-annotation-filter';
+
 
 export class Query extends ModelBase {
   @prop()
@@ -30,5 +31,5 @@ export class Query extends ModelBase {
   }
 }
 
-const QueryModel = getModelForClass(Query, DefaultTransform);
+const QueryModel = getModelForClass(Query, defaultTransform);
 export { QueryModel };

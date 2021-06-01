@@ -1,5 +1,5 @@
-import { getModelForClass, prop, Ref } from '@typegoose/typegoose';
-import { DefaultTransform, ModelBase } from '../general/model-base';
+import { getModelForClass, modelOptions, prop, Ref } from '@typegoose/typegoose';
+import { defaultTransform, ModelBase } from '../general/model-base';
 import { Datasource } from '../master/datasource';
 import { DocumentAnnotationValue } from './document-annotation-value';
 import { DocumentFieldBooleanValue } from './document-field-boolean-value';
@@ -7,6 +7,8 @@ import { DocumentFieldDateValue } from './document-field-date-value';
 import { DocumentFieldNumberValue } from './document-field-number-value';
 import { DocumentFieldTextValue } from './document-field-text-value';
 import { DocumentMetadatumValue } from './document-metadatum-value';
+
+
 export class Document extends ModelBase {
   @prop()
   childrenDocument: Ref<Document>[];
@@ -49,5 +51,5 @@ export class Document extends ModelBase {
   }
 }
 
-const DocumentModel = getModelForClass(Document, DefaultTransform);
+const DocumentModel = getModelForClass(Document, defaultTransform);
 export { DocumentModel };

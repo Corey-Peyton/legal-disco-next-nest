@@ -1,5 +1,6 @@
-import { getModelForClass, prop, Ref } from '@typegoose/typegoose';
-import { DefaultTransform, ModelBase } from '../general/model-base';
+import { getModelForClass, modelOptions, prop, Ref } from '@typegoose/typegoose';
+import { defaultTransform, ModelBase } from '../general/model-base';
+
 
 export class DocumentField extends ModelBase {
   @prop()
@@ -22,5 +23,5 @@ export class DocumentField extends ModelBase {
 
 const documentFieldTableNamePrefix = 'DocumentField_';
 
-const DocumentFieldModel = getModelForClass(DocumentField, DefaultTransform);
+const DocumentFieldModel = getModelForClass(DocumentField, defaultTransform);
 export { DocumentFieldModel, documentFieldTableNamePrefix };

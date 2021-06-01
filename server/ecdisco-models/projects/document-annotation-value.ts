@@ -1,7 +1,8 @@
-import { getModelForClass, prop } from '@typegoose/typegoose';
+import { getModelForClass, modelOptions, prop } from '@typegoose/typegoose';
 import { Document } from '../../api/document';
-import { DefaultTransform, ModelBase } from '../general/model-base';
+import { defaultTransform, ModelBase } from '../general/model-base';
 import { DocumentAnnotation } from './document-annotation';
+
 
 export class DocumentAnnotationValue extends ModelBase {
 
@@ -19,5 +20,5 @@ export class DocumentAnnotationValue extends ModelBase {
   documentAnnotation: DocumentAnnotation;
 }
 
-const DocumentAnnotationValueModel = getModelForClass(DocumentAnnotationValue, DefaultTransform);
+const DocumentAnnotationValueModel = getModelForClass(DocumentAnnotationValue, defaultTransform);
 export { DocumentAnnotationValueModel };

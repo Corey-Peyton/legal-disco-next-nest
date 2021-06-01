@@ -1,6 +1,7 @@
-import { getModelForClass, prop } from '@typegoose/typegoose';
-import { DefaultTransform, ModelBase } from '../general/model-base';
+import { getModelForClass, modelOptions, prop } from '@typegoose/typegoose';
+import { defaultTransform, ModelBase } from '../general/model-base';
 import { Project } from './project';
+
 
 export class DatabaseServer extends ModelBase {
 
@@ -16,5 +17,5 @@ export class DatabaseServer extends ModelBase {
   }
 }
 
-const DatabaseServerModel = getModelForClass(DatabaseServer, DefaultTransform);
+const DatabaseServerModel = getModelForClass(DatabaseServer, defaultTransform);
 export { DatabaseServerModel };

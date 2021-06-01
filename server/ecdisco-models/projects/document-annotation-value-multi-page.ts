@@ -1,6 +1,7 @@
-import { getModelForClass, prop } from '@typegoose/typegoose';
-import { DefaultTransform, ModelBase } from '../general/model-base';
+import { getModelForClass, modelOptions, prop } from '@typegoose/typegoose';
+import { defaultTransform, ModelBase } from '../general/model-base';
 import { DocumentAnnotation } from './document-annotation';
+
 
 export class DocumentAnnotationValueMultiPage extends ModelBase {
 
@@ -13,6 +14,6 @@ export class DocumentAnnotationValueMultiPage extends ModelBase {
 }
 
 const DocumentAnnotationValueMultiPageModel = getModelForClass(
-  DocumentAnnotationValueMultiPage, DefaultTransform
+  DocumentAnnotationValueMultiPage, defaultTransform
 );
 export { DocumentAnnotationValueMultiPageModel };

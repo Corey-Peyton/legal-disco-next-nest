@@ -1,8 +1,9 @@
-import { getModelForClass, prop } from '@typegoose/typegoose';
+import { getModelForClass, modelOptions, prop } from '@typegoose/typegoose';
 import { Query } from 'express-serve-static-core';
-import { DefaultTransform, ModelBase } from '../general/model-base';
+import { defaultTransform, ModelBase } from '../general/model-base';
 import { DocumentAnnotation } from './document-annotation';
 import { Production } from './production';
+
 
 export class ProductionAnnotationFilter extends ModelBase {
 
@@ -23,6 +24,6 @@ export class ProductionAnnotationFilter extends ModelBase {
 }
 
 const ProductionAnnotationFilterModel = getModelForClass(
-  ProductionAnnotationFilter, DefaultTransform
+  ProductionAnnotationFilter, defaultTransform
 );
 export { ProductionAnnotationFilterModel };

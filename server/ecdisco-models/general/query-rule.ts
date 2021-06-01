@@ -1,10 +1,12 @@
-﻿import { getModelForClass, prop, Ref } from '@typegoose/typegoose';
+﻿import { getModelForClass, modelOptions, prop, Ref, Severity } from '@typegoose/typegoose';
 import { ObjectID } from 'bson';
+import { Schema } from 'mongoose';
 import { Condition } from '../enums/condition';
 import { FieldType } from '../enums/field-type';
 import { NodeType } from '../enums/node-type';
 import { Operation } from '../enums/operation';
-import { DefaultTransform, ModelBase } from './model-base';
+import { defaultTransform, ModelBase } from './model-base';
+
 
 export class QueryRule extends ModelBase {
 
@@ -17,6 +19,7 @@ export class QueryRule extends ModelBase {
   @prop()
   parentQueryRuleId: ObjectID;
 }
+
 
 export class ChildRule extends ModelBase {
   @prop()
@@ -33,6 +36,6 @@ export class ChildRule extends ModelBase {
   parentQueryRuleId: number;
 }
 
-const QueryRuleModel = getModelForClass(QueryRule, DefaultTransform);
-const ChildRuleModel = getModelForClass(ChildRule, DefaultTransform);
+const QueryRuleModel = getModelForClass(QueryRule, defaultTransform);
+const ChildRuleModel = getModelForClass(ChildRule, defaultTransform);
 export { QueryRuleModel, ChildRuleModel };
