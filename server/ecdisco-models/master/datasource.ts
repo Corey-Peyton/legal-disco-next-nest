@@ -4,8 +4,7 @@ import { Connection } from 'mongoose';
 import { DatasourceType } from '../enums/datasource-type';
 import { defaultTransform, ModelBase } from '../general/model-base';
 
-
-export class Datasource extends ModelBase {
+export class Datasources extends ModelBase {
 
   @prop()
   name: string;
@@ -17,8 +16,8 @@ export class Datasource extends ModelBase {
 
 const datasourceModel = (
   connection: Connection,
-): ReturnModelType<typeof Datasource, BeAnObject> => {
-  return getModelForClass(Datasource, {
+): ReturnModelType<typeof Datasources, BeAnObject> => {
+  return getModelForClass(Datasources, {
     ...defaultTransform,
     ...{
       existingConnection: connection,

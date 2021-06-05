@@ -11,8 +11,6 @@ import path from 'path';
 import connectMongo from 'connect-mongo';
 import { setGlobalOptions, Severity } from "@typegoose/typegoose";
 
-setGlobalOptions({ options: { allowMixed: Severity.ALLOW } });
-
 declare const module: any;
 
 async function bootstrap() {

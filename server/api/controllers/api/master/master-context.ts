@@ -1,9 +1,6 @@
 import {
-  connect,
   Connection,
-  createConnection,
-  mongo,
-  Mongoose,
+  createConnection
 } from 'mongoose';
 
 export class MasterContext {

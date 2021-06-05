@@ -1,10 +1,10 @@
 import { prop } from '@typegoose/typegoose';
 import { ModelBase } from '../general/model-base';
-import { Datasource } from './datasource';
+import { Datasources } from './datasource';
 
 export class DatasourceType extends ModelBase {
   @prop()
-  datasources: Datasource[];
+  datasources: Datasources[];
 
   @prop()
   name: string;

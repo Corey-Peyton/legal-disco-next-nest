@@ -1,5 +1,5 @@
 import { ObjectID } from 'bson';
-import { connect, Connection, createConnection, Mongoose } from 'mongoose';
+import { Connection, createConnection } from 'mongoose';
 
 export class ProjectContext {
   projectId: ObjectID;

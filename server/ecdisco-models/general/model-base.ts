@@ -1,4 +1,7 @@
-import { modelOptions, Severity } from '@typegoose/typegoose';
+import {
+  modelOptions,
+  Severity
+} from '@typegoose/typegoose';
 import { ObjectID } from 'bson';
 
 export const defaultOptions = {

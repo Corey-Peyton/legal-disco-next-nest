@@ -4,7 +4,6 @@ import { Connection, Mongoose } from 'mongoose';
 import { MasterContext } from './master-context';
 import { MasterController } from './master-controller';
 
-@Controller()
 export class MasterBaseController extends MasterController {
   sessionId: number;
 
