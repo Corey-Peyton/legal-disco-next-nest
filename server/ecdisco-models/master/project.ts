@@ -1,12 +1,11 @@
+import { prop } from '@typegoose/typegoose';
+import { ObjectID } from 'mongodb';
+import { Connection } from 'mongoose';
+import { getCommonModelForClass, ModelBase } from '../general/model-base';
 import { DatabaseServer } from './database-server';
 import { Datasources } from './datasource';
 import { ProjectGroup } from './project-group';
 import { ProjectUser } from './project-user';
-import { prop, getModelForClass, ReturnModelType, modelOptions } from '@typegoose/typegoose';
-import { defaultTransform, ModelBase } from '../general/model-base';
-import { ObjectID } from 'mongodb';
-import { Connection } from 'mongoose';
-import { BeAnObject } from '@typegoose/typegoose/lib/types';
 
 export class Project extends ModelBase {
   @prop()
@@ -24,14 +23,6 @@ export class Project extends ModelBase {
   projectUsers?: ProjectUser[];
 }
 
-const ProjectModel = (
-  connection: Connection,
-): ReturnModelType<typeof Project, BeAnObject> => {
-  return getModelForClass(Project, {
-    ...defaultTransform,
-    ...{
-      existingConnection: connection,
-    },
-  });
+export const ProjectModel = (connection: Connection) => {
+  return getCommonModelForClass(Project, connection);
 };
-export { ProjectModel };

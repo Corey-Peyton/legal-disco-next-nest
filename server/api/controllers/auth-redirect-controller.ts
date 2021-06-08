@@ -28,9 +28,9 @@ export class AuthRedirectController extends MasterBaseController {
 
     const projectConnection = new ProjectContext(projectId);
 
-    const projectContext = projectConnection.context;
+    const projectContext = await projectConnection.context;
 
-    const datasources = (await DatasourceModel.findById(datasourceId).select(
+    const datasources = (await DatasourceModel(projectContext).findById(datasourceId).select(
       'source'
     )).source;
 
@@ -99,7 +99,7 @@ export class AuthRedirectController extends MasterBaseController {
       })
     ).id;
 
-    DatasourceModel.findByIdAndUpdate(datasourceId, {
+    DatasourceModel(projectContext).findByIdAndUpdate(datasourceId, {
       $set: { authTokenId: tokenId },
     });
 

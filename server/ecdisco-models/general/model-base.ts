@@ -1,8 +1,11 @@
 import {
+  getModelForClass,
   modelOptions,
   Severity
 } from '@typegoose/typegoose';
+import { AnyParamConstructor, BeAnObject } from '@typegoose/typegoose/lib/types';
 import { ObjectID } from 'bson';
+import { Connection } from 'mongoose';
 
 export const defaultOptions = {
   options: {
@@ -33,4 +36,19 @@ export const defaultTransform = {
       },
     },
   },
+};
+
+export const getCommonModelForClass = <
+  U extends AnyParamConstructor<any>,
+  QueryHelpers = BeAnObject
+>(
+  cl: U,
+  connection: Connection,
+) => {
+  return getModelForClass(cl, {
+    ...defaultTransform,
+    ...{
+      existingConnection: connection,
+    },
+  });
 };
