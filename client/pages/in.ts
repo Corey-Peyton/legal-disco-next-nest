@@ -28,6 +28,7 @@ import 'vue-context/dist/css/vue-context.css';
 import { Component, Vue, Watch } from 'vue-property-decorator';
 import { Route } from 'vue-router';
 import uploader from 'vue-simple-uploader';
+import { ObjectId } from 'bson';
 // tslint:disable-next-line: max-line-length
 // TODO: Need to check if following should be used in main as this registers globally. so if someone registers again then what happens.
 Vue.use(uploader);
@@ -346,13 +347,13 @@ export default class In extends Vue {
     }
 
     // TODO: Define axios graphql base url.
-    ApiService.post(query, variables).then((responseData: any) => {
+    ApiService.post(query, variables).then((id: ObjectId) => {
       switch (parentNode.data.nodeType) {
         case NodeType.Project:
-          data.id = responseData.project.id;
+          data.id = id;
           break;
         case NodeType.Datasource:
-          data.id = responseData.datasource.id;
+          data.id = id;
       }
     });
   }
