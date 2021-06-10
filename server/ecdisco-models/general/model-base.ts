@@ -1,9 +1,8 @@
+import { getModelForClass, modelOptions, Severity } from '@typegoose/typegoose';
 import {
-  getModelForClass,
-  modelOptions,
-  Severity
-} from '@typegoose/typegoose';
-import { AnyParamConstructor, BeAnObject } from '@typegoose/typegoose/lib/types';
+  AnyParamConstructor,
+  BeAnObject,
+} from '@typegoose/typegoose/lib/types';
 import { ObjectID } from 'bson';
 import { Connection } from 'mongoose';
 

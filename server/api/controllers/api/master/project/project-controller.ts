@@ -5,7 +5,7 @@ import { DatabaseServerModel } from '../../../../../ecdisco-models/master/databa
 import { datasourceModel } from '../../../../../ecdisco-models/master/datasource';
 import {
   Project,
-  ProjectModel,
+  ProjectModel
 } from '../../../../../ecdisco-models/master/project';
 import { GlobalConfiguration } from '../../../global-configuration';
 import { ProjectBaseController } from '../../project/project-base-controller';
@@ -81,3 +81,4 @@ export class ProjectController extends MasterBaseController {
     return project.id;
   }
 }
+

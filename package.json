@@ -71,6 +71,7 @@
     "rxjs": "^6.6.7",
     "splitpanes": "^2.3.6",
     "ts-loader": "^8.2.0",
+    "typegoose": "^5.9.1",
     "typeorm": "^0.2.32",
     "vue": "^2.6.12",
     "vue-class-component": "^7.2.6",

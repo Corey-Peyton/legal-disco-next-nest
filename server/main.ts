@@ -1,17 +1,17 @@
 import { NestFactory } from '@nestjs/core';
+import connectMongo from 'connect-mongo';
 import Consola from 'consola';
 import session from 'express-session';
+import fs from 'fs';
 import passport from 'passport';
+import path from 'path';
 import config from '../nuxt.config';
 import { ApplicationModule } from './application.module';
 import NuxtServer from './nuxt/';
 import { NuxtFilter } from './nuxt/nuxt.filter';
-import fs from 'fs';
-import path from 'path';
-import connectMongo from 'connect-mongo';
-import { setGlobalOptions, Severity } from "@typegoose/typegoose";
 
 declare const module: any;
+
 
 async function bootstrap() {
   const { host, port } = config.env;
@@ -30,7 +30,7 @@ async function bootstrap() {
     config.dev ? !(module.hot && module.hot._main) : true,
   );
   const server = await NestFactory.create(ApplicationModule, {
-    httpsOptions
+    httpsOptions,
   });
 
   server.useGlobalFilters(new NuxtFilter(nuxt)); // On 404: This loads nuxt. Like other SPA do.

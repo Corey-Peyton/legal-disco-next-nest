@@ -50,16 +50,14 @@ export class DatasourceController extends ProjectBaseController {
 
   @Post('getFiles')
   async getFiles(@Body() datasources: Datasource): Promise<string> {
-
-    
-
     if (((datasources.id as unknown) as number) === 1) {
       return this.getFTPFiles();
     }
 
-    const datasource: Datasource = await DatasourceModel(await this.projectContext).findById(
-      datasources.id,
+    const datasource: Datasource = await DatasourceModel(
+      await this.projectContext,
     )
+      .findById(datasources.id)
       .select(['authTokenId', 'source'])
       .exec();
 
@@ -205,11 +203,12 @@ export class DatasourceController extends ProjectBaseController {
   // Static readonly HttpClient httpClient = new HttpClient();
   @Post('saveDatasource')
   async saveDatasource(@Body() datasource: Datasource): Promise<ObjectID> {
-
     this.projectId = datasource.project.id;
 
     if (datasource.id) {
-      datasource = await DatasourceModel(await this.projectContext).findOneAndUpdate(
+      datasource = await DatasourceModel(
+        await this.projectContext,
+      ).findOneAndUpdate(
         { id: datasource.id },
         {
           $set: {
