@@ -82,6 +82,49 @@ const config: NuxtConfig = {
   build: {
     transpile: [/^element-ui/],
   },
+
+  router: {
+    extendRoutes(routes, resolve) {
+      return [
+        {
+          path: '/',
+          name: 'home',
+          component: resolve(__dirname, 'pages/home.vue'),
+        },
+        {
+          path: '/in',
+          name: 'in',
+          // Route level code-splitting
+          // This generates a separate chunk (in.[hash].js) for this route
+          // Which is lazy-loaded when the route is visited.
+          component: resolve(__dirname, 'pages/in/in.vue'),
+        },
+        {
+          path: '/in/project/:projectId/datasource/:datasourceId',
+          name: 'in',
+          // Route level code-splitting
+          // This generates a separate chunk (in.[hash].js) for this route
+          // Which is lazy-loaded when the route is visited.
+          component: resolve(__dirname, 'pages/in/in.vue'),
+        },
+        {
+          path: '/work/project/:projectId',
+          name: 'work',
+          component: resolve(__dirname, 'pages/work/work.vue'),
+        },
+        {
+          path: '/out/project/:projectId',
+          name: 'out',
+          component: resolve(__dirname, 'pages/out/out.vue'),
+        },
+        {
+          path: '/annotator/:documentId',
+          name: 'annotator',
+          component: resolve(__dirname, 'components/annotator/annotator.vue'),
+        },
+      ];
+    },
+  },
 };
 
-export default config;
+export { config };

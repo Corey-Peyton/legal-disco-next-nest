@@ -15,7 +15,7 @@
     "esModuleInterop": true,
     "moduleResolution": "node",
     "baseUrl": "./",
-    "skipLibCheck": true, // Temporary. https://github.com/nuxt/typescript/issues/49
+    "skipLibCheck": true, // TODO: Remove. Temporary. https://github.com/nuxt/typescript/issues/49
     "paths": {
       "~/*": ["server/*"],
       "@/*": [

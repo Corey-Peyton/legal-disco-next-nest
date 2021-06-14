@@ -5,7 +5,7 @@ import session from 'express-session';
 import fs from 'fs';
 import passport from 'passport';
 import path from 'path';
-import config from '../nuxt.config';
+import { config } from '../client/nuxt.config';
 import { ApplicationModule } from './application.module';
 import NuxtServer from './nuxt/';
 import { NuxtFilter } from './nuxt/nuxt.filter';
