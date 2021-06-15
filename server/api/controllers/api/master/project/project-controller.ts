@@ -1,11 +1,11 @@
 ﻿import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { ObjectID } from 'bson';
+import { DatasourceModel } from '~/ecdisco-models/projects/datasource';
 import { AuthenticatedGuard } from '../../../../../auth/oidc/session-guard';
 import { DatabaseServerModel } from '../../../../../ecdisco-models/master/database-server';
-import { datasourceModel } from '../../../../../ecdisco-models/master/datasource';
 import {
   Project,
-  ProjectModel
+  ProjectModel,
 } from '../../../../../ecdisco-models/master/project';
 import { GlobalConfiguration } from '../../../global-configuration';
 import { ProjectBaseController } from '../../project/project-base-controller';
@@ -29,13 +29,15 @@ export class ProjectController extends MasterBaseController {
   async getProjects(): Promise<Project[]> {
     const projects = await ProjectModel(await this.masterContext).find({});
 
-    await Promise.all(projects.map(async (project) => {
-      const projectBaseController = new ProjectBaseController();
-      projectBaseController.projectId = project.id;
-      project.datasource = await datasourceModel(
-        await projectBaseController.projectContext,
-      ).find({});
-    }));
+    await Promise.all(
+      projects.map(async function (project) {
+        const projectBaseController = new ProjectBaseController();
+        projectBaseController.projectId = project.id;
+        project.datasource = await DatasourceModel(
+          await projectBaseController.projectContext,
+        ).find({});
+      }),
+    );
 
     return projects;
   }
@@ -44,21 +46,15 @@ export class ProjectController extends MasterBaseController {
   async saveProject(@Body() project: Project): Promise<ObjectID> {
     const avail = GlobalConfiguration.AvailableDatabaseServer;
 
-    await DatabaseServerModel.updateOne(
-      {
-        name: avail,
-      },
-      {
-        name: avail,
-      },
+    await (await DatabaseServerModel()).updateOne(
+      { name: avail },
+      { name: avail },
       { upsert: true },
     );
 
     // TODO: We will fetch this based on computed storage of cloud. For now it is fixed from Global Configuration.
     project.databaseServerId = (
-      await DatabaseServerModel.findOne({
-        name: avail,
-      })
+      await (await DatabaseServerModel()).findOne({ name: avail })
     ).id;
 
     if (project.id) {
@@ -81,4 +77,3 @@ export class ProjectController extends MasterBaseController {
     return project.id;
   }
 }
-

@@ -1,11 +1,13 @@
-import { getModelForClass, modelOptions, prop, ReturnModelType } from '@typegoose/typegoose';
+import {
+  getModelForClass, prop,
+  ReturnModelType
+} from '@typegoose/typegoose';
 import { BeAnObject } from '@typegoose/typegoose/lib/types';
 import { Connection } from 'mongoose';
 import { DatasourceType } from '../enums/datasource-type';
 import { defaultTransform, ModelBase } from '../general/model-base';
 
 export class Datasources extends ModelBase {
-
   @prop()
   name: string;
   @prop()
@@ -21,7 +23,12 @@ const datasourceModel = (
     ...defaultTransform,
     ...{
       existingConnection: connection,
+      options: {
+        customName: connection.db.databaseName,
+        automaticName: true,
+      },
     },
   });
 };
 export { datasourceModel };
+

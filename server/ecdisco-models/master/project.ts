@@ -2,8 +2,8 @@ import { prop } from '@typegoose/typegoose';
 import { ObjectID } from 'mongodb';
 import { Connection } from 'mongoose';
 import { getCommonModelForClass, ModelBase } from '../general/model-base';
+import { Datasource } from '../projects/datasource';
 import { DatabaseServer } from './database-server';
-import { Datasources } from './datasource';
 import { ProjectGroup } from './project-group';
 import { ProjectUser } from './project-user';
 
@@ -13,7 +13,7 @@ export class Project extends ModelBase {
   @prop()
   databaseServerId?: ObjectID;
   @prop()
-  datasource?: Datasources[];
+  datasource?: Datasource[];
 
   @prop()
   name?: string;

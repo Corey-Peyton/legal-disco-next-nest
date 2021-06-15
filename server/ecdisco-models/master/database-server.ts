@@ -1,7 +1,7 @@
-import { getModelForClass, modelOptions, prop } from '@typegoose/typegoose';
-import { defaultTransform, ModelBase } from '../general/model-base';
+import { prop } from '@typegoose/typegoose';
+import { MasterContext } from '~/api/controllers/api/master/master-context';
+import { getCommonModelForClass, ModelBase } from '../general/model-base';
 import { Project } from './project';
-
 
 export class DatabaseServer extends ModelBase {
 
@@ -17,5 +17,7 @@ export class DatabaseServer extends ModelBase {
   }
 }
 
-const DatabaseServerModel = getModelForClass(DatabaseServer, defaultTransform);
+const DatabaseServerModel = async () => { 
+  return getCommonModelForClass(DatabaseServer, await new MasterContext().context); 
+};
 export { DatabaseServerModel };

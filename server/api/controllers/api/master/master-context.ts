@@ -1,7 +1,4 @@
-import {
-  Connection,
-  createConnection
-} from 'mongoose';
+import { Connection, createConnection } from 'mongoose';
 
 export class MasterContext {
   get context(): Promise<Connection> {

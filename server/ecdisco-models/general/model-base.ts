@@ -48,6 +48,10 @@ export const getCommonModelForClass = <
     ...defaultTransform,
     ...{
       existingConnection: connection,
+      options: {
+        customName: connection.db.databaseName,
+        automaticName: true,
+      },
     },
   });
 };
