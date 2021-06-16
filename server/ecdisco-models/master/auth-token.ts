@@ -1,9 +1,7 @@
 import { getModelForClass, modelOptions, prop } from '@typegoose/typegoose';
 import { defaultTransform, ModelBase } from '../general/model-base';
 
-
 export class AuthToken extends ModelBase {
-
   @prop()
   tokenType: string;
   @prop()
@@ -18,5 +16,4 @@ export class AuthToken extends ModelBase {
   dateTime: Date;
 }
 
-const AuthTokenModel = getModelForClass(AuthToken, defaultTransform);
-export { AuthTokenModel };
+export const AuthTokenModel = getModelForClass(AuthToken, defaultTransform);

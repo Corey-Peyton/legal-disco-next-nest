@@ -23,7 +23,6 @@ export class ProductionAnnotationFilter extends ModelBase {
   query: Query;
 }
 
-const ProductionAnnotationFilterModel = getModelForClass(
+export const ProductionAnnotationFilterModel = getModelForClass(
   ProductionAnnotationFilter, defaultTransform
 );
-export { ProductionAnnotationFilterModel };

@@ -3,9 +3,7 @@ import { Document } from '../../api/document';
 import { defaultTransform, ModelBase } from '../general/model-base';
 import { DocumentAnnotation } from './document-annotation';
 
-
 export class DocumentAnnotationValue extends ModelBase {
-
   @prop()
   documentAnnotationId: number;
   @prop()
@@ -20,5 +18,7 @@ export class DocumentAnnotationValue extends ModelBase {
   documentAnnotation: DocumentAnnotation;
 }
 
-const DocumentAnnotationValueModel = getModelForClass(DocumentAnnotationValue, defaultTransform);
-export { DocumentAnnotationValueModel };
+export const DocumentAnnotationValueModel = getModelForClass(
+  DocumentAnnotationValue,
+  defaultTransform,
+);

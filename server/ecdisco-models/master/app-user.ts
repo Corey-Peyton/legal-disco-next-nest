@@ -5,7 +5,6 @@ import { IdentityProvider } from './identity-provider';
 import { ProjectUser } from './project-user';
 import { UserClaim } from './user-claim';
 
-
 export class AppUser extends ModelBase {
   @prop()
   email: string;
@@ -41,5 +40,4 @@ export class AppUser extends ModelBase {
   }
 }
 
-const AppUserModel = getModelForClass(AppUser, defaultTransform);
-export { AppUserModel };
+export const AppUserModel = getModelForClass(AppUser, defaultTransform);
