@@ -1,27 +1,32 @@
-﻿import * as amqp from 'amqplib/callback_api';
+﻿import { Body, Controller, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import * as amqp from 'amqplib/callback_api';
 import * as fs from 'fs';
+import mime from 'mime-types';
 import * as path from 'path';
 import * as redis from 'redis';
 import { Hash } from '../../general/hash/hash';
 import { ChunkMetaData } from './chunk-meta-data';
 import { FileResult } from './file-result';
-import mime from 'mime-types';
-import { Controller } from '@nestjs/common';
+// This is a hack to make Multer available in the Express namespace
+import { Multer } from 'multer'
 
 @Controller('Upload')
 export class UploadController {
+  @Post()
+  @UseInterceptors(FileInterceptor('file'))
   async index(
-    file: any,
-    chunkNumber: number,
-    chunkSize: number,
-    currentChunkSize: number,
-    totalSize: number,
-    identifier: string,
-    filename: string,
-    relativePath: string,
-    totalChunks: number,
-    projectId: number,
-    datasourceId: number
+    @UploadedFile() file: Express.Multer.File,
+    @Body() chunkNumber: number,
+    @Body() chunkSize: number,
+    @Body() currentChunkSize: number,
+    @Body() totalSize: number,
+    @Body() identifier: string,
+    @Body() filename: string,
+    @Body() relativePath: string,
+    @Body() totalChunks: number,
+    @Body() projectId: number,
+    @Body() datasourceId: number,
   ): Promise<FileResult> {
     // Here first check nist list. and filter them.
     //https://www.nist.gov/itl/ssd/software-quality-group/national-software-reference-library-nsrl
@@ -44,7 +49,7 @@ export class UploadController {
       `Project_${projectId}`,
       'Source',
       `Datasource_${datasourceId}`,
-      chunkData.RelativePath
+      chunkData.RelativePath,
     );
 
     const directoyName = path.dirname(filePath);
@@ -71,7 +76,7 @@ export class UploadController {
 
     const isSystemFile = client.sismember(
       'NSRLHash',
-      await Hash.GetHash(filePath)
+      await Hash.GetHash(filePath),
     );
 
     if (fileResult.uploaded && !isSystemFile) {
@@ -95,8 +100,8 @@ export class UploadController {
                 projectId,
                 datasourceId,
                 documentPath: filePath,
-              })
-            )
+              }),
+            ),
           );
         });
       });

@@ -140,7 +140,7 @@ export default class In extends Vue {
 
   options = {
     //  TODO: Following base url is fixed. Need to move to common.
-    target: `${ApiService.apiHost}/api/upload`,
+    target: `${ApiService.apiHost}api/upload`,
     testChunks: false,
     query: {
       projectId: 0,
