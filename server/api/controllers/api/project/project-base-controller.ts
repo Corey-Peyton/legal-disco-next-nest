@@ -12,12 +12,6 @@ export class ProjectBaseController extends MasterController {
   }
 
   get projectContext(): Promise<Connection> {
-    if (!this.m_projectContext) {
-      this.m_projectContext = new ProjectContext(this.projectId).context;
-    }
-
-    return this.m_projectContext;
+    return new ProjectContext(this.projectId).context;
   }
-
-  private m_projectContext: Promise<Connection>;
 }

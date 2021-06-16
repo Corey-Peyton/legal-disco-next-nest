@@ -2,6 +2,7 @@ import { getModelForClass, modelOptions, Severity } from '@typegoose/typegoose';
 import {
   AnyParamConstructor,
   BeAnObject,
+  IModelOptions,
 } from '@typegoose/typegoose/lib/types';
 import { ObjectID } from 'bson';
 import { Connection } from 'mongoose';
@@ -24,7 +25,7 @@ export class ModelBase {
   }
 }
 
-export const defaultTransform = {
+export const defaultTransform: IModelOptions = {
   schemaOptions: {
     toJSON: {
       virtuals: true,
@@ -44,8 +45,11 @@ export const getCommonModelForClass = <
   cl: U,
   connection: Connection,
 ) => {
+  const customTransform = defaultTransform;
+  customTransform.schemaOptions.collection = cl.name;
+
   return getModelForClass(cl, {
-    ...defaultTransform,
+    ...customTransform,
     ...{
       existingConnection: connection,
       options: {
