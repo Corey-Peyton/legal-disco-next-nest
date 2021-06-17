@@ -45,9 +45,7 @@ export class UploadController {
 
     const directoyName = path.dirname(filePath);
 
-    if (!fs.existsSync(directoyName)) {
-      fs.mkdirSync(directoyName);
-    }
+    await fs.mkdir(directoyName, { recursive: true }, null);
 
     const fileStream = fs.createWriteStream(filePath, {
       flags: 'a+',
