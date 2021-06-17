@@ -1,4 +1,10 @@
-﻿import { Body, Controller, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
+﻿import {
+  Body,
+  Controller,
+  Post,
+  UploadedFile,
+  UseInterceptors,
+} from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import * as amqp from 'amqplib/callback_api';
 import * as fs from 'fs';
@@ -6,50 +12,35 @@ import mime from 'mime-types';
 import * as path from 'path';
 import * as redis from 'redis';
 import { Hash } from '../../general/hash/hash';
-import { ChunkMetaData } from './chunk-meta-data';
+import { FileChunkMetaData } from './file-chunk-meta-data';
 import { FileResult } from './file-result';
 // This is a hack to make Multer available in the Express namespace
-import { Multer } from 'multer'
+import { Multer } from 'multer';
 
 @Controller('Upload')
 export class UploadController {
   @Post()
   @UseInterceptors(FileInterceptor('file'))
   async index(
-    @UploadedFile() file: Express.Multer.File,
-    @Body() chunkNumber: number,
-    @Body() chunkSize: number,
-    @Body() currentChunkSize: number,
-    @Body() totalSize: number,
-    @Body() identifier: string,
-    @Body() filename: string,
-    @Body() relativePath: string,
-    @Body() totalChunks: number,
-    @Body() projectId: number,
-    @Body() datasourceId: number,
+    @UploadedFile() fileChunk: Express.Multer.File,
+    @Body() fileChunkMetaData: FileChunkMetaData,
   ): Promise<FileResult> {
     // Here first check nist list. and filter them.
     //https://www.nist.gov/itl/ssd/software-quality-group/national-software-reference-library-nsrl
     // In above link there is download link as well.
     //https://www.nist.gov/itl/ssd/software-quality-group/national-software-reference-library-nsrl/nsrl-download
 
-    const chunkData: ChunkMetaData = {
-      UploadUid: identifier,
-      FileName: filename,
-      RelativePath: relativePath,
-      ChunkIndex: chunkNumber,
-      TotalChunks: totalChunks,
-      TotalFileSize: totalSize,
-      ContentType: mime.lookup(filename) as string,
-    };
+    fileChunkMetaData.contentType = mime.lookup(
+      fileChunkMetaData.filename,
+    ) as string;
 
     //TODO: Folder upload not working.
     const filePath = path.join(
       'C:\\ecdiscoProjects', //TODO: This path will be from Database.
-      `Project_${projectId}`,
+      `Project_${fileChunkMetaData.projectId}`,
       'Source',
-      `Datasource_${datasourceId}`,
-      chunkData.RelativePath,
+      `Datasource_${fileChunkMetaData.datasourceId}`,
+      fileChunkMetaData.relativePath,
     );
 
     const directoyName = path.dirname(filePath);
@@ -60,14 +51,15 @@ export class UploadController {
 
     const fileStream = fs.createWriteStream(filePath, {
       flags: 'a+',
-      start: (chunkData.ChunkIndex - 1) * chunkSize,
+      start: (fileChunkMetaData.chunkNumber - 1) * fileChunkMetaData.chunkSize,
     });
 
-    fileStream.write(file);
+    fileStream.write(fileChunk);
 
     const fileResult: FileResult = {
-      uploaded: chunkData.TotalChunks - 1 <= chunkData.ChunkIndex,
-      fileUid: chunkData.UploadUid,
+      uploaded:
+        fileChunkMetaData.totalChunks - 1 <= fileChunkMetaData.chunkNumber,
+      fileUid: fileChunkMetaData.identifier,
     };
     const client = redis.createClient({
       port: 6379,
@@ -97,8 +89,8 @@ export class UploadController {
             documentProcessQueue,
             Buffer.from(
               JSON.stringify({
-                projectId,
-                datasourceId,
+                projectId: fileChunkMetaData.projectId,
+                datasourceId: fileChunkMetaData.datasourceId,
                 documentPath: filePath,
               }),
             ),
