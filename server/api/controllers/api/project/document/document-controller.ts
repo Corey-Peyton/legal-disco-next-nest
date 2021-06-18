@@ -1,5 +1,5 @@
 ﻿import { Client } from '@elastic/elasticsearch';
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post, Headers } from '@nestjs/common';
 import { ObjectID } from 'bson';
 import fs from 'fs';
 import path from 'path';
@@ -51,23 +51,19 @@ export class DocumentController extends ProjectBaseController {
   }
 
   @Post('addDocument')
-  addDocument(@Body() document: Document): number {
-    this.projectContext;
+  async addDocument(
+    @Body() document: Document,
+    @Headers('projectid') projectId: ObjectID,
+  ): Promise<ObjectID> {
+    this.projectId = projectId;
+    const newDocument = await DocumentModel(await this.projectContext).create({
+      parentDocumentId: document.parentDocumentId,
+      datasourceId: document.datasourceId,
+      fileName: path.parse(document.fileName).name,
+      fileExtension: path.parse(document.fileName).ext,
+    });
 
-    let documentId;
-
-    (async () => {
-      documentId = (
-        await DocumentModel.create({
-          parentDocumentId: document.parentDocumentId,
-          datasourceId: document.datasourceId,
-          fileName: path.parse(document.fileName).name,
-          fileExtension: path.parse(document.fileName).ext,
-        } as Document)
-      ).id;
-    })();
-
-    return documentId;
+    return newDocument.id;
   }
 
   @Post('deleteSelectedColumnData')
@@ -424,7 +420,9 @@ export class DocumentController extends ProjectBaseController {
         let docTableRow;
 
         (async () => {
-          docTableRow = await DocumentModel.aggregate([
+          docTableRow = await DocumentModel(
+            await this.projectContext,
+          ).aggregate([
             {
               $lookup: columnNameWIthJoin[column],
             },

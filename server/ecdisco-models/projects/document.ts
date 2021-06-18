@@ -1,10 +1,10 @@
 import {
-  getModelForClass,
-  modelOptions,
   prop,
-  Ref,
+  Ref
 } from '@typegoose/typegoose';
-import { defaultTransform, ModelBase } from '../general/model-base';
+import { ObjectID } from 'bson';
+import { Connection } from 'mongoose';
+import { getCommonModelForClass, ModelBase } from '../general/model-base';
 import { Datasources } from '../master/datasource';
 import { DocumentAnnotationValue } from './document-annotation-value';
 import { DocumentFieldBooleanValue } from './document-field-boolean-value';
@@ -21,7 +21,7 @@ export class Document extends ModelBase {
   @prop()
   datasource: Datasources;
   @prop()
-  datasourceId: number;
+  datasourceId: ObjectID;
   @prop()
   documentAnnotationValues: DocumentAnnotationValue[];
   @prop()
@@ -42,7 +42,7 @@ export class Document extends ModelBase {
   @prop()
   parentDocument: Ref<Document>;
   @prop()
-  parentDocumentId: number;
+  parentDocumentId: ObjectID;
   constructor() {
     super();
     this.documentAnnotationValues = [];
@@ -55,4 +55,6 @@ export class Document extends ModelBase {
   }
 }
 
-export const DocumentModel = getModelForClass(Document, defaultTransform);
+export const DocumentModel = (connection: Connection) => {
+  return getCommonModelForClass(Document, connection);
+};

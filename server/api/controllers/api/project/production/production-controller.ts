@@ -200,7 +200,7 @@ export class ProductionController extends ProjectBaseController {
     let DocumentIds: number[] = [];
 
     async () => {
-      DocumentIds = (await DocumentModel.aggregate(finalQuery)).map(
+      DocumentIds = (await DocumentModel(await this.projectContext).aggregate(finalQuery)).map(
         (document) => document.id,
       );
     };

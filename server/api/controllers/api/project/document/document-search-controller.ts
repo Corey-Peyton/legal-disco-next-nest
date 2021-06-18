@@ -64,7 +64,7 @@ export class DocumentSearchController extends ProjectBaseController {
     const finalQuery = [whereQuery, ...lookups];
 
     (await this.projectContext).collection(this.tempDocumentSearchResult)
-      .insertMany(await DocumentModel.aggregate(finalQuery));
+      .insertMany(await DocumentModel(await this.projectContext).aggregate(finalQuery));
 
     const gridData = (await this.projectContext).collection(this.tempDocumentSearchResult)
       .find({}, selectedColumn);
