@@ -1,6 +1,6 @@
 ﻿import { Body, Controller, Post } from '@nestjs/common';
 import AdmZip from 'adm-zip';
-import amqp from 'amqplib/callback_api';
+import amqp from 'amqplib';
 import fs from 'fs';
 import path from 'path';
 import { FileResponse } from '../../../../../ecdisco-models/general/file-response';
@@ -25,7 +25,6 @@ import { ProjectBaseController } from '../project-base-controller';
 export class ProductionController extends ProjectBaseController {
   @Post('production')
   async production(@Body() production: Production): Promise<Production> {
-    
     this.projectContext;
 
     return await ProductionModel.findById(production.id);
@@ -33,7 +32,6 @@ export class ProductionController extends ProjectBaseController {
 
   @Post('productions')
   async productions(): Promise<Production[]> {
-
     this.projectContext;
 
     return await ProductionModel.find({});
@@ -41,7 +39,6 @@ export class ProductionController extends ProjectBaseController {
 
   @Post('saveProduction')
   async saveProduction(@Body() production: Production): Promise<number> {
-
     this.projectContext;
 
     return (
@@ -57,7 +54,6 @@ export class ProductionController extends ProjectBaseController {
 
   @Post('runProduction')
   async runProduction(@Body() production: Production): Promise<void> {
-
     this.projectContext;
 
     // 1  Get Prduction id
@@ -94,7 +90,7 @@ export class ProductionController extends ProjectBaseController {
     });
 
     // 4 Now loop through main documents
-    productionDocuments.forEach((productionDocumentId) => {
+    productionDocuments.forEach(async (productionDocumentId) => {
       // 5  If document is associated in any annotation, then do annotation.
       if (productionDocumentId in documentsAnnotations) {
         const documentAnnotations: number[] =
@@ -155,29 +151,27 @@ export class ProductionController extends ProjectBaseController {
           fs.copyFile(file, productionFile, null);
         });
 
-        amqp.connect('amqp://localhost', (connectionError, connection) => {
-          connection.createChannel((channelError, channel) => {
-            const imageAnnotatorQueue = 'imageAnnotator';
+        const connection = await amqp.connect('amqp://localhost');
+        const channel = await connection.createChannel();
+        const imageAnnotatorQueue = 'imageAnnotator';
 
-            channel.assertQueue(imageAnnotatorQueue, {
-              durable: false,
-              exclusive: false,
-              autoDelete: false,
-              arguments: null,
-            });
-
-            channel.sendToQueue(
-              imageAnnotatorQueue,
-              Buffer.from(
-                JSON.stringify({
-                  projectId: this.projectId,
-                  documentId: productionDocumentId,
-                  annotations: annotationsArray,
-                }),
-              ),
-            );
-          });
+        channel.assertQueue(imageAnnotatorQueue, {
+          durable: false,
+          exclusive: false,
+          autoDelete: false,
+          arguments: null,
         });
+
+        channel.sendToQueue(
+          imageAnnotatorQueue,
+          Buffer.from(
+            JSON.stringify({
+              projectId: this.projectId,
+              documentId: productionDocumentId,
+              annotations: annotationsArray,
+            }),
+          ),
+        );
       }
     });
   }
@@ -216,7 +210,6 @@ export class ProductionController extends ProjectBaseController {
 
   @Post('downloadProduction')
   downloadProduction(@Body() production: any): FileResponse {
-
     this.projectContext;
 
     // 1  Get Prduction id

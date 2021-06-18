@@ -5,7 +5,7 @@ import { Hash } from '../general/hash/hash';
 import fs from 'fs';
 
 import cron from 'node-cron';
-import amqp from 'amqplib/callback_api';
+import amqp from 'amqplib';
 import crypto from 'crypto';
 const sha1 = crypto.createHash('sha1');
 
@@ -20,7 +20,7 @@ export class NSRL {
     const currentRDSDirectory: string = path.join(destination, 'current');
     const versionTextFilePath: string = path.join(
       currentRDSDirectory,
-      'version.txt'
+      'version.txt',
     );
 
     if (
@@ -37,41 +37,39 @@ export class NSRL {
       this.downloadFile(`${source}current/version.txt`, versionTextFilePath);
       this.downloadFile(
         `${source}current/rds_modernm.zip`,
-        path.join(currentRDSDirectory, 'rds_modernm.zip')
+        path.join(currentRDSDirectory, 'rds_modernm.zip'),
       );
       this.downloadFile(
         `${source}current/RDS_android.iso`,
-        path.join(currentRDSDirectory, 'RDS_android.iso')
+        path.join(currentRDSDirectory, 'RDS_android.iso'),
       );
       this.downloadFile(
         `${source}rds_2.65/RDS_android.iso`,
-        path.join(pastRDSDirectory, 'RDS_android.iso')
+        path.join(pastRDSDirectory, 'RDS_android.iso'),
       );
       this.downloadFile(
         `${source}current/RDS_ios.iso`,
-        path.join(currentRDSDirectory, 'RDS_ios.iso')
+        path.join(currentRDSDirectory, 'RDS_ios.iso'),
       );
       this.downloadFile(
         `${source}current/RDS_legacy.iso`,
-        path.join(currentRDSDirectory, 'RDS_legacy.iso')
+        path.join(currentRDSDirectory, 'RDS_legacy.iso'),
       );
 
       // Send ecdiscoextract project a request to update redis from their file.
 
-      amqp.connect('amqp://localhost', (connectionError, connection) => {
-        connection.createChannel((channelError, channel) => {
-          const documentProcessQueue = 'UpdateNSRL';
+      const connection = await amqp.connect('amqp://localhost');
+      const channel = await connection.createChannel();
+      const documentProcessQueue = 'UpdateNSRL';
 
-          channel.assertQueue(documentProcessQueue, {
-            durable: false,
-            exclusive: false,
-            autoDelete: false,
-            arguments: null,
-          });
-
-          channel.sendToQueue(documentProcessQueue, null);
-        });
+      channel.assertQueue(documentProcessQueue, {
+        durable: false,
+        exclusive: false,
+        autoDelete: false,
+        arguments: null,
       });
+
+      channel.sendToQueue(documentProcessQueue, null);
     }
   }
 
