@@ -6,7 +6,7 @@
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import amqp from 'amqplib/callback_api';
+import amqp from 'amqplib';
 import fs from 'fs';
 import mime from 'mime-types';
 import path from 'path';
@@ -73,29 +73,27 @@ export class UploadController {
     if (fileResult.uploaded && !isSystemFile) {
       //TODO: This might require seperate library. to be used from other projects.
 
-      amqp.connect('amqp://localhost', (connectionError, connection) => {
-        connection.createChannel((channelError, channel) => {
-          const documentProcessQueue = 'DocumentProcess';
+      const connection = await amqp.connect('amqp://localhost');
+      const channel = await connection.createChannel();
+      const documentProcessQueue = 'DocumentProcess';
 
-          channel.assertQueue(documentProcessQueue, {
-            durable: false,
-            exclusive: false,
-            autoDelete: false,
-            arguments: null,
-          });
-
-          channel.sendToQueue(
-            documentProcessQueue,
-            Buffer.from(
-              JSON.stringify({
-                projectId: fileChunkMetaData.projectId,
-                datasourceId: fileChunkMetaData.datasourceId,
-                documentPath: filePath,
-              }),
-            ),
-          );
-        });
+      channel.assertQueue(documentProcessQueue, {
+        durable: false,
+        exclusive: false,
+        autoDelete: false,
+        arguments: null,
       });
+
+      channel.sendToQueue(
+        documentProcessQueue,
+        Buffer.from(
+          JSON.stringify({
+            projectId: fileChunkMetaData.projectId,
+            datasourceId: fileChunkMetaData.datasourceId,
+            documentPath: filePath,
+          }),
+        ),
+      );
     }
 
     return fileResult;
