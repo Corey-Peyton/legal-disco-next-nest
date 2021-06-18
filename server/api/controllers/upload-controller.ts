@@ -60,40 +60,42 @@ export class UploadController {
       fileUid: fileChunkMetaData.identifier,
     };
 
-    const client = redis.createClient({
-      port: 6379,
-      host: 'fe80::20c:29ff:fec5:a66b',
-    });
-
-    const isSystemFile = client.sismember(
-      'NSRLHash',
-      await Hash.GetHash(filePath),
-    );
-
-    if (fileResult.uploaded && !isSystemFile) {
-      //TODO: This might require seperate library. to be used from other projects.
-
-      const connection = await amqp.connect('amqp://localhost');
-      const channel = await connection.createChannel();
-      const documentProcessQueue = 'DocumentProcess';
-
-      channel.assertQueue(documentProcessQueue, {
-        durable: false,
-        exclusive: false,
-        autoDelete: false,
-        arguments: null,
+    if (fileResult.uploaded) {
+      const client = redis.createClient({
+        port: 6379,
+        host: 'fe80::20c:29ff:fec5:a66b',
       });
 
-      channel.sendToQueue(
-        documentProcessQueue,
-        Buffer.from(
-          JSON.stringify({
-            projectId: fileChunkMetaData.projectId,
-            datasourceId: fileChunkMetaData.datasourceId,
-            documentPath: filePath,
-          }),
-        ),
+      const isSystemFile = client.sismember(
+        'NSRLHash',
+        await Hash.GetHash(filePath),
       );
+
+      if (!isSystemFile) {
+        //TODO: This might require seperate library. to be used from other projects.
+
+        const connection = await amqp.connect('amqp://localhost');
+        const channel = await connection.createChannel();
+        const documentProcessQueue = 'DocumentProcess';
+
+        channel.assertQueue(documentProcessQueue, {
+          durable: false,
+          exclusive: false,
+          autoDelete: false,
+          arguments: null,
+        });
+
+        channel.sendToQueue(
+          documentProcessQueue,
+          Buffer.from(
+            JSON.stringify({
+              projectId: fileChunkMetaData.projectId,
+              datasourceId: fileChunkMetaData.datasourceId,
+              documentPath: filePath,
+            }),
+          ),
+        );
+      }
     }
 
     return fileResult;
