@@ -1,8 +1,8 @@
 ﻿import { Client } from '@elastic/elasticsearch';
 import { Body, Controller, Post } from '@nestjs/common';
 import { ObjectID } from 'bson';
-import * as fs from 'fs';
-import * as path from 'path';
+import fs from 'fs';
+import path from 'path';
 import { FieldType } from '../../../../../ecdisco-models/enums/field-type';
 import { NodeType } from '../../../../../ecdisco-models/enums/node-type';
 import { KeyValue } from '../../../../../ecdisco-models/general/key-value';

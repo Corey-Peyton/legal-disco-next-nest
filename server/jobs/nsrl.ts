@@ -2,11 +2,11 @@
 import { createWriteStream } from 'fs';
 import path from 'path';
 import { Hash } from '../general/hash/hash';
-import * as fs from 'fs';
+import fs from 'fs';
 
 import cron from 'node-cron';
 import amqp from 'amqplib/callback_api';
-import * as crypto from 'crypto';
+import crypto from 'crypto';
 const sha1 = crypto.createHash('sha1');
 
 cron.schedule('0 0 9 MAR,JUN,SEP,DEC *', function () {

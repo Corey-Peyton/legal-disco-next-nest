@@ -1,5 +1,5 @@
-import * as fs from 'fs';
-import * as crypto from 'crypto';
+import fs from 'fs';
+import crypto from 'crypto';
 const sha1 = crypto.createHash('sha1');
 
 export class Hash {

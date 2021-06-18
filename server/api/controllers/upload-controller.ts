@@ -6,11 +6,11 @@
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import * as amqp from 'amqplib/callback_api';
-import * as fs from 'fs';
+import amqp from 'amqplib/callback_api';
+import fs from 'fs';
 import mime from 'mime-types';
-import * as path from 'path';
-import * as redis from 'redis';
+import path from 'path';
+import redis from 'redis';
 import { Hash } from '../../general/hash/hash';
 import { FileChunkMetaData } from './file-chunk-meta-data';
 import { FileResult } from './file-result';

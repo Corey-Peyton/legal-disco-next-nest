@@ -1,7 +1,7 @@
 ﻿import { Body, Controller, Post } from '@nestjs/common';
 import AdmZip from 'adm-zip';
-import * as amqp from 'amqplib/callback_api';
-import * as fs from 'fs';
+import amqp from 'amqplib/callback_api';
+import fs from 'fs';
 import path from 'path';
 import { FileResponse } from '../../../../../ecdisco-models/general/file-response';
 import {

@@ -1,6 +1,6 @@
 ﻿import { Client } from '@elastic/elasticsearch';
 import path from 'path';
-import * as fs from 'fs';
+import fs from 'fs';
 import { Controller } from '@nestjs/common';
 
 @Controller('Index')

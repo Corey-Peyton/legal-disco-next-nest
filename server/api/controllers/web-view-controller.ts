@@ -1,5 +1,5 @@
 ﻿import path from 'path';
-import * as fs from 'fs';
+import fs from 'fs';
 import { FileResponse } from '../../ecdisco-models/general/file-response';
 import { Controller } from '@nestjs/common';
 
