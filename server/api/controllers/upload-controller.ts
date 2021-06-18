@@ -66,36 +66,37 @@ export class UploadController {
         host: 'fe80::20c:29ff:fec5:a66b',
       });
 
-      const isSystemFile = client.sismember(
+      client.sismember(
         'NSRLHash',
         await Hash.GetHash(filePath),
+        async function (err, isSystemFile) {
+          if (!isSystemFile) {
+            //TODO: This might require seperate library. to be used from other projects.
+
+            const connection = await amqp.connect('amqp://localhost');
+            const channel = await connection.createChannel();
+            const documentProcessQueue = 'DocumentProcess';
+
+            channel.assertQueue(documentProcessQueue, {
+              durable: false,
+              exclusive: false,
+              autoDelete: false,
+              arguments: null,
+            });
+
+            channel.sendToQueue(
+              documentProcessQueue,
+              Buffer.from(
+                JSON.stringify({
+                  projectId: fileChunkMetaData.projectId,
+                  datasourceId: fileChunkMetaData.datasourceId,
+                  documentPath: filePath,
+                }),
+              ),
+            );
+          }
+        },
       );
-
-      if (!isSystemFile) {
-        //TODO: This might require seperate library. to be used from other projects.
-
-        const connection = await amqp.connect('amqp://localhost');
-        const channel = await connection.createChannel();
-        const documentProcessQueue = 'DocumentProcess';
-
-        channel.assertQueue(documentProcessQueue, {
-          durable: false,
-          exclusive: false,
-          autoDelete: false,
-          arguments: null,
-        });
-
-        channel.sendToQueue(
-          documentProcessQueue,
-          Buffer.from(
-            JSON.stringify({
-              projectId: fileChunkMetaData.projectId,
-              datasourceId: fileChunkMetaData.datasourceId,
-              documentPath: filePath,
-            }),
-          ),
-        );
-      }
     }
 
     return fileResult;
