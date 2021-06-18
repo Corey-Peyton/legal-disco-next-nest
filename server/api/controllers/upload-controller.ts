@@ -45,20 +45,21 @@ export class UploadController {
 
     const directoyName = path.dirname(filePath);
 
-    await fs.mkdir(directoyName, { recursive: true }, null);
+    await fs.promises.mkdir(directoyName, { recursive: true });
 
     const fileStream = fs.createWriteStream(filePath, {
       flags: 'a+',
       start: (fileChunkMetaData.chunkNumber - 1) * fileChunkMetaData.chunkSize,
     });
 
-    fileStream.write(fileChunk);
+    fileStream.write(fileChunk.buffer);
 
     const fileResult: FileResult = {
       uploaded:
         fileChunkMetaData.totalChunks - 1 <= fileChunkMetaData.chunkNumber,
       fileUid: fileChunkMetaData.identifier,
     };
+
     const client = redis.createClient({
       port: 6379,
       host: 'fe80::20c:29ff:fec5:a66b',

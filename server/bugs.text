@@ -1,1 +1,3 @@
 - tree data getting hide when we switch from one data source to another data source in project tree in in page.
+- currently after login it is not redirecting to original page
+- clicking on datasource is not opening upload page directly. we have to reload page.
