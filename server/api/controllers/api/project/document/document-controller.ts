@@ -1,5 +1,5 @@
 ﻿import { Client } from '@elastic/elasticsearch';
-import { Body, Controller, Post, Headers } from '@nestjs/common';
+import { Body, Controller, Headers, Post } from '@nestjs/common';
 import { ObjectID } from 'bson';
 import fs from 'fs';
 import path from 'path';
@@ -9,35 +9,35 @@ import { KeyValue } from '../../../../../ecdisco-models/general/key-value';
 import { Paginate } from '../../../../../ecdisco-models/general/paginate';
 import {
   DocumentMetadatum,
-  DocumentMetadatumModel,
+  DocumentMetadatumModel
 } from '../../../../../ecdisco-models/master/document-metadatum';
 import {
   Document,
-  DocumentModel,
+  DocumentModel
 } from '../../../../../ecdisco-models/projects/document';
 import {
   DocumentField,
-  DocumentFieldModel,
+  DocumentFieldModel
 } from '../../../../../ecdisco-models/projects/document-field';
 import {
   DocumentFieldBooleanValue,
-  DocumentFieldBooleanValueModel,
+  DocumentFieldBooleanValueModel
 } from '../../../../../ecdisco-models/projects/document-field-boolean-value';
 import {
   DocumentFieldDateValue,
-  DocumentFieldDateValueModel,
+  DocumentFieldDateValueModel
 } from '../../../../../ecdisco-models/projects/document-field-date-value';
 import {
   DocumentFieldNumberValue,
-  DocumentFieldNumberValueModel,
+  DocumentFieldNumberValueModel
 } from '../../../../../ecdisco-models/projects/document-field-number-value';
 import {
   DocumentFieldTextValue,
-  DocumentFieldTextValueModel,
+  DocumentFieldTextValueModel
 } from '../../../../../ecdisco-models/projects/document-field-text-value';
 import {
   DocumentMetadatumValueLink,
-  DocumentMetadatumValueLinkModel,
+  DocumentMetadatumValueLinkModel
 } from '../../../../../ecdisco-models/projects/document-metadatum-value-link';
 import { DocumentFields } from '../document-field/document-fields';
 import { ProjectBaseController } from '../project-base-controller';
@@ -237,7 +237,6 @@ export class DocumentController extends ProjectBaseController {
     @Body('metadata') metadata: string,
     @Headers('projectid') projectId: ObjectID,
   ): void {
-    this.projectContext(projectId);
 
     const metadatas: any = JSON.parse(metadata);
     // ConnectionPool masterContext = new ConnectionPool();
@@ -247,14 +246,14 @@ export class DocumentController extends ProjectBaseController {
       documentMetadataValue[key] = metadatas[key];
 
       // TODO: We need to manage if already exists then get value of it.
-      let documentMetadata = await DocumentMetadatumModel.findOne({
+      let documentMetadata = await DocumentMetadatumModel(await this.masterContext).findOne({
         name: key,
       } as DocumentMetadatum)
         .select('name')
         .exec();
 
       if (!documentMetadata) {
-        documentMetadata = await DocumentMetadatumModel.create({
+        documentMetadata = await DocumentMetadatumModel(await this.masterContext).create({
           name: key,
         } as DocumentMetadatum);
       }
@@ -265,7 +264,7 @@ export class DocumentController extends ProjectBaseController {
         documentMetadataValue[documentMetadataKey].forEach(
           async (metadataValue: string) => {
             // TODO: Need to use above dynamic table name: documentMetadataTable
-            let existingMetadataValueRecord = await DocumentMetadatumValueLinkModel.findOne(
+            let existingMetadataValueRecord = await DocumentMetadatumValueLinkModel(await this.projectContext(projectId)).findOne(
               {
                 metadataId: documentMetadata.id,
                 documentMetadataValue: metadataValue,
@@ -273,7 +272,7 @@ export class DocumentController extends ProjectBaseController {
             ).select('id');
 
             if (!existingMetadataValueRecord) {
-              existingMetadataValueRecord = await DocumentMetadatumValueLinkModel.create(
+              existingMetadataValueRecord = await DocumentMetadatumValueLinkModel(await this.projectContext(projectId)).create(
                 {
                   documentMetadataValueId: documentMetadata.id,
                   documentMetadataValue: metadataValue,
@@ -281,7 +280,7 @@ export class DocumentController extends ProjectBaseController {
               );
             }
 
-            DocumentMetadatumValueLinkModel.create({
+            DocumentMetadatumValueLinkModel(await this.projectContext(projectId)).create({
               documentMetadataValueId: existingMetadataValueRecord.id,
               documentId: document.id,
             } as DocumentMetadatumValueLink);

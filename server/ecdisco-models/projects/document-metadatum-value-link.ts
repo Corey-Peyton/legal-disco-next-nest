@@ -1,6 +1,7 @@
-import { getModelForClass, modelOptions, prop } from '@typegoose/typegoose';
-import { ObjectID } from 'mongodb';
-import { defaultTransform, ModelBase } from '../general/model-base';
+import { prop } from '@typegoose/typegoose';
+import { ObjectID } from 'bson';
+import { Connection } from 'mongoose';
+import { getCommonModelForClass, ModelBase } from '../general/model-base';
 import { DocumentMetadatumValue } from './document-metadatum-value';
 
 export class DocumentMetadatumValueLink extends ModelBase {
@@ -25,7 +26,6 @@ export class DocumentMetadatumValueLink extends ModelBase {
   }
 }
 
-export const DocumentMetadatumValueLinkModel = getModelForClass(
-  DocumentMetadatumValueLink,
-  defaultTransform,
-);
+export const DocumentMetadatumValueLinkModel = (connection: Connection) => {
+  return getCommonModelForClass(DocumentMetadatumValueLink, connection);
+};
