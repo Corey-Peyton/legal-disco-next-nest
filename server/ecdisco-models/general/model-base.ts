@@ -44,9 +44,10 @@ export const getCommonModelForClass = <
 >(
   cl: U,
   connection: Connection,
+  id?: ObjectID,
 ) => {
   const customTransform = defaultTransform;
-  customTransform.schemaOptions.collection = cl.name;
+  customTransform.schemaOptions.collection = cl.name + (id ? '_' + id : '');
 
   return getModelForClass(cl, {
     ...customTransform,

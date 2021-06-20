@@ -8,7 +8,6 @@ import { NodeType } from '../../../../../ecdisco-models/enums/node-type';
 import { KeyValue } from '../../../../../ecdisco-models/general/key-value';
 import { Paginate } from '../../../../../ecdisco-models/general/paginate';
 import {
-  DocumentMetadatum,
   DocumentMetadatumModel
 } from '../../../../../ecdisco-models/master/document-metadatum';
 import {
@@ -68,7 +67,10 @@ export class DocumentController extends ProjectBaseController {
   }
 
   @Post('deleteSelectedColumnData')
-  async deleteSelectedColumnData(@Body() columnObject: any, @Headers('projectId') projectId: ObjectID): Promise<void> {
+  async deleteSelectedColumnData(
+    @Body() columnObject: any,
+    @Headers('projectId') projectId: ObjectID,
+  ): Promise<void> {
     this.projectContext;
 
     const fieldToRemove: any = {};
@@ -237,7 +239,6 @@ export class DocumentController extends ProjectBaseController {
     @Body('metadata') metadata: string,
     @Headers('projectid') projectId: ObjectID,
   ): void {
-
     const metadatas: any = JSON.parse(metadata);
     // ConnectionPool masterContext = new ConnectionPool();
     const documentMetadataValue: { [key: string]: string[] } = {};
@@ -246,41 +247,46 @@ export class DocumentController extends ProjectBaseController {
       documentMetadataValue[key] = metadatas[key];
 
       // TODO: We need to manage if already exists then get value of it.
-      let documentMetadata = await DocumentMetadatumModel(await this.masterContext).findOne({
-        name: key,
-      } as DocumentMetadatum)
-        .select('name')
-        .exec();
+      let documentMetadata = await DocumentMetadatumModel(
+        await this.masterContext,
+      ).findOne({ name: key });
 
       if (!documentMetadata) {
-        documentMetadata = await DocumentMetadatumModel(await this.masterContext).create({
+        documentMetadata = await DocumentMetadatumModel(
+          await this.masterContext,
+        ).create({
           name: key,
-        } as DocumentMetadatum);
+        });
       }
-
-      const documentMetadataTable = `DocumentMetadatum_${documentMetadata.id}`;
 
       Object.keys(documentMetadataValue).forEach((documentMetadataKey) => {
         documentMetadataValue[documentMetadataKey].forEach(
           async (metadataValue: string) => {
             // TODO: Need to use above dynamic table name: documentMetadataTable
-            let existingMetadataValueRecord = await DocumentMetadatumValueLinkModel(await this.projectContext(projectId)).findOne(
-              {
+            let existingMetadataValueRecord = await DocumentMetadatumValueLinkModel(
+              await this.projectContext(projectId),
+              documentMetadata.id,
+            )
+              .findOne({
                 metadataId: documentMetadata.id,
                 documentMetadataValue: metadataValue,
-              } as DocumentMetadatumValueLink,
-            ).select('id');
+              } as DocumentMetadatumValueLink)
+              .select('id');
 
             if (!existingMetadataValueRecord) {
-              existingMetadataValueRecord = await DocumentMetadatumValueLinkModel(await this.projectContext(projectId)).create(
-                {
-                  documentMetadataValueId: documentMetadata.id,
-                  documentMetadataValue: metadataValue,
-                } as DocumentMetadatumValueLink,
-              );
+              existingMetadataValueRecord = await DocumentMetadatumValueLinkModel(
+                await this.projectContext(projectId),
+                documentMetadata.id,
+              ).create({
+                documentMetadataValueId: documentMetadata.id,
+                documentMetadataValue: metadataValue,
+              } as DocumentMetadatumValueLink);
             }
 
-            DocumentMetadatumValueLinkModel(await this.projectContext(projectId)).create({
+            DocumentMetadatumValueLinkModel(
+              await this.projectContext(projectId),
+              documentMetadata.id,
+            ).create({
               documentMetadataValueId: existingMetadataValueRecord.id,
               documentId: document.id,
             } as DocumentMetadatumValueLink);

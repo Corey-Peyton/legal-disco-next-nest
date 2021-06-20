@@ -26,6 +26,6 @@ export class DocumentMetadatumValueLink extends ModelBase {
   }
 }
 
-export const DocumentMetadatumValueLinkModel = (connection: Connection) => {
-  return getCommonModelForClass(DocumentMetadatumValueLink, connection);
+export const DocumentMetadatumValueLinkModel = (connection: Connection, MetadatumId: ObjectID) => {
+  return getCommonModelForClass(DocumentMetadatumValueLink, connection, MetadatumId);
 };
