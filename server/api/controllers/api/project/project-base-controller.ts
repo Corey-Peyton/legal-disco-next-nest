@@ -5,13 +5,12 @@ import { MasterController } from '../master/master-controller';
 import { ProjectContext } from '../master/project-context';
 
 export class ProjectBaseController extends MasterController {
-  projectId: ObjectID;
 
   get masterContext(): Promise<Connection> {
     return new MasterBaseController().masterContext;
   }
 
-  get projectContext(): Promise<Connection> {
-    return new ProjectContext(this.projectId).context;
+  projectContext(projectId): Promise<Connection> {
+    return new ProjectContext(projectId).context;
   }
 }

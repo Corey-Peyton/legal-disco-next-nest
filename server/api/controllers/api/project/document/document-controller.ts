@@ -55,8 +55,9 @@ export class DocumentController extends ProjectBaseController {
     @Body() document: Document,
     @Headers('projectid') projectId: ObjectID,
   ): Promise<ObjectID> {
-    this.projectId = projectId;
-    const newDocument = await DocumentModel(await this.projectContext).create({
+    const newDocument = await DocumentModel(
+      await this.projectContext(projectId),
+    ).create({
       parentDocumentId: document.parentDocumentId,
       datasourceId: document.datasourceId,
       fileName: path.parse(document.fileName).name,
@@ -67,13 +68,13 @@ export class DocumentController extends ProjectBaseController {
   }
 
   @Post('deleteSelectedColumnData')
-  async deleteSelectedColumnData(@Body() columnObject: any): Promise<void> {
+  async deleteSelectedColumnData(@Body() columnObject: any, @Headers('projectId') projectId: ObjectID): Promise<void> {
     this.projectContext;
 
     const fieldToRemove: any = {};
     fieldToRemove[columnObject.selectedColumn] = 1;
 
-    (await this.projectContext).db
+    (await this.projectContext(projectId)).db
       .collection(this.tempDocumentSearchResult)
       .updateMany({}, { $unset: fieldToRemove });
   }
@@ -186,13 +187,16 @@ export class DocumentController extends ProjectBaseController {
   }
 
   @Post('PNG')
-  PNG(@Body() documentData: any): DocumentInfo {
+  PNG(
+    @Body() documentData: any,
+    @Headers('projectId') projectId: ObjectID,
+  ): DocumentInfo {
     this.projectContext;
 
     // TODO: Following path should be from database.
     const directoryPath: string = path.join(
       'C:\\ecdiscoProjects',
-      `Project_${this.projectId}`,
+      `Project_${projectId}`,
       'Processed',
     );
 
@@ -228,10 +232,14 @@ export class DocumentController extends ProjectBaseController {
   }
 
   @Post('saveDocument')
-  saveDocument(@Body() fieldData: any): void {
-    this.projectContext;
+  saveDocument(
+    @Body('document') document: Document,
+    @Body('metadata') metadata: string,
+    @Headers('projectid') projectId: ObjectID,
+  ): void {
+    this.projectContext(projectId);
 
-    const metadatas: any = JSON.parse(fieldData.metadata.toString());
+    const metadatas: any = JSON.parse(metadata);
     // ConnectionPool masterContext = new ConnectionPool();
     const documentMetadataValue: { [key: string]: string[] } = {};
 
@@ -275,7 +283,7 @@ export class DocumentController extends ProjectBaseController {
 
             DocumentMetadatumValueLinkModel.create({
               documentMetadataValueId: existingMetadataValueRecord.id,
-              documentId: fieldData.documentId,
+              documentId: document.id,
             } as DocumentMetadatumValueLink);
           },
         );
@@ -284,7 +292,10 @@ export class DocumentController extends ProjectBaseController {
   }
 
   @Post('saveFieldData')
-  saveFieldData(@Body() fieldData: any): void {
+  saveFieldData(
+    @Body() fieldData: any,
+    @Headers('projectId') projectId: ObjectID,
+  ): void {
     this.projectContext;
 
     const documentId: ObjectID = fieldData.documentId as ObjectID;
@@ -374,7 +385,7 @@ export class DocumentController extends ProjectBaseController {
               DocumentId: documentId,
               Value: fieldData.fieldHTMLText,
             },
-            routing: this.projectId.toString(),
+            routing: projectId.toString(),
           });
         } else {
           DocumentFieldTextValueModel(fieldId).deleteOne({
@@ -386,7 +397,7 @@ export class DocumentController extends ProjectBaseController {
           client.delete({
             id: fieldId.toString(),
             index: 'project_documents_textfielddata',
-            routing: this.projectId.toString(),
+            routing: projectId.toString(),
           });
         }
 
@@ -396,7 +407,10 @@ export class DocumentController extends ProjectBaseController {
   }
 
   @Post('setAndGetSelectedColumnData')
-  async setAndGetSelectedColumnData(@Body() paramsObject: any): Promise<any[]> {
+  async setAndGetSelectedColumnData(
+    @Body() paramsObject: any,
+    @Headers('projectId') projectId: ObjectID,
+  ): Promise<any[]> {
     this.projectContext;
 
     const columnName: string = paramsObject.selectedColumn as string;
@@ -408,10 +422,10 @@ export class DocumentController extends ProjectBaseController {
     } = new DocumentFields().GetColumnNameAndJoin(
       Number(selectedColumn[0]) as NodeType,
       Number(selectedColumn[1]),
-      await this.projectContext,
+      await this.projectContext(projectId),
     );
 
-    (await this.projectContext).db
+    (await this.projectContext(projectId)).db
       .collection(this.tempDocumentSearchResult)
       .find()
       .forEach((tempTableRow) => {
@@ -421,7 +435,7 @@ export class DocumentController extends ProjectBaseController {
 
         (async () => {
           docTableRow = await DocumentModel(
-            await this.projectContext,
+            await this.projectContext(projectId),
           ).aggregate([
             {
               $lookup: columnNameWIthJoin[column],
@@ -439,7 +453,7 @@ export class DocumentController extends ProjectBaseController {
     const paginate: Paginate = paramsObject.paginate;
     let paginatedData: Promise<any[]>;
 
-    paginatedData = (await this.projectContext).db
+    paginatedData = (await this.projectContext(projectId)).db
       .collection(this.tempDocumentSearchResult)
       .find({ id: { $g: paginate.lastRowValue } })
       .limit(paginate.pageSize)

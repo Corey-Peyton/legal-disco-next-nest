@@ -1,5 +1,9 @@
-- tree data getting hide when we switch from one data source to another data source in project tree in in page.
+- tree data getting hide when we switch from one data source to another data source in project tree in in page
 - currently after login it is not redirecting to original page
-- clicking on datasource is not opening upload page directly. we have to reload page.
+- clicking on datasource is not opening upload page directly. we have to reload page
 - browser title is showing as title instead of ecdisco
 - search filter add delete buttons are not proper in height
+- when wifi is connected, it is not able to detect vmware redis
+- during project start, it time outs a lot.
+- when 0 kb file is uploaded. Extract project throws error
+- SERIOUS ISSUE. Currently project id is common for base controller. so multiple methods can messup project id due to async behaviour. Need fix.

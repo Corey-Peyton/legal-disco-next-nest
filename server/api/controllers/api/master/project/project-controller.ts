@@ -20,8 +20,7 @@ export class ProjectController extends MasterBaseController {
 
     // TODO: Need to make some common methods for following types of db operations.
     const projectController = new ProjectBaseController();
-    projectController.projectId = projectId;
-    const connection = await projectController.projectContext;
+    const connection = await projectController.projectContext(projectId);
     connection.db.dropDatabase();
   }
 
@@ -32,9 +31,8 @@ export class ProjectController extends MasterBaseController {
     await Promise.all(
       projects.map(async function (project) {
         const projectBaseController = new ProjectBaseController();
-        projectBaseController.projectId = project.id;
         project.datasource = await DatasourceModel(
-          await projectBaseController.projectContext,
+          await projectBaseController.projectContext(project.id),
         ).find({});
       }),
     );

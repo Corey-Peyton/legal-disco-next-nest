@@ -1,5 +1,6 @@
 ﻿import { Body, Controller, Post } from '@nestjs/common';
 import { DocumentType } from '@typegoose/typegoose/lib/types';
+import { ObjectID } from 'mongodb';
 import { KeyValue } from '../../../../../ecdisco-models/general/key-value';
 import {
   DocumentAnnotation,
@@ -33,10 +34,10 @@ export class DocumentAnnotationController extends ProjectBaseController {
 
     this.projectContext;
 
-    const documentId: number = documentData.documentId as number;
+    const documentId = documentData.documentId;
     const annotationId: number = (documentData.id as unknown) as number;
 
-    if (documentId === -1) {
+    if (documentId === null) { // TODO: Here it was -1 instead of null. Need to check use of it.
       return (
         await DocumentAnnotationValueMultiPageModel.find({
           DocumentAnnotationId: annotationId,
@@ -56,7 +57,7 @@ export class DocumentAnnotationController extends ProjectBaseController {
   }
 
   @Post('multiPageAnnotationData')
-  async multiPageAnnotationData(@Body() annotationId: number): Promise<string> {
+  async multiPageAnnotationData(@Body() annotationId: ObjectID): Promise<string> {
 
     this.projectContext;
 
@@ -74,12 +75,12 @@ export class DocumentAnnotationController extends ProjectBaseController {
 
     this.projectContext;
 
-    const documentId: number = annotationData.documentId;
-    const pageId: number = annotationData.pageId;
-    const annotationId: number = annotationData.documentAnnotationId;
+    const documentId = annotationData.documentId;
+    const pageId = annotationData.pageId;
+    const annotationId = annotationData.documentAnnotationId;
     const value: string = annotationData.value;
 
-    if (documentId !== -1 && documentId !== null && pageId !== null) {
+    if (documentId !== null && pageId !== null) { // documentId !== -1 &&  TODO: Need to check use of documentid !== -1 condition. currently commenting it.
       if (value) {
         DocumentAnnotationValueModel.findOneAndUpdate(
           {

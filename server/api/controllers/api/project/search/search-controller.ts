@@ -1,9 +1,10 @@
-﻿import { Body, Controller, Post } from '@nestjs/common';
+﻿import { Body, Controller, Headers, Post } from '@nestjs/common';
+import { ObjectID } from 'mongodb';
 import {
   ChildRule,
   ChildRuleModel,
   QueryRule,
-  QueryRuleModel,
+  QueryRuleModel
 } from '../../../../../ecdisco-models/general/query-rule';
 import { Query, QueryModel } from '../../../../../ecdisco-models/projects/query';
 import { ProjectBaseController } from '../project-base-controller';
@@ -21,13 +22,13 @@ export class SearchController extends ProjectBaseController {
   }
 
   @Post('load')
-  async load(@Body() search: any): Promise<QueryRule> {
+  async load(@Body() search: any, @Headers('projectId') projectId: ObjectID): Promise<QueryRule> {
 
     this.projectContext;
 
     const queryId: number = search.queryId as number;
 
-    return new Search().Load(queryId, true, await this.projectContext);
+    return new Search().Load(queryId, true, await this.projectContext(projectId));
   }
 
   @Post('save')

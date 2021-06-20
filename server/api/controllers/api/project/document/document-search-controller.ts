@@ -18,7 +18,8 @@ import { DocumentType } from '@typegoose/typegoose/lib/types';
 import { DocumentModel } from '../../../../../ecdisco-models/projects/document';
 import { $lookup } from './lookup';
 import { DocumentFieldModel } from '../../../../../ecdisco-models/projects/document-field';
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post, Headers } from '@nestjs/common';
+import { ObjectID } from 'mongodb';
 
 @Controller('DocumentSearch')
 export class DocumentSearchController extends ProjectBaseController {
@@ -27,17 +28,17 @@ export class DocumentSearchController extends ProjectBaseController {
   }
 
   @Post('getSearchResultPagedData')
-  getSearchResultPagedData(@Body() filterData: any): GridData {
+  getSearchResultPagedData(@Body() filterData: any, @Headers('projectId') projectId: ObjectID): GridData {
 
     this.projectContext;
 
     const paginate: Paginate = filterData.paginate as Paginate;
 
-    return this.GetPagedData(paginate);
+    return this.GetPagedData(paginate, projectId);
   }
 
   @Post('search')
-  async search(@Body() filterData: any): Promise<GridData> {
+  async search(@Body() filterData: any, @Headers('projectId') projectId: ObjectID): Promise<GridData> {
 
     this.projectContext;
 
@@ -45,7 +46,7 @@ export class DocumentSearchController extends ProjectBaseController {
 
     const whereQuery: any = {};
 
-    (await this.projectContext).collection(this.tempDocumentSearchResult)
+    (await this.projectContext(projectId)).collection(this.tempDocumentSearchResult)
       .drop();
 
     const lookups: $lookup[] = [];
@@ -59,29 +60,30 @@ export class DocumentSearchController extends ProjectBaseController {
       lookups,
       whereQuery,
       filterData.queryRule.Condition,
+      projectId
     );
 
     const finalQuery = [whereQuery, ...lookups];
 
-    (await this.projectContext).collection(this.tempDocumentSearchResult)
-      .insertMany(await DocumentModel(await this.projectContext).aggregate(finalQuery));
+    (await this.projectContext(projectId)).collection(this.tempDocumentSearchResult)
+      .insertMany(await DocumentModel(await this.projectContext(projectId)).aggregate(finalQuery));
 
-    const gridData = (await this.projectContext).collection(this.tempDocumentSearchResult)
+    const gridData = (await this.projectContext(projectId)).collection(this.tempDocumentSearchResult)
       .find({}, selectedColumn);
 
     paginate.total = await gridData.count();
 
-    return this.GetPagedData(paginate);
+    return this.GetPagedData(paginate, projectId);
   }
 
-  private GetPagedData(paginate: Paginate): GridData {
+  private GetPagedData(paginate: Paginate, projectId: ObjectID): GridData {
 
     this.projectContext;
 
     let paginatedData;
 
     (async () => {
-      paginatedData = (await this.projectContext).db
+      paginatedData = (await this.projectContext(projectId)).db
         .collection(this.tempDocumentSearchResult)
         .find({ id: { $g: paginate.lastRowValue } })
         .limit(paginate.pageSize)
@@ -182,6 +184,7 @@ export class DocumentSearchController extends ProjectBaseController {
     joinQuery: $lookup[],
     whereQuery: { [key: string]: any },
     condition: Condition,
+    projectId: ObjectID
   ): void {
     let i = 0;
 
@@ -211,6 +214,7 @@ export class DocumentSearchController extends ProjectBaseController {
           joinQuery,
           whereQuery,
           queryRule.condition,
+          projectId
         );
       } else {
         // When field will be null, it means filter is not selected. we'll ignore it.
@@ -256,6 +260,7 @@ export class DocumentSearchController extends ProjectBaseController {
           joinQuery,
           whereQuery,
           condition,
+          projectId
         );
       }
       i++;
@@ -267,8 +272,7 @@ export class DocumentSearchController extends ProjectBaseController {
     childRule: ChildRule,
     joinQuery: $lookup[],
     whereQuery: { [key: string]: any },
-    condition: Condition,
-  ): Promise<void> {
+    condition: Condition, projectId: ObjectID): Promise<void> {
     const documentFieldValue = `DocumentField_${childRule.fieldId}`;
     const documentField: { [key: string]: any } = {};
 
@@ -334,7 +338,7 @@ export class DocumentSearchController extends ProjectBaseController {
               },
             },
           },
-          routing: this.projectId.toString(),
+          routing: projectId.toString(),
         });
 
         // TODO: We need to keep making search query. and only during final fetch it should fetch data.
@@ -349,7 +353,7 @@ export class DocumentSearchController extends ProjectBaseController {
 
         const tempTableName = '#MatchedTextDocuments';
 
-        (await this.projectContext).db
+        (await this.projectContext(projectId)).db
           .collection(tempTableName)
           .insertMany(fieldTextValueDocumentIds);
 

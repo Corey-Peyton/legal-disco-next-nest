@@ -1,12 +1,13 @@
-﻿import { Body, Controller, Post } from '@nestjs/common';
+﻿import { Body, Controller, Headers, Post } from '@nestjs/common';
 import AdmZip from 'adm-zip';
 import amqp from 'amqplib';
+import { ObjectID } from 'bson';
 import fs from 'fs';
 import path from 'path';
 import { FileResponse } from '../../../../../ecdisco-models/general/file-response';
 import {
   QueryRule,
-  QueryRuleModel,
+  QueryRuleModel
 } from '../../../../../ecdisco-models/general/query-rule';
 import { DocumentModel } from '../../../../../ecdisco-models/projects/document';
 import { DocumentAnnotationModel } from '../../../../../ecdisco-models/projects/document-annotation';
@@ -14,7 +15,7 @@ import { DocumentAnnotationValueModel } from '../../../../../ecdisco-models/proj
 import { DocumentAnnotationValueMultiPageModel } from '../../../../../ecdisco-models/projects/document-annotation-value-multi-page';
 import {
   Production,
-  ProductionModel,
+  ProductionModel
 } from '../../../../../ecdisco-models/projects/production';
 import { ProductionAnnotationFilterModel } from '../../../../../ecdisco-models/projects/production-annotation-filter';
 import { DocumentSearchController } from '../document/document-search-controller';
@@ -53,29 +54,32 @@ export class ProductionController extends ProjectBaseController {
   }
 
   @Post('runProduction')
-  async runProduction(@Body() production: Production): Promise<void> {
+  async runProduction(
+    @Body() production: Production,
+    @Headers('projectId') projectId: ObjectID,
+  ): Promise<void> {
     this.projectContext;
 
     // 1  Get Prduction id
     const productionId = production.id;
 
     // 2 Get main query to filter main documents
-    const queryId: number = (await ProductionModel.findById(productionId))
+    const queryId = (await ProductionModel.findById(productionId))
       .queryId;
 
-    const productionDocuments = this.getDocumentIdsByQueryId(queryId);
+    const productionDocuments = this.getDocumentIdsByQueryId(queryId, projectId);
 
     // Array<DocumentId, AnnotationId>
-    const documentsAnnotations: { [key: number]: number[] } = [];
+    const documentsAnnotations: { [key: number]: ObjectID[] } = [];
 
     // 3 Get filters to annotate data
     const annotationQueryData = await ProductionAnnotationFilterModel.find({
       ProductionId: productionId,
-    }).select(['queryId', 'annotationId']);
+    });
 
     annotationQueryData.forEach((annotationQueryRow) => {
       const annotationDocuments = this.getDocumentIdsByQueryId(
-        annotationQueryRow.queryId as number,
+        annotationQueryRow.queryId, projectId
       );
 
       annotationDocuments.forEach((annotationDocumentId) => {
@@ -93,12 +97,12 @@ export class ProductionController extends ProjectBaseController {
     productionDocuments.forEach(async (productionDocumentId) => {
       // 5  If document is associated in any annotation, then do annotation.
       if (productionDocumentId in documentsAnnotations) {
-        const documentAnnotations: number[] =
+        const documentAnnotations: ObjectID[] =
           documentsAnnotations[productionDocumentId];
 
         const annotationsArray: any[] = [];
 
-        documentAnnotations.forEach(async (annotationId: number) => {
+        documentAnnotations.forEach(async (annotationId: ObjectID) => {
           const isMultiPageAnnotation = (
             await DocumentAnnotationModel.findById(annotationId).select(
               'isMultiPage',
@@ -127,7 +131,7 @@ export class ProductionController extends ProjectBaseController {
         const reg = new RegExp(`^${productionDocumentId}_P`);
 
         const dirCont = fs.readdirSync(
-          `C:\\ecdiscoProjects\\Project_${this.projectId}\\Processed`,
+          `C:\\ecdiscoProjects\\Project_${projectId}\\Processed`,
         );
 
         const files: string[] = dirCont
@@ -135,7 +139,7 @@ export class ProductionController extends ProjectBaseController {
           .filter((f) => reg.test(path.parse(f).name));
 
         const productionPath = path.join(
-          `C:\\ecdiscoProjects\\Project_${this.projectId}\\Production`,
+          `C:\\ecdiscoProjects\\Project_${projectId}\\Production`,
           productionId.toString(),
         );
 
@@ -166,7 +170,7 @@ export class ProductionController extends ProjectBaseController {
           imageAnnotatorQueue,
           Buffer.from(
             JSON.stringify({
-              projectId: this.projectId,
+              projectId: projectId,
               documentId: productionDocumentId,
               annotations: annotationsArray,
             }),
@@ -176,7 +180,10 @@ export class ProductionController extends ProjectBaseController {
     });
   }
 
-  private getDocumentIdsByQueryId(queryId: number): number[] {
+  private getDocumentIdsByQueryId(
+    queryId: ObjectID,
+    projectId: ObjectID,
+  ): number[] {
     let queryRule: QueryRule;
 
     (async () => {
@@ -191,6 +198,7 @@ export class ProductionController extends ProjectBaseController {
       lookups,
       whereQuery,
       queryRule.condition,
+      projectId,
     );
 
     // Let tempRunProductionTable: string = 'TempRunProduction_' + productionId;
@@ -200,9 +208,11 @@ export class ProductionController extends ProjectBaseController {
     let DocumentIds: number[] = [];
 
     async () => {
-      DocumentIds = (await DocumentModel(await this.projectContext).aggregate(finalQuery)).map(
-        (document) => document.id,
-      );
+      DocumentIds = (
+        await DocumentModel(await this.projectContext(projectId)).aggregate(
+          finalQuery,
+        )
+      ).map((document) => document.id);
     };
 
     return DocumentIds;

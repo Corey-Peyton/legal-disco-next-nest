@@ -15,7 +15,7 @@ import {
   AuthTokenModel,
 } from '../../../../../ecdisco-models/master/auth-token';
 import { IAuthToken } from '../../../i-auth-token';
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post, Headers } from '@nestjs/common';
 import { ObjectID } from 'bson';
 
 @Controller('Datasource')
@@ -49,13 +49,16 @@ export class DatasourceController extends ProjectBaseController {
   }
 
   @Post('getFiles')
-  async getFiles(@Body() datasources: Datasource): Promise<string> {
+  async getFiles(
+    @Body() datasources: Datasource,
+    @Headers('projectId') projectId: ObjectID,
+  ): Promise<string> {
     if (((datasources.id as unknown) as number) === 1) {
       return this.getFTPFiles();
     }
 
     const datasource: Datasource = await DatasourceModel(
-      await this.projectContext,
+      await this.projectContext(projectId),
     )
       .findById(datasources.id)
       .select(['authTokenId', 'source'])
@@ -203,11 +206,9 @@ export class DatasourceController extends ProjectBaseController {
   // Static readonly HttpClient httpClient = new HttpClient();
   @Post('saveDatasource')
   async saveDatasource(@Body() datasource: Datasource): Promise<ObjectID> {
-    this.projectId = datasource.project.id;
-
     if (datasource.id) {
       datasource = await DatasourceModel(
-        await this.projectContext,
+        await this.projectContext(datasource.project.id),
       ).findOneAndUpdate(
         { id: datasource.id },
         {
@@ -220,7 +221,9 @@ export class DatasourceController extends ProjectBaseController {
         { upsert: true },
       );
     } else {
-      datasource = await DatasourceModel(await this.projectContext).create({
+      datasource = await DatasourceModel(
+        await this.projectContext(datasource.project.id),
+      ).create({
         name: datasource.name,
         type: datasource.type,
         source: datasource.source,
