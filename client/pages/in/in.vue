@@ -85,6 +85,7 @@
                   v-else-if="node.parent.data.nodeType === NodeType.Datasource"
                 >
                   <router-link
+                    class="link"
                     :to="{
                       path:
                         '/in/project/' +

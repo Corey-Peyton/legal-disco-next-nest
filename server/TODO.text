@@ -1,4 +1,0 @@
-- take all configuration to common config file
-    --web app url
-    -- identity server url
-    -- rabbit mq url

@@ -6,4 +6,8 @@
 - when wifi is connected, it is not able to detect vmware redis
 - during project start, it time outs a lot.
 - when 0 kb file is uploaded. Extract project throws error
-- SERIOUS ISSUE. Currently project id is common for base controller. so multiple methods can messup project id due to async behaviour. Need fix.
+- need to make common control for hyperlink and apply class "class="link"" to all
+- take all configuration to common config file
+    --web app url
+    -- identity server url
+    -- rabbit mq url
