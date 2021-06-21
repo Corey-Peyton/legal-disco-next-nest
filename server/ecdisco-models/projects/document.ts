@@ -1,7 +1,4 @@
-import {
-  prop,
-  Ref
-} from '@typegoose/typegoose';
+import { prop, Ref } from '@typegoose/typegoose';
 import { ObjectID } from 'bson';
 import { Connection } from 'mongoose';
 import { getCommonModelForClass, ModelBase } from '../general/model-base';
@@ -16,33 +13,46 @@ import { DocumentMetadatumValue } from './document-metadatum-value';
 export class Document extends ModelBase {
   @prop()
   childrenDocument: Ref<Document>[];
+
   @prop()
   content: string;
+
   @prop()
   datasource: Datasources;
+
   @prop()
   datasourceId: ObjectID;
+
   @prop()
   documentAnnotationValues: DocumentAnnotationValue[];
+
   @prop()
   documentFieldBooleanValues: DocumentFieldBooleanValue[];
+
   @prop()
   documentFieldDateValues: DocumentFieldDateValue[];
+
   @prop()
   documentFieldNumberValues: DocumentFieldNumberValue[];
+
   @prop()
   documentFieldTextValues: DocumentFieldTextValue[];
+
   @prop()
   documentMetadatumValues: DocumentMetadatumValue[];
+
   @prop()
   fileExtension: string;
+
   @prop()
   fileName: string;
 
   @prop()
   parentDocument: Ref<Document>;
+
   @prop()
   parentDocumentId: ObjectID;
+
   constructor() {
     super();
     this.documentAnnotationValues = [];

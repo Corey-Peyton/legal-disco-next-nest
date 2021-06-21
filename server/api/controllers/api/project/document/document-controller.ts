@@ -7,36 +7,34 @@ import { FieldType } from '../../../../../ecdisco-models/enums/field-type';
 import { NodeType } from '../../../../../ecdisco-models/enums/node-type';
 import { KeyValue } from '../../../../../ecdisco-models/general/key-value';
 import { Paginate } from '../../../../../ecdisco-models/general/paginate';
-import {
-  DocumentMetadatumModel
-} from '../../../../../ecdisco-models/master/document-metadatum';
+import { DocumentMetadatumModel } from '../../../../../ecdisco-models/master/document-metadatum';
 import {
   Document,
-  DocumentModel
+  DocumentModel,
 } from '../../../../../ecdisco-models/projects/document';
 import {
   DocumentField,
-  DocumentFieldModel
+  DocumentFieldModel,
 } from '../../../../../ecdisco-models/projects/document-field';
 import {
   DocumentFieldBooleanValue,
-  DocumentFieldBooleanValueModel
+  DocumentFieldBooleanValueModel,
 } from '../../../../../ecdisco-models/projects/document-field-boolean-value';
 import {
   DocumentFieldDateValue,
-  DocumentFieldDateValueModel
+  DocumentFieldDateValueModel,
 } from '../../../../../ecdisco-models/projects/document-field-date-value';
 import {
   DocumentFieldNumberValue,
-  DocumentFieldNumberValueModel
+  DocumentFieldNumberValueModel,
 } from '../../../../../ecdisco-models/projects/document-field-number-value';
 import {
   DocumentFieldTextValue,
-  DocumentFieldTextValueModel
+  DocumentFieldTextValueModel,
 } from '../../../../../ecdisco-models/projects/document-field-text-value';
 import {
   DocumentMetadatumValueLink,
-  DocumentMetadatumValueLinkModel
+  DocumentMetadatumValueLinkModel,
 } from '../../../../../ecdisco-models/projects/document-metadatum-value-link';
 import { DocumentFields } from '../document-field/document-fields';
 import { ProjectBaseController } from '../project-base-controller';
@@ -54,16 +52,14 @@ export class DocumentController extends ProjectBaseController {
     @Body() document: Document,
     @Headers('projectid') projectId: ObjectID,
   ): Promise<ObjectID> {
-    const newDocument = await DocumentModel(
-      await this.projectContext(projectId),
-    ).create({
-      parentDocumentId: document.parentDocumentId,
-      datasourceId: document.datasourceId,
-      fileName: path.parse(document.fileName).name,
-      fileExtension: path.parse(document.fileName).ext,
-    });
-
-    return newDocument.id;
+    return (
+      await DocumentModel(await this.projectContext(projectId)).create({
+        parentDocumentId: document.parentDocumentId,
+        datasourceId: document.datasourceId,
+        fileName: path.parse(document.fileName).name,
+        fileExtension: path.parse(document.fileName).ext,
+      })
+    ).id;
   }
 
   @Post('deleteSelectedColumnData')
@@ -270,7 +266,7 @@ export class DocumentController extends ProjectBaseController {
               .findOne({
                 metadataId: documentMetadata.id,
                 documentMetadataValue: metadataValue,
-              } as DocumentMetadatumValueLink)
+              })
               .select('id');
 
             if (!existingMetadataValueRecord) {
@@ -280,7 +276,7 @@ export class DocumentController extends ProjectBaseController {
               ).create({
                 documentMetadataValueId: documentMetadata.id,
                 documentMetadataValue: metadataValue,
-              } as DocumentMetadatumValueLink);
+              });
             }
 
             DocumentMetadatumValueLinkModel(
@@ -289,7 +285,7 @@ export class DocumentController extends ProjectBaseController {
             ).create({
               documentMetadataValueId: existingMetadataValueRecord.id,
               documentId: document.id,
-            } as DocumentMetadatumValueLink);
+            });
           },
         );
       });

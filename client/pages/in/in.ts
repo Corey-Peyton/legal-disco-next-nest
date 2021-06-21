@@ -270,12 +270,12 @@ export default class In extends Vue {
   }
 
   // TODO: Need to check parameters of TreeNode which is currently any, any.
-  remove(node: TreeNode<any, TreeData>, data: TreeData) {
+  async remove(node: TreeNode<any, TreeData>, data: TreeData) {
     const children = node.parent!.data.children!;
     const index = children.indexOf(data.id);
     children.splice(index, 1);
 
-    ApiService.post('Project/deleteProject', { projectId: data.id }).then();
+    await ApiService.post('Project/deleteProject', { projectId: data.id });
   }
 
   // TODO: Need to check parameters of TreeNode which is currently any.

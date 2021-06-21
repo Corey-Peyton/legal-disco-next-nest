@@ -6,29 +6,29 @@
         <vue-context ref="contextmenu">
           <template slot-scope="child">
             <template v-if="child.data">
-              <template v-if="child.data.data.nodeType !== null">
-                <li>
-                  <a
-                    type="text"
-                    size="mini"
-                    @click="() => add(child.data.node, child.data.data)"
-                  >Add</a>
-                </li>
-              </template>
-              <template v-else>
-                <li>
-                  <!-- TODO: Edit function is not available.-->
-                  <a type="text" size="mini" @click="() => edit(child.data.data)">Edit</a>
-                </li>
-                <li>
-                  <!-- TODO: Node object gives us data property. so No need to pass data. -->
-                  <a
-                    type="text"
-                    size="mini"
-                    @click="() => remove(child.data.node, child.data.data)"
-                  >Delete</a>
-                </li>
-              </template>
+              <li v-if="child.data.data.nodeType !== null">
+                <a
+                  type="text"
+                  size="mini"
+                  @click="() => add(child.data.node, child.data.data)"
+                  >Add</a
+                >
+              </li>
+              <li v-else>
+                <!-- TODO: Edit function is not available.-->
+                <a type="text" size="mini" @click="() => edit(child.data.data)"
+                  >Edit</a
+                >
+              </li>
+              <li>
+                <!-- TODO: Node object gives us data property. so No need to pass data. -->
+                <a
+                  type="text"
+                  size="mini"
+                  @click="() => remove(child.data.node, child.data.data)"
+                  >Delete</a
+                >
+              </li>
             </template>
           </template>
         </vue-context>
@@ -45,7 +45,9 @@
           <span
             class="custom-tree-node"
             slot-scope="{ node, data }"
-            @contextmenu.prevent="$refs.contextmenu.open($event, { node, data })"
+            @contextmenu.prevent="
+              $refs.contextmenu.open($event, { node, data })
+            "
           >
             <!--TODO: Following is for add. Need to handle edit.-->
             <template v-if="data.isAdd">
@@ -75,13 +77,23 @@
                   <router-link
                     v-else
                     class="link"
-                    :to="{ name: 'work', params: { projectId: data.id }}"
-                  >{{ node.label }}</router-link>
+                    :to="{ name: 'work', params: { projectId: data.id } }"
+                    >{{ node.label }}</router-link
+                  >
                 </template>
-                <template v-else-if="node.parent.data.nodeType === NodeType.Datasource">
+                <template
+                  v-else-if="node.parent.data.nodeType === NodeType.Datasource"
+                >
                   <router-link
-                    :to="{ path: '/in/project/' + node.parent.parent.data.id + '/datasource/' + node.data.id }"
-                  >{{ node.label }}</router-link>
+                    :to="{
+                      path:
+                        '/in/project/' +
+                        node.parent.parent.data.id +
+                        '/datasource/' +
+                        node.data.id,
+                    }"
+                    >{{ node.label }}</router-link
+                  >
                 </template>
                 <template v-else>{{ node.label }}</template>
               </span>
@@ -91,11 +103,18 @@
       </pane>
       <pane size="70">
         <div class="flex-parent flex-column">
-          <query-builder :filterTreeData="documentFilters" :rule="rule" simple></query-builder>
+          <query-builder
+            :filterTreeData="documentFilters"
+            :rule="rule"
+            simple
+          ></query-builder>
           <el-button @click="getFiles()">Search</el-button>
           <div class="flex-remaining flex-column fullHeight">
             <uploader
-              v-if="Number(selectedDatasourceType.split('_')[0]) === DatasourceType.HDD"
+              v-if="
+                Number(selectedDatasourceType.split('_')[0]) ===
+                DatasourceType.HDD
+              "
               :options="options"
               class="uploader-example"
             >
@@ -107,7 +126,14 @@
               </uploader-drop>
               <uploader-list></uploader-list>
             </uploader>
-            <template v-if="[DatasourceType.Cloud.toString(), DatasourceType.Mail.toString()].includes(selectedDatasourceType.split('_')[0])">
+            <template
+              v-if="
+                [
+                  DatasourceType.Cloud.toString(),
+                  DatasourceType.Mail.toString(),
+                ].includes(selectedDatasourceType.split('_')[0])
+              "
+            >
               <auth2
                 v-if="!authDone"
                 :masterDatasourceId="masterDatasourceId"
@@ -125,7 +151,9 @@
                 <table-column type="selection" width="55"></table-column>
                 <table-column label="Name">
                   <template slot-scope="scope">
-                    <i v-if="'folder' in scope.row" class="material-icons">insert_drive_file</i>
+                    <i v-if="'folder' in scope.row" class="material-icons"
+                      >insert_drive_file</i
+                    >
                     <i v-else class="material-icons">folder</i>
                     {{ scope.row.name }}
                   </template>
@@ -139,7 +167,7 @@
   </div>
 </template>
 
-<script lang="ts" src="./in.ts"/>
+<script lang="ts" src="./in.ts" />
 
 <style lang="scss">
 .in {

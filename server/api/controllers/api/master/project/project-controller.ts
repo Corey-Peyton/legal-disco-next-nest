@@ -10,18 +10,24 @@ import {
 import { GlobalConfiguration } from '../../../global-configuration';
 import { ProjectBaseController } from '../../project/project-base-controller';
 import { MasterBaseController } from '../master-base-controller';
+import fs from 'fs';
 
 @UseGuards(AuthenticatedGuard)
 @Controller('Project')
 export class ProjectController extends MasterBaseController {
   @Post('deleteProject')
-  async deleteProject(projectId: ObjectID): Promise<void> {
-    ProjectModel(await this.masterContext).findByIdAndDelete(projectId);
+  async deleteProject(@Body('projectId') projectId: ObjectID) {
+    await ProjectModel(await this.masterContext).findByIdAndDelete(projectId);
 
     // TODO: Need to make some common methods for following types of db operations.
     const projectController = new ProjectBaseController();
     const connection = await projectController.projectContext(projectId);
     connection.db.dropDatabase();
+
+    fs.promises.rm(`C:\\ecdiscoProjects\\Project_${projectId}`, {
+      recursive: true,
+      force: true,
+    });
   }
 
   @Post('getProjects')
