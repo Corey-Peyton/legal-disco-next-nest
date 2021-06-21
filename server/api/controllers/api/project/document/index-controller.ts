@@ -1,11 +1,12 @@
 ﻿import { Client } from '@elastic/elasticsearch';
 import path from 'path';
 import fs from 'fs';
-import { Controller } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 
 @Controller('Index')
 export class IndexController {
-  async index(textFileName: any): Promise<void> {
+  @Post('index')
+  async index(@Body('textFileName') textFileName: string) {
     const client = new Client();
 
     //https://www.elastic.co/blog/found-multi-tenancy
@@ -14,10 +15,10 @@ export class IndexController {
 
     //https://www.elastic.co/guide/en/elasticsearch/client/net-api/current/routing-inference.html
 
-    let directoryInfo = path.dirname(textFileName.textFileName);
+    let directoryInfo = path.dirname(textFileName);
     const directories = directoryInfo.split(path.sep);
     while (!directoryInfo.startsWith('Project_')) {
-        directoryInfo = directories.pop();
+      directoryInfo = directories.pop();
     }
 
     const routingFromInt = Number(directoryInfo.split('_')[1]); //TODO: This is project id.
@@ -25,16 +26,14 @@ export class IndexController {
     //1) Indexing
     //Second, you need to add the routing value when you index your document, like this:
 
-    const documentId = Number(
-      path.basename(textFileName.textFileName).split('_')[0]
-    );
+    const documentId = Number(path.basename(textFileName).split('_')[0]);
 
     client.index({
       id: documentId.toString(),
       index: 'project_documents',
       body: {
         id: documentId,
-        Content: fs.readFileSync(textFileName.textFileName),
+        Content: fs.readFileSync(textFileName),
       },
       routing: routingFromInt.toString(),
     });

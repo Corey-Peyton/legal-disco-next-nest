@@ -5,7 +5,6 @@ import { MasterContext } from './master-context';
 import { MasterController } from './master-controller';
 
 export class MasterBaseController extends MasterController {
-  sessionId: number;
 
   get masterContext(): Promise<Connection> {
     if (!this.m_masterContext) {

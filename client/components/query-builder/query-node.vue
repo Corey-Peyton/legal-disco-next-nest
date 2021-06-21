@@ -2,7 +2,12 @@
   <div id="querybuilder_group_0" class="rules-group-container">
     <div class="rules-group-header">
       <div class="btn-group pull-right group-actions">
-        <el-button type="button" class="btn btn-xs btn-success" data-add="rule" @click="addRule()">
+        <el-button
+          type="button"
+          class="btn btn-xs btn-success"
+          data-add="rule"
+          @click="addRule()"
+        >
           <i class="material-icons">add_circle</i> Add rule
         </el-button>
         <el-button
@@ -25,7 +30,10 @@
       <div class="btn-group group-conditions">
         <label
           class="btn btn-xs btn-primary"
-          :class="{ active: rule.condition === condition.And, disabled: rule.condition !== condition.And }"
+          :class="{
+            active: rule.condition === condition.And,
+            disabled: rule.condition !== condition.And,
+          }"
         >
           <input
             type="radio"
@@ -36,7 +44,10 @@
         </label>
         <label
           class="btn btn-xs btn-primary"
-          :class="{ active: rule.condition === condition.Or, disabled: rule.condition !== condition.Or }"
+          :class="{
+            active: rule.condition === condition.Or,
+            disabled: rule.condition !== condition.Or,
+          }"
         >
           <input
             type="radio"
@@ -47,7 +58,10 @@
         </label>
         <label
           class="btn btn-xs btn-primary"
-          :class="{ active: rule.condition === condition.Not, disabled: rule.condition !== condition.Not }"
+          :class="{
+            active: rule.condition === condition.Not,
+            disabled: rule.condition !== condition.Not,
+          }"
         >
           <input
             type="radio"
@@ -90,4 +104,12 @@
   </div>
 </template>
 
-<script lang="ts" src="./query-node.ts" ></script>
+<script lang="ts" src="./query-node.ts"></script>
+
+<style>
+.material-icons {
+  font-size: 12px;
+  display: inline-flex;
+  vertical-align: text-bottom;
+}
+</style>
