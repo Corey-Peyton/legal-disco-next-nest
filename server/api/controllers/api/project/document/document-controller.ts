@@ -2,6 +2,7 @@
 import { Body, Controller, Headers, Post } from '@nestjs/common';
 import { ObjectID } from 'bson';
 import fs from 'fs';
+import { GridFSBucket } from 'mongodb';
 import path from 'path';
 import { FieldType } from '../../../../../ecdisco-models/enums/field-type';
 import { NodeType } from '../../../../../ecdisco-models/enums/node-type';
@@ -10,31 +11,30 @@ import { Paginate } from '../../../../../ecdisco-models/general/paginate';
 import { DocumentMetadatumModel } from '../../../../../ecdisco-models/master/document-metadatum';
 import {
   Document,
-  DocumentModel,
+  DocumentModel
 } from '../../../../../ecdisco-models/projects/document';
 import {
   DocumentField,
-  DocumentFieldModel,
+  DocumentFieldModel
 } from '../../../../../ecdisco-models/projects/document-field';
 import {
   DocumentFieldBooleanValue,
-  DocumentFieldBooleanValueModel,
+  DocumentFieldBooleanValueModel
 } from '../../../../../ecdisco-models/projects/document-field-boolean-value';
 import {
   DocumentFieldDateValue,
-  DocumentFieldDateValueModel,
+  DocumentFieldDateValueModel
 } from '../../../../../ecdisco-models/projects/document-field-date-value';
 import {
   DocumentFieldNumberValue,
-  DocumentFieldNumberValueModel,
+  DocumentFieldNumberValueModel
 } from '../../../../../ecdisco-models/projects/document-field-number-value';
 import {
   DocumentFieldTextValue,
-  DocumentFieldTextValueModel,
+  DocumentFieldTextValueModel
 } from '../../../../../ecdisco-models/projects/document-field-text-value';
 import {
-  DocumentMetadatumValueLink,
-  DocumentMetadatumValueLinkModel,
+  DocumentMetadatumValueLinkModel
 } from '../../../../../ecdisco-models/projects/document-metadatum-value-link';
 import { DocumentFields } from '../document-field/document-fields';
 import { ProjectBaseController } from '../project-base-controller';
@@ -230,11 +230,12 @@ export class DocumentController extends ProjectBaseController {
   }
 
   @Post('saveDocument')
-  saveDocument(
+  async saveDocument(
     @Body('document') document: Document,
     @Body('metadata') metadata: string,
+    @Body('outputTextFilePath') outputTextFilePath: string,
     @Headers('projectid') projectId: ObjectID,
-  ): void {
+  ): Promise<void> {
     const metadatas: any = JSON.parse(metadata);
     // ConnectionPool masterContext = new ConnectionPool();
     const documentMetadataValue: { [key: string]: string[] } = {};
@@ -290,6 +291,15 @@ export class DocumentController extends ProjectBaseController {
         );
       });
     });
+
+    // Connect to the db
+    const bucket = new GridFSBucket((await this.projectContext(projectId)).db, {
+      bucketName: 'DocumentTextFile',
+    });
+
+    fs.createReadStream(outputTextFilePath).pipe(
+      bucket.openUploadStream(document.id.toString()),
+    );
   }
 
   @Post('saveFieldData')
