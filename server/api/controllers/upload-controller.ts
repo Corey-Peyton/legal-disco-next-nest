@@ -3,22 +3,24 @@
   Controller,
   Post,
   UploadedFile,
-  UseInterceptors,
+  UseInterceptors
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import amqp from 'amqplib';
 import fs from 'fs';
 import mime from 'mime-types';
+import { GridFSBucket } from 'mongodb';
 import path from 'path';
-import redis from 'redis';
+import { DocumentModel } from '~/ecdisco-models/projects/document';
+import { NSRLHashModel } from '~/ecdisco-models/projects/NSRLHash';
 import { Hash } from '../../general/hash/hash';
+import { MasterBaseController } from './api/master/master-base-controller';
+import { ProjectBaseController } from './api/project/project-base-controller';
 import { FileChunkMetaData } from './file-chunk-meta-data';
 import { FileResult } from './file-result';
-// This is a hack to make Multer available in the Express namespace
-import { Multer } from 'multer';
 
 @Controller('Upload')
-export class UploadController {
+export class UploadController extends MasterBaseController {
   @Post()
   @UseInterceptors(FileInterceptor('file'))
   async index(
@@ -61,18 +63,26 @@ export class UploadController {
     };
 
     if (fileResult.uploaded) {
-      const client = redis.createClient({
-        port: 6379,
-        host: 'fe80::20c:29ff:fec5:a66b',
-      });
+      const isSystemFile = await NSRLHashModel(
+        await this.masterContext,
+      ).findOne({ documentHash: await Hash.GetHash(filePath) });
 
-      client.sismember(
-        'NSRLHash',
-        await Hash.GetHash(filePath),
-        async function (err, isSystemFile) {
-          if (!isSystemFile) {
-            //TODO: This might require seperate library. to be used from other projects.
+      if (!isSystemFile) {
+        //TODO: This might require seperate library. to be used from other projects.
+        const projectController = new ProjectBaseController();
+        const projectContext = await projectController.projectContext(
+          fileChunkMetaData.projectId,
+        );
 
+        const documentId = (await DocumentModel(projectContext).create({})).id;
+
+        const bucket = new GridFSBucket(projectContext.db, {
+          bucketName: 'DocumentFile',
+        });
+
+        fs.createReadStream(filePath)
+          .pipe(bucket.openUploadStream(documentId.toString()))
+          .on('finish', async () => {
             const connection = await amqp.connect('amqp://localhost');
             const channel = await connection.createChannel();
             const documentProcessQueue = 'DocumentProcess';
@@ -94,9 +104,8 @@ export class UploadController {
                 }),
               ),
             );
-          }
-        },
-      );
+          });
+      }
     }
 
     return fileResult;

@@ -11,31 +11,29 @@ import { Paginate } from '../../../../../ecdisco-models/general/paginate';
 import { DocumentMetadatumModel } from '../../../../../ecdisco-models/master/document-metadatum';
 import {
   Document,
-  DocumentModel
+  DocumentModel,
 } from '../../../../../ecdisco-models/projects/document';
 import {
   DocumentField,
-  DocumentFieldModel
+  DocumentFieldModel,
 } from '../../../../../ecdisco-models/projects/document-field';
 import {
   DocumentFieldBooleanValue,
-  DocumentFieldBooleanValueModel
+  DocumentFieldBooleanValueModel,
 } from '../../../../../ecdisco-models/projects/document-field-boolean-value';
 import {
   DocumentFieldDateValue,
-  DocumentFieldDateValueModel
+  DocumentFieldDateValueModel,
 } from '../../../../../ecdisco-models/projects/document-field-date-value';
 import {
   DocumentFieldNumberValue,
-  DocumentFieldNumberValueModel
+  DocumentFieldNumberValueModel,
 } from '../../../../../ecdisco-models/projects/document-field-number-value';
 import {
   DocumentFieldTextValue,
-  DocumentFieldTextValueModel
+  DocumentFieldTextValueModel,
 } from '../../../../../ecdisco-models/projects/document-field-text-value';
-import {
-  DocumentMetadatumValueLinkModel
-} from '../../../../../ecdisco-models/projects/document-metadatum-value-link';
+import { DocumentMetadatumValueLinkModel } from '../../../../../ecdisco-models/projects/document-metadatum-value-link';
 import { DocumentFields } from '../document-field/document-fields';
 import { ProjectBaseController } from '../project-base-controller';
 import { DocumentInfo } from './document-info';
@@ -299,7 +297,18 @@ export class DocumentController extends ProjectBaseController {
 
     fs.createReadStream(outputTextFilePath).pipe(
       bucket.openUploadStream(document.id.toString()),
-    );
+    ).on('finish', () => {
+      // Delete temp text file.
+      fs.unlink(outputTextFilePath, null);
+    });
+
+    fs.createReadStream(outputTextFilePath +  + ".txt").pipe(
+      bucket.openUploadStream(document.id.toString()),
+    ).on('finish', () => {
+      // Delete temp text file.
+      fs.unlink(outputTextFilePath, null);
+    });
+
   }
 
   @Post('saveFieldData')
