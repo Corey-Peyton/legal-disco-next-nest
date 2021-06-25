@@ -45,21 +45,6 @@ export class DocumentController extends ProjectBaseController {
     return `Temp_Session_${this.sessionId}_DocumentSearchResult`;
   }
 
-  @Post('addDocument')
-  async addDocument(
-    @Body() document: Document,
-    @Headers('projectid') projectId: ObjectID,
-  ): Promise<ObjectID> {
-    return (
-      await DocumentModel(await this.projectContext(projectId)).create({
-        parentDocumentId: document.parentDocumentId,
-        datasourceId: document.datasourceId,
-        fileName: path.parse(document.fileName).name,
-        fileExtension: path.parse(document.fileName).ext,
-      })
-    ).id;
-  }
-
   @Post('deleteSelectedColumnData')
   async deleteSelectedColumnData(
     @Body() columnObject: any,
@@ -234,6 +219,14 @@ export class DocumentController extends ProjectBaseController {
     @Body('outputTextFilePath') outputTextFilePath: string,
     @Headers('projectid') projectId: ObjectID,
   ): Promise<void> {
+
+    await DocumentModel(await this.projectContext(projectId)).create({
+      parentDocumentId: document.parentDocumentId,
+      datasourceId: document.datasourceId,
+      fileName: path.parse(document.fileName).name,
+      fileExtension: path.parse(document.fileName).ext,
+    })
+
     const metadatas: any = JSON.parse(metadata);
     // ConnectionPool masterContext = new ConnectionPool();
     const documentMetadataValue: { [key: string]: string[] } = {};
@@ -299,14 +292,14 @@ export class DocumentController extends ProjectBaseController {
       bucket.openUploadStream(document.id.toString()),
     ).on('finish', () => {
       // Delete temp text file.
-      fs.unlink(outputTextFilePath, null);
+      fs.unlink(outputTextFilePath, () => {});
     });
 
-    fs.createReadStream(outputTextFilePath +  + ".txt").pipe(
+    fs.createReadStream(outputTextFilePath + ".txt").pipe(
       bucket.openUploadStream(document.id.toString()),
     ).on('finish', () => {
       // Delete temp text file.
-      fs.unlink(outputTextFilePath, null);
+      fs.unlink(outputTextFilePath, () => {});
     });
 
   }
