@@ -3,21 +3,21 @@
   Controller,
   Post,
   UploadedFile,
-  UseInterceptors,
+  UseInterceptors
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import amqp from 'amqplib';
 import fs from 'fs';
 import mime from 'mime-types';
+import { Multer } from 'multer'; // DO NOT REMOVE THIS TILL TYPING IS FIXED. IT GIVES TYPE ERROR. This is a hack to make Multer available in the Express namespace
 import { GridFSBucket, ObjectID } from 'mongodb';
 import path from 'path';
 import { NSRLHashModel } from '~/ecdisco-models/projects/NSRLHash';
+import { RabbitMQ } from '~/general/rabbitmq/rabbitmq';
 import { Hash } from '../../general/hash/hash';
 import { MasterBaseController } from './api/master/master-base-controller';
 import { ProjectBaseController } from './api/project/project-base-controller';
 import { FileChunkMetaData } from './file-chunk-meta-data';
 import { FileResult } from './file-result';
-import { Multer } from 'multer'; // DO NOT REMOVE THIS TILL TYPING IS FIXED. IT GIVES TYPE ERROR. This is a hack to make Multer available in the Express namespace
 
 @Controller('Upload')
 export class UploadController extends MasterBaseController {
@@ -83,28 +83,12 @@ export class UploadController extends MasterBaseController {
         fs.createReadStream(filePath)
           .pipe(bucket.openUploadStream(documentId.toString()))
           .on('finish', async () => {
-            const connection = await amqp.connect('amqp://localhost');
-            const channel = await connection.createChannel();
-            const documentProcessQueue = 'DocumentProcess';
-
-            channel.assertQueue(documentProcessQueue, {
-              durable: false,
-              exclusive: false,
-              autoDelete: false,
-              arguments: null,
+            RabbitMQ.sendToQueue('DocumentProcess', {
+              documentId,
+              projectId: fileChunkMetaData.projectId,
+              datasourceId: fileChunkMetaData.datasourceId,
+              documentPath: filePath,
             });
-
-            channel.sendToQueue(
-              documentProcessQueue,
-              Buffer.from(
-                JSON.stringify({
-                  documentId,
-                  projectId: fileChunkMetaData.projectId,
-                  datasourceId: fileChunkMetaData.datasourceId,
-                  documentPath: filePath,
-                }),
-              ),
-            );
           });
       }
     }

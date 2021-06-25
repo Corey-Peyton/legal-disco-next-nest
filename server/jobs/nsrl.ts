@@ -1,12 +1,11 @@
 ﻿import axios from 'axios';
-import { createWriteStream } from 'fs';
-import path from 'path';
-import { Hash } from '../general/hash/hash';
-import fs from 'fs';
-
-import cron from 'node-cron';
-import amqp from 'amqplib';
 import crypto from 'crypto';
+import fs, { createWriteStream } from 'fs';
+import cron from 'node-cron';
+import path from 'path';
+import { RabbitMQ } from '~/general/rabbitmq/rabbitmq';
+import { Hash } from '../general/hash/hash';
+
 const sha1 = crypto.createHash('sha1');
 
 cron.schedule('0 0 9 MAR,JUN,SEP,DEC *', function () {
@@ -57,19 +56,8 @@ export class NSRL {
       );
 
       // Send ecdiscoextract project a request to update redis from their file.
+      RabbitMQ.sendToQueue('UpdateNSRL', null);
 
-      const connection = await amqp.connect('amqp://localhost');
-      const channel = await connection.createChannel();
-      const documentProcessQueue = 'UpdateNSRL';
-
-      channel.assertQueue(documentProcessQueue, {
-        durable: false,
-        exclusive: false,
-        autoDelete: false,
-        arguments: null,
-      });
-
-      channel.sendToQueue(documentProcessQueue, null);
     }
   }
 

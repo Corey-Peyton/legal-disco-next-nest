@@ -4,6 +4,7 @@ import { ObjectID } from 'bson';
 import fs from 'fs';
 import { GridFSBucket } from 'mongodb';
 import path from 'path';
+import { RabbitMQ } from '~/general/rabbitmq/rabbitmq';
 import { FieldType } from '../../../../../ecdisco-models/enums/field-type';
 import { NodeType } from '../../../../../ecdisco-models/enums/node-type';
 import { KeyValue } from '../../../../../ecdisco-models/general/key-value';
@@ -11,27 +12,27 @@ import { Paginate } from '../../../../../ecdisco-models/general/paginate';
 import { DocumentMetadatumModel } from '../../../../../ecdisco-models/master/document-metadatum';
 import {
   Document,
-  DocumentModel,
+  DocumentModel
 } from '../../../../../ecdisco-models/projects/document';
 import {
   DocumentField,
-  DocumentFieldModel,
+  DocumentFieldModel
 } from '../../../../../ecdisco-models/projects/document-field';
 import {
   DocumentFieldBooleanValue,
-  DocumentFieldBooleanValueModel,
+  DocumentFieldBooleanValueModel
 } from '../../../../../ecdisco-models/projects/document-field-boolean-value';
 import {
   DocumentFieldDateValue,
-  DocumentFieldDateValueModel,
+  DocumentFieldDateValueModel
 } from '../../../../../ecdisco-models/projects/document-field-date-value';
 import {
   DocumentFieldNumberValue,
-  DocumentFieldNumberValueModel,
+  DocumentFieldNumberValueModel
 } from '../../../../../ecdisco-models/projects/document-field-number-value';
 import {
   DocumentFieldTextValue,
-  DocumentFieldTextValueModel,
+  DocumentFieldTextValueModel
 } from '../../../../../ecdisco-models/projects/document-field-text-value';
 import { DocumentMetadatumValueLinkModel } from '../../../../../ecdisco-models/projects/document-metadatum-value-link';
 import { DocumentFields } from '../document-field/document-fields';
@@ -216,16 +217,16 @@ export class DocumentController extends ProjectBaseController {
   async saveDocument(
     @Body('document') document: Document,
     @Body('metadata') metadata: string,
-    @Body('outputTextFilePath') outputTextFilePath: string,
+    @Body('outputPath') outputPath: string,
     @Headers('projectid') projectId: ObjectID,
   ): Promise<void> {
-
     await DocumentModel(await this.projectContext(projectId)).create({
+      id: document.id,
       parentDocumentId: document.parentDocumentId,
       datasourceId: document.datasourceId,
       fileName: path.parse(document.fileName).name,
       fileExtension: path.parse(document.fileName).ext,
-    })
+    });
 
     const metadatas: any = JSON.parse(metadata);
     // ConnectionPool masterContext = new ConnectionPool();
@@ -288,20 +289,24 @@ export class DocumentController extends ProjectBaseController {
       bucketName: 'DocumentTextFile',
     });
 
-    fs.createReadStream(outputTextFilePath).pipe(
-      bucket.openUploadStream(document.id.toString()),
-    ).on('finish', () => {
-      // Delete temp text file.
-      fs.unlink(outputTextFilePath, () => {});
-    });
+    fs.createReadStream(outputPath)
+      .pipe(bucket.openUploadStream(document.id.toString()))
+      .on('finish', () => {});
 
-    fs.createReadStream(outputTextFilePath + ".txt").pipe(
-      bucket.openUploadStream(document.id.toString()),
-    ).on('finish', () => {
-      // Delete temp text file.
-      fs.unlink(outputTextFilePath, () => {});
-    });
+    fs.createReadStream(`${outputPath}.txt`)
+      .pipe(bucket.openUploadStream(document.id.toString()))
+      .on('finish', () => {
+        // Delete temp text file.
+        fs.unlink(`${outputPath}.txt`, () => {});
+      });
 
+    // Image Export
+    RabbitMQ.sendToQueue('DocumentExport', {
+      projectId,
+      documentId: document.id,
+      InputFileName: outputPath,
+      OutputType: 'PNG',
+    });
   }
 
   @Post('saveFieldData')

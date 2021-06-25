@@ -1,9 +1,9 @@
 ﻿import { Body, Controller, Headers, Post } from '@nestjs/common';
 import AdmZip from 'adm-zip';
-import amqp from 'amqplib';
 import { ObjectID } from 'bson';
 import fs from 'fs';
 import path from 'path';
+import { RabbitMQ } from '~/general/rabbitmq/rabbitmq';
 import { FileResponse } from '../../../../../ecdisco-models/general/file-response';
 import {
   QueryRule,
@@ -64,10 +64,12 @@ export class ProductionController extends ProjectBaseController {
     const productionId = production.id;
 
     // 2 Get main query to filter main documents
-    const queryId = (await ProductionModel.findById(productionId))
-      .queryId;
+    const queryId = (await ProductionModel.findById(productionId)).queryId;
 
-    const productionDocuments = this.getDocumentIdsByQueryId(queryId, projectId);
+    const productionDocuments = this.getDocumentIdsByQueryId(
+      queryId,
+      projectId,
+    );
 
     // Array<DocumentId, AnnotationId>
     const documentsAnnotations: { [key: number]: ObjectID[] } = [];
@@ -79,7 +81,8 @@ export class ProductionController extends ProjectBaseController {
 
     annotationQueryData.forEach((annotationQueryRow) => {
       const annotationDocuments = this.getDocumentIdsByQueryId(
-        annotationQueryRow.queryId, projectId
+        annotationQueryRow.queryId,
+        projectId,
       );
 
       annotationDocuments.forEach((annotationDocumentId) => {
@@ -155,27 +158,11 @@ export class ProductionController extends ProjectBaseController {
           fs.copyFile(file, productionFile, null);
         });
 
-        const connection = await amqp.connect('amqp://localhost');
-        const channel = await connection.createChannel();
-        const imageAnnotatorQueue = 'imageAnnotator';
-
-        channel.assertQueue(imageAnnotatorQueue, {
-          durable: false,
-          exclusive: false,
-          autoDelete: false,
-          arguments: null,
+        RabbitMQ.sendToQueue('imageAnnotator', {
+          projectId: projectId,
+          documentId: productionDocumentId,
+          annotations: annotationsArray,
         });
-
-        channel.sendToQueue(
-          imageAnnotatorQueue,
-          Buffer.from(
-            JSON.stringify({
-              projectId: projectId,
-              documentId: productionDocumentId,
-              annotations: annotationsArray,
-            }),
-          ),
-        );
       }
     });
   }
