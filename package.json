@@ -46,6 +46,7 @@
     "express-session": "^1.17.1",
     "fabric": "^4.4.0",
     "file-saver": "^2.0.5",
+    "glob": "^7.1.7",
     "http-status-codes": "^2.1.4",
     "jQuery-QueryBuilder": "^2.6.0",
     "jquery": "^3.6.0",

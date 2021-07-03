@@ -2,6 +2,7 @@
 import { Body, Controller, Headers, Post } from '@nestjs/common';
 import { ObjectID } from 'bson';
 import fs from 'fs';
+import glob from 'glob';
 import { GridFSBucket } from 'mongodb';
 import path from 'path';
 import { RabbitMQ } from '~/general/rabbitmq/rabbitmq';
@@ -211,6 +212,28 @@ export class DocumentController extends ProjectBaseController {
       fileContentResult: fs.readFileSync(files[0]),
       count: files.length,
     };
+  }
+
+  @Post('saveDocumentImages')
+  async saveDocumentImages(
+    @Body('projectId') projectId: ObjectID,
+    @Body('documentId') documentId: ObjectID,
+  ) {
+    const bucket = new GridFSBucket((await this.projectContext(projectId)).db, {
+      bucketName: 'DocumentImageFile',
+    });
+
+    glob(
+      `C:/ecdiscoMaster/Temp/${documentId}_P+([0-9])_png.png`,
+      null,
+      (er, files) => {
+        files.forEach((file) => {
+          fs.createReadStream(file)
+            .pipe(bucket.openUploadStream(documentId.toString()))
+            .on('finish', () => {});
+        });
+      },
+    );
   }
 
   @Post('saveDocument')
